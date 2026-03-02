@@ -1,5 +1,5 @@
 import sql from "@/lib/db"
-import { formatYen, calcProgress, calcDaysLeft } from "@/lib/auth"
+import { formatYen, calcProgress, calcDaysLeft } from "@/lib/utils"
 import { TrendingUp, Users, Target, Clock, CreditCard, ShoppingBag, CheckCircle2, AlertCircle } from "lucide-react"
 import type { Campaign } from "@/lib/db"
 import AdminRecentPledges from "@/components/admin/AdminRecentPledges"

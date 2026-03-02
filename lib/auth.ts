@@ -1,3 +1,4 @@
+import "server-only"
 import { cookies } from "next/headers"
 import sql from "./db"
 import { AdminUser } from "./db"
@@ -15,23 +16,4 @@ export async function getAdminSession(): Promise<AdminUser | null> {
     LIMIT 1
   `
   return (result[0] as AdminUser) ?? null
-}
-
-export function formatYen(amount: number): string {
-  return new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: "JPY",
-    minimumFractionDigits: 0,
-  }).format(amount)
-}
-
-export function calcProgress(current: number, goal: number): number {
-  return Math.min(Math.round((current / goal) * 100), 100)
-}
-
-export function calcDaysLeft(endDate: string): number {
-  const now = new Date()
-  const end = new Date(endDate)
-  const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-  return Math.max(0, diff)
 }

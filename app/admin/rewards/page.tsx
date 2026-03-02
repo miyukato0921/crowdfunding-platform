@@ -1,5 +1,5 @@
 import sql from "@/lib/db"
-import { formatYen } from "@/lib/auth"
+import { formatYen } from "@/lib/utils"
 import type { RewardTier } from "@/lib/db"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

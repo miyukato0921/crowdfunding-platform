@@ -1,5 +1,5 @@
 import sql from "@/lib/db"
-import { formatYen } from "@/lib/auth"
+import { formatYen } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"

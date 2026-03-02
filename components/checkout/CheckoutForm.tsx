@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { formatYen } from "@/lib/auth"
+import { formatYen } from "@/lib/utils"
 import { CreditCard, Loader2, Lock } from "lucide-react"
 
 interface Props {

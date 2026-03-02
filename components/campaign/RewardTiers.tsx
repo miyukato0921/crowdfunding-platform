@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import type { RewardTier } from "@/lib/db"
-import { formatYen } from "@/lib/auth"
+import { formatYen } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Calendar, Users, ChevronRight } from "lucide-react"

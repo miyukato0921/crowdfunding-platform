@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import type { Campaign } from "@/lib/db"
-import { calcProgress, calcDaysLeft, formatYen } from "@/lib/auth"
+import { calcProgress, calcDaysLeft, formatYen } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import { Users, Clock, TrendingUp, Target } from "lucide-react"
 

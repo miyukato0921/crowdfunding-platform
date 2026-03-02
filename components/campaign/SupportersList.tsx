@@ -1,4 +1,4 @@
-import { formatYen } from "@/lib/auth"
+import { formatYen } from "@/lib/utils"
 import { Heart } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { ja } from "date-fns/locale"

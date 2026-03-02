@@ -1,5 +1,5 @@
 import sql from "@/lib/db"
-import { formatYen, calcProgress, calcDaysLeft } from "@/lib/auth"
+import { formatYen, calcProgress, calcDaysLeft } from "@/lib/utils"
 import type { Campaign } from "@/lib/db"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
