@@ -86,13 +86,14 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
     })
   }
 
-  const handleUpdatePhoto = (id: number) => {
-    if (!editPhotoUrl) return
+  const handleUpdatePhoto = (id: number, currentImageUrl: string) => {
+    const urlToSave = editPhotoUrl || currentImageUrl
+    if (!urlToSave) return
     startTransition(async () => {
       await fetch(`/api/admin/gallery/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_url: editPhotoUrl }),
+        body: JSON.stringify({ image_url: urlToSave }),
       })
       setEditingPhotoId(null)
       setEditPhotoUrl("")
@@ -227,14 +228,14 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                   <ImageUploader
                     name={`photo_url_${photo.id}`}
                     label="新しい写真"
-                    currentUrl={editPhotoUrl || photo.image_url}
+                    currentUrl={editPhotoUrl !== "" ? editPhotoUrl : photo.image_url}
                     onUrlChange={setEditPhotoUrl}
                   />
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      onClick={() => handleUpdatePhoto(photo.id)}
-                      disabled={!editPhotoUrl || isPending}
+                      onClick={() => handleUpdatePhoto(photo.id, photo.image_url)}
+                      disabled={isPending}
                       className="bg-ireland-green hover:bg-ireland-green/90 text-white"
                     >
                       <Check className="w-3.5 h-3.5 mr-1" />
@@ -277,7 +278,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                       <ChevronDown className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); setEditingPhotoId(photo.id); setEditPhotoUrl("") }}
+                      onClick={(e) => { e.stopPropagation(); setEditPhotoUrl(photo.image_url); setEditingPhotoId(photo.id) }}
                       className="w-8 h-8 rounded-lg bg-black/50 hover:bg-ireland-green/80 text-white flex items-center justify-center transition-colors"
                       title="写真を変更"
                     >

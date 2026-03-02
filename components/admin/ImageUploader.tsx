@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,13 @@ export default function ImageUploader({ name, label, defaultValue, currentUrl, r
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // currentUrl prop が外から変わったとき（例: 編集モード切替時）に内部 state を同期
+  useEffect(() => {
+    if (currentUrl !== undefined) {
+      setUrl(currentUrl)
+    }
+  }, [currentUrl])
 
   const setUrlAndNotify = useCallback((newUrl: string) => {
     setUrl(newUrl)
