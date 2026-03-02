@@ -13,11 +13,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const admin = await getAdminSession()
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  const { campaign_id, name, role, bio, image_url, sort_order } = await request.json()
+  const { campaign_id, name, role, bio, image_url, sort_order,
+    name_en, role_en, bio_en, name_ko, role_ko, bio_ko, name_zh, role_zh, bio_zh } = await request.json()
   if (!name) return NextResponse.json({ error: "name required" }, { status: 400 })
   await sql`
-    INSERT INTO performers (campaign_id, name, role, bio, image_url, sort_order, is_active)
-    VALUES (${campaign_id}, ${name}, ${role || ""}, ${bio || ""}, ${image_url || null}, ${sort_order ?? 0}, true)
+    INSERT INTO performers (campaign_id, name, role, bio, image_url, sort_order, is_active,
+      name_en, role_en, bio_en, name_ko, role_ko, bio_ko, name_zh, role_zh, bio_zh)
+    VALUES (${campaign_id}, ${name}, ${role || ""}, ${bio || ""}, ${image_url || null}, ${sort_order ?? 0}, true,
+      ${name_en || null}, ${role_en || null}, ${bio_en || null},
+      ${name_ko || null}, ${role_ko || null}, ${bio_ko || null},
+      ${name_zh || null}, ${role_zh || null}, ${bio_zh || null})
   `
   return NextResponse.json({ success: true })
 }

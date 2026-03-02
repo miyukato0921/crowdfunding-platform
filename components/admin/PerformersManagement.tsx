@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import Image from "next/image"
-import { Plus, Trash2, Pencil, Eye, EyeOff, X, Check, ChevronUp, ChevronDown } from "lucide-react"
+import { Plus, Trash2, Pencil, Eye, EyeOff, X, Check, ChevronUp, ChevronDown, Languages, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,6 +17,9 @@ interface Performer {
   image_url: string | null
   sort_order: number
   is_active: boolean
+  name_en?: string; role_en?: string; bio_en?: string
+  name_ko?: string; role_ko?: string; bio_ko?: string
+  name_zh?: string; role_zh?: string; bio_zh?: string
 }
 
 interface Props {
@@ -24,15 +27,124 @@ interface Props {
   initialPerformers: Performer[]
 }
 
-const emptyForm = { name: "", role: "", bio: "", image_url: "" }
+const emptyForm = {
+  name: "", role: "", bio: "", image_url: "",
+  name_en: "", role_en: "", bio_en: "",
+  name_ko: "", role_ko: "", bio_ko: "",
+  name_zh: "", role_zh: "", bio_zh: "",
+}
 
+type FormState = typeof emptyForm
+
+// ── 翻訳ボタン (共通) ──────────────────────────────
+function AutoTranslateButton({
+  texts,
+  onResult,
+}: {
+  texts: { name: string; role: string; bio: string }
+  onResult: (lang: string, result: { name: string; role: string; bio: string }) => void
+}) {
+  const [loading, setLoading] = useState(false)
+
+  const handleTranslate = async () => {
+    const hasText = texts.name.trim() || texts.role.trim() || texts.bio.trim()
+    if (!hasText) return
+    setLoading(true)
+    try {
+      const res = await fetch("/api/admin/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texts: { name: texts.name, role: texts.role, bio: texts.bio } }),
+      })
+      const data = await res.json()
+      if (data.translations) {
+        for (const lang of ["en", "ko", "zh"] as const) {
+          if (data.translations[lang]) {
+            onResult(lang, data.translations[lang])
+          }
+        }
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      onClick={handleTranslate}
+      disabled={loading}
+      className="gap-1.5 text-xs h-8 border-ireland-green/40 text-ireland-green hover:bg-ireland-green/10"
+    >
+      {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Languages className="w-3.5 h-3.5" />}
+      {loading ? "翻訳中..." : "EN / KO / ZH に自動翻訳"}
+    </Button>
+  )
+}
+
+// ── 多言語フォームセクション ──────────────────────────
+function I18nFields({
+  form,
+  onChange,
+}: {
+  form: FormState
+  onChange: (updates: Partial<FormState>) => void
+}) {
+  return (
+    <div className="space-y-5 border-t border-border pt-4">
+      {(["en", "ko", "zh"] as const).map((lang) => {
+        const labels = {
+          en: { lang: "English", name: "Name", role: "Role / Title", bio: "Bio" },
+          ko: { lang: "한국어", name: "이름", role: "역할 / 직함", bio: "프로필" },
+          zh: { lang: "中文", name: "姓名", role: "角色 / 头衔", bio: "简介" },
+        }[lang]
+        return (
+          <div key={lang} className="space-y-3">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{labels.lang}</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs font-medium">{labels.name}</Label>
+                <Input
+                  value={(form as any)[`name_${lang}`]}
+                  onChange={(e) => onChange({ [`name_${lang}`]: e.target.value })}
+                  className="mt-1 text-sm h-8"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium">{labels.role}</Label>
+                <Input
+                  value={(form as any)[`role_${lang}`]}
+                  onChange={(e) => onChange({ [`role_${lang}`]: e.target.value })}
+                  className="mt-1 text-sm h-8"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs font-medium">{labels.bio}</Label>
+              <Textarea
+                value={(form as any)[`bio_${lang}`]}
+                onChange={(e) => onChange({ [`bio_${lang}`]: e.target.value })}
+                rows={2}
+                className="mt-1 text-sm resize-none"
+              />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── メインコンポーネント ──────────────────────────────
 export default function PerformersManagement({ campaignId, initialPerformers }: Props) {
   const [performers, setPerformers] = useState<Performer[]>(initialPerformers)
   const [isPending, startTransition] = useTransition()
   const [addMode, setAddMode] = useState(false)
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState<FormState>(emptyForm)
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [editForm, setEditForm] = useState(emptyForm)
+  const [editForm, setEditForm] = useState<FormState>(emptyForm)
 
   const reload = async () => {
     const res = await fetch(`/api/admin/performers?campaign_id=${campaignId}`)
@@ -90,7 +202,12 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
 
   const startEdit = (p: Performer) => {
     setEditingId(p.id)
-    setEditForm({ name: p.name, role: p.role, bio: p.bio, image_url: p.image_url || "" })
+    setEditForm({
+      name: p.name, role: p.role, bio: p.bio, image_url: p.image_url || "",
+      name_en: p.name_en || "", role_en: p.role_en || "", bio_en: p.bio_en || "",
+      name_ko: p.name_ko || "", role_ko: p.role_ko || "", bio_ko: p.bio_ko || "",
+      name_zh: p.name_zh || "", role_zh: p.role_zh || "", bio_zh: p.bio_zh || "",
+    })
   }
 
   const handleUpdate = (id: number) => {
@@ -103,6 +220,20 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
       setEditingId(null)
       await reload()
     })
+  }
+
+  // 翻訳結果をフォームに反映
+  const applyTranslation = (
+    setter: React.Dispatch<React.SetStateAction<FormState>>,
+    lang: string,
+    result: { name: string; role: string; bio: string }
+  ) => {
+    setter((prev) => ({
+      ...prev,
+      [`name_${lang}`]: result.name || (prev as any)[`name_${lang}`],
+      [`role_${lang}`]: result.role || (prev as any)[`role_${lang}`],
+      [`bio_${lang}`]: result.bio || (prev as any)[`bio_${lang}`],
+    }))
   }
 
   return (
@@ -120,27 +251,41 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
 
       {/* 追加フォーム */}
       {addMode && (
-        <div className="bg-card border border-border rounded-2xl p-6 mb-6 space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-6 space-y-5">
           <h2 className="font-bold text-foreground">新しい出演者を追加</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="text-sm font-medium">名前 <span className="text-destructive">*</span></Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="例：孝藤右近" className="mt-1.5" />
+
+          {/* 日本語 */}
+          <div className="space-y-4 pb-4 border-b border-border">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">日本語</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium">名前 <span className="text-destructive">*</span></Label>
+                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="例：孝藤右近" className="mt-1.5" />
+              </div>
+              <div>
+                <Label className="text-sm font-medium">役割・肩書き</Label>
+                <Input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="例：日本舞踊" className="mt-1.5" />
+              </div>
             </div>
             <div>
-              <Label className="text-sm font-medium">役割・肩書き</Label>
-              <Input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="例：日本舞踊" className="mt-1.5" />
+              <Label className="text-sm font-medium">プロフィール</Label>
+              <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="出演者の紹介文を入力" className="mt-1.5" rows={3} />
             </div>
+            <AutoTranslateButton
+              texts={{ name: form.name, role: form.role, bio: form.bio }}
+              onResult={(lang, result) => applyTranslation(setForm, lang, result)}
+            />
           </div>
-          <div>
-            <Label className="text-sm font-medium">プロフィール</Label>
-            <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="出演者の紹介文を入力" className="mt-1.5" rows={3} />
-          </div>
+
+          {/* EN / KO / ZH */}
+          <I18nFields form={form} onChange={(u) => setForm((p) => ({ ...p, ...u }))} />
+
+          {/* 写真 */}
           <div>
             <Label className="text-sm font-medium mb-2 block">プロフィール写真</Label>
             <ImageUploader name="image_url" label="プロフィール写真" currentUrl={form.image_url} onUrlChange={(url) => setForm({ ...form, image_url: url })} />
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <Button onClick={handleAdd} disabled={!form.name || isPending} className="bg-ireland-green hover:bg-ireland-green/90">追加する</Button>
             <Button variant="outline" onClick={() => { setAddMode(false); setForm(emptyForm) }}>キャンセル</Button>
           </div>
@@ -158,22 +303,36 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
           {performers.map((p, index) => (
             <div key={p.id} className={`bg-card border rounded-2xl overflow-hidden ${!p.is_active ? "opacity-50 border-border" : "border-border"}`}>
               {editingId === p.id ? (
-                <div className="p-6 space-y-4">
+                <div className="p-6 space-y-5">
                   <h3 className="font-bold text-foreground">編集中</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium">名前</Label>
-                      <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="mt-1.5" />
+
+                  {/* 日本語 */}
+                  <div className="space-y-4 pb-4 border-b border-border">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">日本語</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">名前</Label>
+                        <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="mt-1.5" />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium">役割</Label>
+                        <Input value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} className="mt-1.5" />
+                      </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium">役割</Label>
-                      <Input value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} className="mt-1.5" />
+                      <Label className="text-sm font-medium">プロフィール</Label>
+                      <Textarea value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} className="mt-1.5" rows={3} />
                     </div>
+                    <AutoTranslateButton
+                      texts={{ name: editForm.name, role: editForm.role, bio: editForm.bio }}
+                      onResult={(lang, result) => applyTranslation(setEditForm, lang, result)}
+                    />
                   </div>
-                  <div>
-                    <Label className="text-sm font-medium">プロフィール</Label>
-                    <Textarea value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} className="mt-1.5" rows={3} />
-                  </div>
+
+                  {/* EN / KO / ZH */}
+                  <I18nFields form={editForm} onChange={(u) => setEditForm((prev) => ({ ...prev, ...u }))} />
+
+                  {/* 写真 */}
                   <div>
                     <Label className="text-sm font-medium mb-2 block">写真</Label>
                     <ImageUploader name="image_url" label="プロフィール写真" currentUrl={editForm.image_url} onUrlChange={(url) => setEditForm({ ...editForm, image_url: url })} />
@@ -195,7 +354,6 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
                       onClick={() => movePerformer(index, "up")}
                       disabled={index === 0 || isPending}
                       className="w-7 h-7 rounded-lg border border-border hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                      title="上へ"
                     >
                       <ChevronUp className="w-4 h-4" />
                     </button>
@@ -203,7 +361,6 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
                       onClick={() => movePerformer(index, "down")}
                       disabled={index === performers.length - 1 || isPending}
                       className="w-7 h-7 rounded-lg border border-border hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                      title="下へ"
                     >
                       <ChevronDown className="w-4 h-4" />
                     </button>
@@ -222,6 +379,11 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
                       <div>
                         <p className="text-xs text-ireland-gold font-bold uppercase tracking-wider">{p.role}</p>
                         <p className="font-black text-foreground text-lg">{p.name}</p>
+                        {(p.name_en || p.name_ko || p.name_zh) && (
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {[p.name_en, p.name_ko, p.name_zh].filter(Boolean).join(" / ")}
+                          </p>
+                        )}
                       </div>
                       <div className="flex gap-1 shrink-0">
                         <button onClick={() => handleToggle(p.id, p.is_active)} className="w-8 h-8 rounded-lg border border-border hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors" title={p.is_active ? "非表示" : "表示"}>

@@ -20,7 +20,7 @@ type Props =
     }
 
 export default function CheckoutPageClient(props: Props) {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
 
   if (props.type === "no_campaign") {
     return (
@@ -31,6 +31,19 @@ export default function CheckoutPageClient(props: Props) {
   }
 
   const { campaign, reward, isCustom, defaultAmount } = props
+  const c = campaign as any
+  const campaignTitle =
+    lang === "en" && c.title_en ? c.title_en :
+    lang === "ko" && c.title_ko ? c.title_ko :
+    lang === "zh" && c.title_zh ? c.title_zh :
+    campaign.title
+  const r = reward as any
+  const rewardTitle = reward
+    ? (lang === "en" && r.title_en ? r.title_en :
+       lang === "ko" && r.title_ko ? r.title_ko :
+       lang === "zh" && r.title_zh ? r.title_zh :
+       reward.title)
+    : null
 
   return (
     <>
@@ -52,15 +65,15 @@ export default function CheckoutPageClient(props: Props) {
             <div className="relative h-32 w-full rounded-xl overflow-hidden mb-4">
               <Image
                 src={reward?.image_url ?? "/images/hero-festival.jpg"}
-                alt={reward?.title ?? campaign.title}
+                alt={rewardTitle ?? campaignTitle}
                 fill
                 className="object-cover"
               />
             </div>
-            <p className="font-bold text-foreground text-sm mb-1">{campaign.title}</p>
+            <p className="font-bold text-foreground text-sm mb-1">{campaignTitle}</p>
             {reward ? (
               <>
-                <p className="text-xs text-muted-foreground mb-3">{reward.title}</p>
+                <p className="text-xs text-muted-foreground mb-3">{rewardTitle}</p>
                 <div className="border-t border-border pt-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{t("checkoutAmountLabel")}</span>

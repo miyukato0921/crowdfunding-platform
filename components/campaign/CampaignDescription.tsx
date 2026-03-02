@@ -20,6 +20,9 @@ interface Performer {
   bio: string
   image_url: string | null
   sort_order: number
+  name_en?: string; role_en?: string; bio_en?: string
+  name_ko?: string; role_ko?: string; bio_ko?: string
+  name_zh?: string; role_zh?: string; bio_zh?: string
 }
 
 interface Props {
@@ -30,7 +33,13 @@ interface Props {
 
 export default function CampaignDescription({ campaign, gallery, performers }: Props) {
   const [lightbox, setLightbox] = useState<number | null>(null)
-  const { t, locale } = useLanguage()
+  const { t, locale, lang } = useLanguage()
+
+  const localizePerformer = (p: Performer) => ({
+    name: (lang !== "ja" && (p as any)[`name_${lang}`]) || p.name,
+    role: (lang !== "ja" && (p as any)[`role_${lang}`]) || p.role,
+    bio:  (lang !== "ja" && (p as any)[`bio_${lang}`])  || p.bio,
+  })
 
   const prev = () => setLightbox((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length))
   const next = () => setLightbox((i) => (i === null ? null : (i + 1) % gallery.length))
@@ -112,28 +121,31 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
           <p className="text-sm text-muted-foreground text-center py-6">{t("noPerformers")}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {performers.map((p) => (
-              <div key={p.id} className="rounded-xl overflow-hidden border border-border bg-muted/30">
-                <div className="relative w-full h-52">
-                  <Image
-                    src={p.image_url || "/images/performer-ukon.jpg"}
-                    alt={p.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ireland-dark/90 via-ireland-dark/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-4">
-                    <p className="text-ireland-gold text-xs font-bold uppercase tracking-wider mb-0.5">{p.role}</p>
-                    <p className="text-white text-lg font-black">{p.name}</p>
+            {performers.map((p) => {
+              const lp = localizePerformer(p)
+              return (
+                <div key={p.id} className="rounded-xl overflow-hidden border border-border bg-muted/30">
+                  <div className="relative w-full h-52">
+                    <Image
+                      src={p.image_url || "/images/performer-ukon.jpg"}
+                      alt={lp.name}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ireland-dark/90 via-ireland-dark/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-4">
+                      <p className="text-ireland-gold text-xs font-bold uppercase tracking-wider mb-0.5">{lp.role}</p>
+                      <p className="text-white text-lg font-black">{lp.name}</p>
+                    </div>
                   </div>
+                  {lp.bio && (
+                    <div className="p-4">
+                      <p className="text-xs text-muted-foreground leading-relaxed">{lp.bio}</p>
+                    </div>
+                  )}
                 </div>
-                {p.bio && (
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground leading-relaxed">{p.bio}</p>
-                  </div>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

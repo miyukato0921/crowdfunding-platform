@@ -15,6 +15,15 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       bio = COALESCE(${body.bio ?? null}, bio),
       image_url = CASE WHEN ${body.image_url !== undefined} THEN ${body.image_url || null} ELSE image_url END,
       is_active = COALESCE(${body.is_active ?? null}, is_active),
+      name_en = COALESCE(${body.name_en ?? null}, name_en),
+      role_en = COALESCE(${body.role_en ?? null}, role_en),
+      bio_en = COALESCE(${body.bio_en ?? null}, bio_en),
+      name_ko = COALESCE(${body.name_ko ?? null}, name_ko),
+      role_ko = COALESCE(${body.role_ko ?? null}, role_ko),
+      bio_ko = COALESCE(${body.bio_ko ?? null}, bio_ko),
+      name_zh = COALESCE(${body.name_zh ?? null}, name_zh),
+      role_zh = COALESCE(${body.role_zh ?? null}, role_zh),
+      bio_zh = COALESCE(${body.bio_zh ?? null}, bio_zh),
       updated_at = NOW()
     WHERE id = ${Number(id)}
   `
