@@ -1,5 +1,7 @@
--- リターンデータをCAMPFIREプレビュー内容に合わせて更新
--- まず既存のリターンを削除
+-- 外部キー制約を回避するため、先にpledgesのreward_tier_idをNULLに設定
+UPDATE pledges SET reward_tier_id = NULL WHERE campaign_id = 1;
+
+-- 既存のリターンを削除
 DELETE FROM reward_tiers WHERE campaign_id = 1;
 
 -- ①ステージで一緒に踊れる権利（3/13 12:00までの支援が必要）
@@ -107,11 +109,10 @@ VALUES (
   true
 );
 
--- キャンペーンのヒーロー画像も更新
+-- キャンペーン情報を更新
 UPDATE campaigns
 SET
   hero_image_url = '/images/hero-irish-bon-odori.jpg',
   title = '【アイリッシュ盆踊り】日本×アイルランド"踊りの輪"を全国・世界へ繋げたい！',
-  short_description = 'アイルランドの音楽と日本舞踊を融合した「アイリッシュ盆踊り」を全国・世界へ。グリーン アイルランド フェスティバル2026を一緒につくりましょう！',
-  organizer_name = 'グリーン アイルランド フェスティバル運営事務局'
+  short_description = 'アイルランドの音楽と日本舞踊を融合した「アイリッシュ盆踊り」を全国・世界へ。グリーン アイルランド フェスティバル2026を一緒につくりましょう！'
 WHERE id = 1;

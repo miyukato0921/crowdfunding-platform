@@ -4,40 +4,58 @@ interface Props {
   campaign: Campaign
 }
 
-function parseMarkdown(text: string): string {
-  return text
-    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-foreground mt-8 mb-3">$1</h2>')
-    .replace(/^- (.+)$/gm, '<li class="text-foreground/80 ml-4">$1</li>')
-    .replace(/\n\n/g, '</p><p class="text-foreground/80 leading-relaxed mb-4">')
-    .replace(/^(?!<[hlp])(.+)/gm, '<p class="text-foreground/80 leading-relaxed mb-4">$1</p>')
-}
-
 export default function CampaignDescription({ campaign }: Props) {
-  const html = parseMarkdown(campaign.description)
-
   return (
     <div className="bg-card rounded-2xl border border-border p-6 mb-6">
       <h2 className="text-xl font-bold text-foreground mb-5 pb-4 border-b border-border">
         プロジェクト詳細
       </h2>
-      <div
-        className="prose-sm max-w-none"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
 
-      {/* Funding usage visual */}
-      <div className="mt-8 p-5 bg-ireland-light rounded-xl border border-border">
+      <div className="space-y-4 text-foreground/80 leading-relaxed text-sm">
+        <p>
+          このプロジェクトは<strong className="text-foreground">「アイリッシュ盆踊り」</strong>を軸に、日本とアイルランドの文化を融合させたグリーン アイルランド フェスティバル2026の開催を実現するためのクラウドファンディングです。
+        </p>
+        <p>
+          アイリッシュ盆踊りとは、アイルランドの伝統音楽・ダンスと日本の盆踊りを融合した新しい文化です。SNSで累計1,000万再生を超え、日本中・世界で話題となっています。
+        </p>
+        <p>
+          2026年3月15日（日）に東京で開催するグリーン アイルランド フェスティバル2026では、アイリッシュ盆踊りのステージパフォーマンスをはじめ、アイルランドの伝統音楽・ダンス・食文化を体感できるイベントを予定しています。
+        </p>
+
+        <div className="mt-6 p-5 bg-ireland-light rounded-xl border border-border">
+          <h3 className="font-bold text-foreground mb-3">出演者紹介</h3>
+          <div className="space-y-3">
+            <div className="flex gap-3">
+              <div className="w-1 rounded-full bg-ireland-green shrink-0" />
+              <div>
+                <p className="font-bold text-foreground text-sm">孝藤右近</p>
+                <p className="text-xs text-muted-foreground">創作日本舞踊孝藤流二代目・剣舞右近流家元・東京大学舞踊講師。約100年続く伝統を受け継ぎながら、アイリッシュ盆踊りを世界に発信する振付家・舞踊家。</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-1 rounded-full bg-ireland-gold shrink-0" />
+              <div>
+                <p className="font-bold text-foreground text-sm">小松大</p>
+                <p className="text-xs text-muted-foreground">日本を代表するフィドル奏者。「アイリッシュ盆踊り」の楽曲で累計1,000万再生を達成。アイルランド音楽と日本文化の橋渡し役として活躍中。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 資金の使い道 */}
+      <div className="mt-6 p-5 bg-ireland-light rounded-xl border border-border">
         <h3 className="font-bold text-foreground mb-4">資金の使い道</h3>
         <div className="space-y-3">
           {[
-            { label: "アーティスト招聘費用・出演料", percent: 40, color: "bg-ireland-green" },
+            { label: "アーティスト出演費・招聘費用", percent: 40, color: "bg-ireland-green" },
             { label: "会場費・設備費", percent: 25, color: "bg-ireland-gold" },
-            { label: "広報・マーケティング", percent: 15, color: "bg-primary/70" },
-            { label: "食材・飲料仕入れ", percent: 15, color: "bg-secondary/70" },
-            { label: "運営費・その他", percent: 5, color: "bg-muted-foreground/50" },
+            { label: "広報・マーケティング費", percent: 15, color: "bg-primary/60" },
+            { label: "リターン製作・送料", percent: 15, color: "bg-secondary/70" },
+            { label: "手数料・その他運営費", percent: 5, color: "bg-muted-foreground/40" },
           ].map((item) => (
             <div key={item.label}>
-              <div className="flex justify-between text-sm mb-1">
+              <div className="flex justify-between text-xs mb-1">
                 <span className="text-foreground/80">{item.label}</span>
                 <span className="font-bold text-foreground">{item.percent}%</span>
               </div>
@@ -52,16 +70,16 @@ export default function CampaignDescription({ campaign }: Props) {
         </div>
       </div>
 
-      {/* Event overview */}
-      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
+      {/* イベント概要 */}
+      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
-          { label: "開催日時", value: "2025年3月17日〜18日" },
-          { label: "会場", value: "東京・お台場特設会場" },
-          { label: "来場予定者数", value: "5,000人" },
+          { label: "開催日", value: "2026年3月15日（日）" },
+          { label: "会場", value: "東京都内（詳細後日）" },
+          { label: "支援締切", value: "2026年3月18日 23:59" },
         ].map((item) => (
           <div key={item.label} className="p-4 bg-muted rounded-xl text-center">
             <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-            <p className="font-bold text-sm text-foreground">{item.value}</p>
+            <p className="font-bold text-xs text-foreground">{item.value}</p>
           </div>
         ))}
       </div>
