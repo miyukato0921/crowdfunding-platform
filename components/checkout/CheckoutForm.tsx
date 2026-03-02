@@ -14,13 +14,14 @@ import { useLanguage } from "@/components/LanguageProvider"
 interface Props {
   campaign: Campaign
   reward: RewardTier | null
+  rewardTitle?: string | null
   isCustom: boolean
   defaultAmount: number | null
 }
 
 const PRESET_AMOUNTS = [1000, 3000, 5000, 10000, 30000]
 
-export default function CheckoutForm({ campaign, reward, isCustom, defaultAmount }: Props) {
+export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, defaultAmount }: Props) {
   const { t } = useLanguage()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -109,7 +110,7 @@ export default function CheckoutForm({ campaign, reward, isCustom, defaultAmount
       {!isCustom && reward && (
         <div className="p-4 bg-ireland-green/10 rounded-xl border border-ireland-green/20">
           <p className="text-sm text-muted-foreground">{t("selectedReturn")}</p>
-          <p className="font-bold text-foreground">{reward.title}</p>
+          <p className="font-bold text-foreground">{rewardTitle ?? reward.title}</p>
           <p className="text-2xl font-black text-ireland-green">{formatYen(reward.amount)}</p>
         </div>
       )}

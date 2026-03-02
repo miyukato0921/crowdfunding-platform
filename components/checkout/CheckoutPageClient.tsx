@@ -103,6 +103,7 @@ export default function CheckoutPageClient(props: Props) {
             <CheckoutForm
               campaign={campaign}
               reward={reward}
+              rewardTitle={rewardTitle}
               isCustom={isCustom}
               defaultAmount={defaultAmount}
             />
