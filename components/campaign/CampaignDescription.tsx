@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import type { Campaign } from "@/lib/db"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { useLanguage } from "@/components/LanguageProvider"
 
 interface GalleryPhoto {
   id: number
@@ -29,9 +30,17 @@ interface Props {
 
 export default function CampaignDescription({ campaign, gallery, performers }: Props) {
   const [lightbox, setLightbox] = useState<number | null>(null)
+  const { t, locale } = useLanguage()
 
   const prev = () => setLightbox((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length))
   const next = () => setLightbox((i) => (i === null ? null : (i + 1) % gallery.length))
+
+  const deadlineLabel = campaign.end_date
+    ? new Date(campaign.end_date).toLocaleDateString(
+        locale === "ja" ? "ja-JP" : locale === "ko" ? "ko-KR" : "en-US",
+        { year: "numeric", month: "long", day: "numeric" }
+      )
+    : t("tba")
 
   return (
     <div className="space-y-6 mb-6">
@@ -41,28 +50,22 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
         <div className="relative w-full h-56 md:h-72">
           <Image
             src={campaign.hero_image_url || "/images/hero-irish-bon-odori.jpg"}
-            alt="メインビジュアル"
+            alt={t("aboutProject")}
             fill
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ireland-dark/80 to-transparent" />
           <div className="absolute bottom-0 left-0 p-6">
-            <p className="text-ireland-gold text-xs font-bold uppercase tracking-widest mb-1">About This Project</p>
+            <p className="text-ireland-gold text-xs font-bold uppercase tracking-widest mb-1">{t("aboutProject")}</p>
             <h2 className="text-white text-xl font-black text-balance leading-tight">
-              日本×アイルランド、踊りで世界を繋ぐ
+              {t("aboutTitle")}
             </h2>
           </div>
         </div>
         <div className="p-6 space-y-4 text-sm text-foreground/80 leading-relaxed">
-          <p>
-            このプロジェクトは<strong className="text-foreground">「アイリッシュ盆踊り」</strong>を軸に、日本とアイルランドの文化を融合させた<strong className="text-foreground">グリーン アイルランド フェスティバル 2026</strong>の開催を実現するためのクラウドファンディングです。
-          </p>
-          <p>
-            アイリッシュ盆踊りとは、アイルランドの伝統音楽・ダンスと日本の盆踊りを融合した新しい文化表現です。SNSで<strong className="text-ireland-green">累計1,000万再生</strong>を超え、日本中・世界で話題となっています。
-          </p>
-          <p>
-            2026年3月15日（日）に東京で開催するフェスティバルでは、アイリッシュ盆踊りのステージパフォーマンスをはじめ、アイルランドの伝統音楽・ダンス・食文化を体感できるイベントを予定しています。
-          </p>
+          <p>{t("aboutP1")}</p>
+          <p>{t("aboutP2")}</p>
+          <p>{t("aboutP3")}</p>
         </div>
       </div>
 
@@ -70,10 +73,10 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
           <span className="w-1 h-5 rounded-full bg-ireland-green inline-block" />
-          フォトギャラリー
+          {t("gallery")}
         </h2>
         {gallery.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-6">写真が登録されていません</p>
+          <p className="text-sm text-muted-foreground text-center py-6">{t("noPhotos")}</p>
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {gallery.map((img, i) => (
@@ -103,10 +106,10 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
           <span className="w-1 h-5 rounded-full bg-ireland-gold inline-block" />
-          出演者紹介
+          {t("performers")}
         </h2>
         {performers.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-6">出演者が登録されていません</p>
+          <p className="text-sm text-muted-foreground text-center py-6">{t("noPerformers")}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {performers.map((p) => (
@@ -139,19 +142,19 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
           <span className="w-1 h-5 rounded-full bg-ireland-green inline-block" />
-          資金の使い道
+          {t("fundingUsage")}
         </h2>
         <div className="space-y-3">
           {[
-            { label: "アーティスト出演費・招聘費用", percent: 40, color: "bg-ireland-green" },
-            { label: "会場費・設備費", percent: 25, color: "bg-ireland-gold" },
-            { label: "広報・マーケティング費", percent: 15, color: "bg-primary/60" },
-            { label: "リターン製作・送料", percent: 15, color: "bg-secondary/70" },
-            { label: "手数料・その他運営費", percent: 5, color: "bg-muted-foreground/40" },
+            { labelKey: "fundUsage1" as const, percent: 40, color: "bg-ireland-green" },
+            { labelKey: "fundUsage2" as const, percent: 25, color: "bg-ireland-gold" },
+            { labelKey: "fundUsage3" as const, percent: 15, color: "bg-primary/60" },
+            { labelKey: "fundUsage4" as const, percent: 15, color: "bg-secondary/70" },
+            { labelKey: "fundUsage5" as const, percent: 5,  color: "bg-muted-foreground/40" },
           ].map((item) => (
-            <div key={item.label}>
+            <div key={item.labelKey}>
               <div className="flex justify-between text-xs mb-1.5">
-                <span className="text-foreground/80">{item.label}</span>
+                <span className="text-foreground/80">{t(item.labelKey)}</span>
                 <span className="font-bold text-foreground">{item.percent}%</span>
               </div>
               <div className="h-2.5 bg-border rounded-full overflow-hidden">
@@ -165,20 +168,20 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       {/* ─── イベント概要 ─── */}
       <div className="bg-card rounded-2xl border border-border overflow-hidden">
         <div className="relative w-full h-44">
-          <Image src="/images/festival-crowd.jpg" alt="フェスティバルの様子" fill className="object-cover" />
+          <Image src="/images/festival-crowd.jpg" alt={t("eventOverview")} fill className="object-cover" />
           <div className="absolute inset-0 bg-ireland-dark/60" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <h2 className="text-white text-xl font-black tracking-wide">イベント概要</h2>
+            <h2 className="text-white text-xl font-black tracking-wide">{t("eventOverview")}</h2>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
           {[
-            { label: "開催日", value: (campaign as any).event_date || "2026年3月15日（日）" },
-            { label: "会場", value: (campaign as any).event_venue || "東京（詳細は支援者にご連絡）" },
-            { label: "支援締切", value: campaign.end_date ? new Date(campaign.end_date).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" }) : "詳細後日公開" },
+            { labelKey: "eventDate" as const, value: (campaign as any).event_date || "2026年3月15日（日）" },
+            { labelKey: "venue" as const,     value: (campaign as any).event_venue || "東京（詳細は支援者にご連絡）" },
+            { labelKey: "deadline" as const,  value: deadlineLabel },
           ].map((item) => (
-            <div key={item.label} className="p-5 text-center">
-              <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+            <div key={item.labelKey} className="p-5 text-center">
+              <p className="text-xs text-muted-foreground mb-1">{t(item.labelKey)}</p>
               <p className="font-bold text-sm text-foreground">{item.value}</p>
             </div>
           ))}
@@ -194,14 +197,14 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
           <button
             className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
             onClick={() => setLightbox(null)}
-            aria-label="閉じる"
+            aria-label="close"
           >
             <X className="w-8 h-8" />
           </button>
           <button
             className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors bg-black/40 rounded-full p-2"
             onClick={(e) => { e.stopPropagation(); prev() }}
-            aria-label="前へ"
+            aria-label="prev"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -224,7 +227,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
           <button
             className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors bg-black/40 rounded-full p-2"
             onClick={(e) => { e.stopPropagation(); next() }}
-            aria-label="次へ"
+            aria-label="next"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
