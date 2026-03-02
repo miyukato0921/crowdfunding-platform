@@ -17,10 +17,14 @@ export default async function NewRewardPage() {
     const delivery_date = formData.get("delivery_date") as string
     const sort_order = Number(formData.get("sort_order") ?? 0)
     const is_active = formData.get("is_active") === "on"
+    const title_en = formData.get("title_en") as string
+    const description_en = formData.get("description_en") as string
+    const title_ko = formData.get("title_ko") as string
+    const description_ko = formData.get("description_ko") as string
 
     await sql`
-      INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, image_url, delivery_date, sort_order, is_active)
-      VALUES (${campaign_id}, ${title}, ${description}, ${amount}, ${limit_count}, ${image_url || null}, ${delivery_date || ""}, ${sort_order}, ${is_active})
+      INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, image_url, delivery_date, sort_order, is_active, title_en, description_en, title_ko, description_ko)
+      VALUES (${campaign_id}, ${title}, ${description}, ${amount}, ${limit_count}, ${image_url || null}, ${delivery_date || ""}, ${sort_order}, ${is_active}, ${title_en || null}, ${description_en || null}, ${title_ko || null}, ${description_ko || null})
     `
     redirect("/admin/rewards")
   }

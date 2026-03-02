@@ -5,12 +5,14 @@ import { translations, type Locale } from "@/lib/i18n"
 
 interface LanguageContextType {
   locale: Locale
+  lang: Locale
   setLocale: (l: Locale) => void
   t: (key: keyof typeof translations.ja, vars?: Record<string, string | number>) => string
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   locale: "ja",
+  lang: "ja",
   setLocale: () => {},
   t: (key) => key as string,
 })
@@ -49,7 +51,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t }}>
+    <LanguageContext.Provider value={{ locale, lang: locale, setLocale, t }}>
       {children}
     </LanguageContext.Provider>
   )

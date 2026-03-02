@@ -1,4 +1,5 @@
 export type Locale = "ja" | "en" | "ko"
+export type Language = Locale
 
 export const translations = {
   ja: {
@@ -350,7 +351,7 @@ export const translations = {
     tax: "세금 포함",
     backToShop: "샵으로 돌아가기",
     backToCampaign: "캠페인 페이지로",
-    stageDeadline: "※3/13(금) 12:00까지 후원 필요",
+    stageDeadline: "※3/13(��) 12:00까지 후원 필요",
     partyLimit: "※한정 50명",
     eventDate: "개최일",
     venue: "장소",

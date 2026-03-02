@@ -47,13 +47,49 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
             ))}
           </select>
         </div>
-        <div>
-          <Label htmlFor="title" className="text-sm font-bold">リターンタイトル <span className="text-destructive">*</span></Label>
-          <Input id="title" name="title" required defaultValue={defaultValues?.title} placeholder="例：アイリッシュ盆踊りステージ参加権" className="mt-1.5" />
+        {/* 日本語 */}
+        <div className="pb-4 border-b border-border">
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">日本語</p>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="title" className="text-sm font-bold">タイトル <span className="text-destructive">*</span></Label>
+              <Input id="title" name="title" required defaultValue={defaultValues?.title} placeholder="例：アイリッシュ盆踊りステージ参加権" className="mt-1.5" />
+            </div>
+            <div>
+              <Label htmlFor="description" className="text-sm font-bold">説明 <span className="text-destructive">*</span></Label>
+              <Textarea id="description" name="description" required rows={4} defaultValue={defaultValues?.description} placeholder="リターン内容の詳細説明..." className="mt-1.5 resize-none" />
+            </div>
+          </div>
         </div>
+
+        {/* English */}
+        <div className="pb-4 border-b border-border">
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">English</p>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="title_en" className="text-sm font-bold">Title</Label>
+              <Input id="title_en" name="title_en" defaultValue={(defaultValues as any)?.title_en ?? ""} placeholder="e.g. Irish Bon Odori Stage Participation" className="mt-1.5" />
+            </div>
+            <div>
+              <Label htmlFor="description_en" className="text-sm font-bold">Description</Label>
+              <Textarea id="description_en" name="description_en" rows={4} defaultValue={(defaultValues as any)?.description_en ?? ""} placeholder="Detailed description of this reward..." className="mt-1.5 resize-none" />
+            </div>
+          </div>
+        </div>
+
+        {/* 한국어 */}
         <div>
-          <Label htmlFor="description" className="text-sm font-bold">説明 <span className="text-destructive">*</span></Label>
-          <Textarea id="description" name="description" required rows={4} defaultValue={defaultValues?.description} placeholder="リターン内容の詳細説明..." className="mt-1.5 resize-none" />
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">한국어</p>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="title_ko" className="text-sm font-bold">제목</Label>
+              <Input id="title_ko" name="title_ko" defaultValue={(defaultValues as any)?.title_ko ?? ""} placeholder="예: 아이리시 봉오도리 스테이지 참가권" className="mt-1.5" />
+            </div>
+            <div>
+              <Label htmlFor="description_ko" className="text-sm font-bold">설명</Label>
+              <Textarea id="description_ko" name="description_ko" rows={4} defaultValue={(defaultValues as any)?.description_ko ?? ""} placeholder="리턴 내용 상세 설명..." className="mt-1.5 resize-none" />
+            </div>
+          </div>
         </div>
         <ImageUploader
           name="image_url"

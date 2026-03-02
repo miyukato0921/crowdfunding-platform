@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Calendar, Users, ChevronRight, Clock, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/components/LanguageProvider"
+import type { Language } from "@/lib/i18n"
 
 interface Props {
   rewards: RewardTier[]
@@ -47,9 +48,18 @@ function getTierStyle(amount: number, t: (k: any) => string) {
   }
 }
 
+function getLocalizedReward(reward: any, lang: Language) {
+  const titleKey = lang === "en" ? "title_en" : lang === "ko" ? "title_ko" : null
+  const descKey = lang === "en" ? "description_en" : lang === "ko" ? "description_ko" : null
+  return {
+    title: (titleKey && reward[titleKey]) ? reward[titleKey] : reward.title,
+    description: (descKey && reward[descKey]) ? reward[descKey] : reward.description,
+  }
+}
+
 export default function RewardTiers({ rewards, campaignId }: Props) {
   const router = useRouter()
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
 
   const handleSupport = (rewardId: number, amount: number) => {
     router.push(`/checkout?campaign_id=${campaignId}&reward_id=${rewardId}&amount=${amount}`)
@@ -63,13 +73,14 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
         const style = getTierStyle(reward.amount, t)
         const isSoldOut = reward.limit_count !== null && reward.claimed_count >= reward.limit_count
         const remaining = reward.limit_count !== null ? reward.limit_count - reward.claimed_count : null
+        const localized = getLocalizedReward(reward, lang)
         const specialNote = getSpecialNote(reward.title, t)
 
         return (
           <div key={reward.id} className={`rounded-2xl border-2 p-5 transition-shadow hover:shadow-md ${style.bg} ${style.border} ${isSoldOut ? "opacity-60" : ""}`}>
             {reward.image_url && (
               <div className="relative h-40 w-full rounded-xl overflow-hidden mb-4">
-                <Image src={reward.image_url} alt={reward.title} fill className="object-cover" />
+                <Image src={reward.image_url} alt={localized.title} fill className="object-cover" />
               </div>
             )}
             <div className="flex items-start justify-between gap-2 mb-2">
@@ -86,8 +97,8 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
                 <p className="text-xl font-black text-foreground">{formatYen(reward.amount)}</p>
               </div>
             </div>
-            <p className="font-bold text-foreground text-sm mb-2">{reward.title}</p>
-            <p className="text-sm text-foreground/75 leading-relaxed mb-4">{reward.description}</p>
+            <p className="font-bold text-foreground text-sm mb-2">{localized.title}</p>
+            <p className="text-sm text-foreground/75 leading-relaxed mb-4">{localized.description}</p>
             <div className="flex flex-wrap gap-3 mb-4 text-xs text-muted-foreground">
               {reward.delivery_date && (
                 <div className="flex items-center gap-1">
