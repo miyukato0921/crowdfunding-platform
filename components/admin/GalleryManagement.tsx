@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from "react"
 import Image from "next/image"
-import { Plus, Trash2, Eye, EyeOff, Pencil, Check, X, ImageIcon, GripVertical, ChevronUp, ChevronDown } from "lucide-react"
+import { Plus, Trash2, Eye, EyeOff, Pencil, Check, X, ImageIcon, GripVertical, ChevronUp, ChevronDown, Upload, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -31,6 +31,8 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
   const [editCaption, setEditCaption] = useState("")
   const [editingPhotoId, setEditingPhotoId] = useState<number | null>(null)
   const [editPhotoUrl, setEditPhotoUrl] = useState("")
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const photoFileRef = useRef<HTMLInputElement>(null)
   const [draggingId, setDraggingId] = useState<number | null>(null)
   const [dragOverId, setDragOverId] = useState<number | null>(null)
   const dragItem = useRef<number | null>(null)
@@ -84,6 +86,32 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
       setEditingId(null)
       await reload()
     })
+  }
+
+  const uploadPhotoFile = async (file: File): Promise<string | null> => {
+    setUploadingPhoto(true)
+    try {
+      const fd = new FormData()
+      fd.append("file", file)
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd })
+      const data = await res.json()
+      if (!res.ok) { alert(data.error ?? "アップロード失敗"); return null }
+      return data.url as string
+    } catch {
+      alert("アップロードに失敗しました")
+      return null
+    } finally {
+      setUploadingPhoto(false)
+    }
+  }
+
+  const handlePhotoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const url = await uploadPhotoFile(file)
+    if (url) setEditPhotoUrl(url)
+    // reset file input so same file can be re-selected
+    e.target.value = ""
   }
 
   const handleUpdatePhoto = (id: number) => {
@@ -222,14 +250,48 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
             >
               {/* 写真部分 */}
               {editingPhotoId === photo.id ? (
-                <div className="p-4 space-y-3 border-b border-border">
+                <div className="p-4 space-y-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
                   <p className="text-sm font-bold text-foreground">写真を変更</p>
-                  <ImageUploader
-                    key={`edit-${photo.id}`}
-                    name={`photo_url_${photo.id}`}
-                    label="新しい写真"
-                    defaultValue={photo.image_url}
-                    onUrlChange={setEditPhotoUrl}
+                  {/* プレビュー */}
+                  <div className="relative w-full h-36 rounded-lg overflow-hidden border border-border bg-muted">
+                    <Image
+                      src={editPhotoUrl || photo.image_url}
+                      alt="プレビュー"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                    {uploadingPhoto && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 text-white animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  {/* ファイル選択ボタン */}
+                  <input
+                    ref={photoFileRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={handlePhotoFileChange}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => photoFileRef.current?.click()}
+                    disabled={uploadingPhoto}
+                    className="w-full"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {uploadingPhoto ? "アップロード中..." : "ファイルを選択"}
+                  </Button>
+                  {/* URL直接入力 */}
+                  <Input
+                    placeholder="またはURLを直接入力..."
+                    value={editPhotoUrl}
+                    onChange={(e) => setEditPhotoUrl(e.target.value)}
+                    className="text-xs"
                   />
                   <div className="flex gap-2">
                     <Button
