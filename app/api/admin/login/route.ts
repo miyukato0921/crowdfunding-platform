@@ -8,7 +8,10 @@ export async function POST(req: NextRequest) {
     const { email, password } = await req.json()
 
     if (!email || !password) {
-      return NextResponse.json({ error: "メールアドレスとパスワードを入力してください。" }, { status: 400 })
+      return NextResponse.json(
+        { error: "メールアドレスとパスワードを入力してください。" },
+        { status: 400 }
+      )
     }
 
     const users = await sql`
@@ -17,12 +20,30 @@ export async function POST(req: NextRequest) {
     const user = users[0]
 
     if (!user) {
-      return NextResponse.json({ error: "メールアドレスまたはパスワードが正しくありません。" }, { status: 401 })
+      return NextResponse.json(
+        { error: "メールアドレスまたはパスワードが正しくありません。" },
+        { status: 401 }
+      )
     }
 
-    const valid = await bcrypt.compare(password, user.password_hash)
-    if (!valid) {
-      return NextResponse.json({ error: "メールアドレスまたはパスワードが正しくありません。" }, { status: 401 })
+    // If password_hash looks like a plaintext placeholder, hash it first
+    let isValid = false
+    if (user.password_hash && user.password_hash.startsWith("$2")) {
+      isValid = await bcrypt.compare(password, user.password_hash)
+    } else {
+      // Fallback: direct compare then upgrade to hash
+      isValid = user.password_hash === password
+      if (isValid) {
+        const hash = await bcrypt.hash(password, 10)
+        await sql`UPDATE admin_users SET password_hash = ${hash} WHERE id = ${user.id}`
+      }
+    }
+
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "メールアドレスまたはパスワードが正しくありません。" },
+        { status: 401 }
+      )
     }
 
     const token = randomBytes(48).toString("hex")
@@ -33,7 +54,7 @@ export async function POST(req: NextRequest) {
       VALUES (${user.id}, ${token}, ${expiresAt.toISOString()})
     `
 
-    const response = NextResponse.json({ success: true })
+    const response = NextResponse.json({ success: true, name: user.name })
     response.cookies.set("admin_session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
