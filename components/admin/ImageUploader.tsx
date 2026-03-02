@@ -11,12 +11,13 @@ interface Props {
   name: string
   label: string
   defaultValue?: string | null
+  currentUrl?: string
   required?: boolean
   onUrlChange?: (url: string) => void
 }
 
-export default function ImageUploader({ name, label, defaultValue, required, onUrlChange }: Props) {
-  const [url, setUrl] = useState<string>(defaultValue ?? "")
+export default function ImageUploader({ name, label, defaultValue, currentUrl, required, onUrlChange }: Props) {
+  const [url, setUrl] = useState<string>(currentUrl ?? defaultValue ?? "")
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)

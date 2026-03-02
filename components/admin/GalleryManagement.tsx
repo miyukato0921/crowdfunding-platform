@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import Image from "next/image"
-import { Plus, Trash2, GripVertical, Eye, EyeOff, Pencil, Check, X } from "lucide-react"
+import { Plus, Trash2, Eye, EyeOff, Pencil, Check, X, ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,6 +29,8 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
   const [newCaption, setNewCaption] = useState("")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editCaption, setEditCaption] = useState("")
+  const [editingPhotoId, setEditingPhotoId] = useState<number | null>(null)
+  const [editPhotoUrl, setEditPhotoUrl] = useState("")
 
   const reload = async () => {
     const res = await fetch(`/api/admin/gallery?campaign_id=${campaignId}`)
@@ -77,6 +79,20 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
         body: JSON.stringify({ caption: editCaption }),
       })
       setEditingId(null)
+      await reload()
+    })
+  }
+
+  const handleUpdatePhoto = (id: number) => {
+    if (!editPhotoUrl) return
+    startTransition(async () => {
+      await fetch(`/api/admin/gallery/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image_url: editPhotoUrl }),
+      })
+      setEditingPhotoId(null)
+      setEditPhotoUrl("")
       await reload()
     })
   }
@@ -137,32 +153,72 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {photos.map((photo) => (
-            <div key={photo.id} className={`bg-card border rounded-2xl overflow-hidden ${!photo.is_active ? "opacity-50" : "border-border"}`}>
-              <div className="relative w-full h-44">
-                <Image src={photo.image_url} alt={photo.caption} fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute top-2 right-2 flex gap-1">
-                  <button
-                    onClick={() => handleToggle(photo.id, photo.is_active)}
-                    className="w-8 h-8 rounded-lg bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors"
-                    title={photo.is_active ? "非表示にする" : "表示する"}
-                  >
-                    {photo.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(photo.id)}
-                    className="w-8 h-8 rounded-lg bg-black/50 hover:bg-red-500/70 text-white flex items-center justify-center transition-colors"
-                    title="削除"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+            <div key={photo.id} className={`bg-card border rounded-2xl overflow-hidden ${!photo.is_active ? "opacity-60" : "border-border"}`}>
+              {/* 写真部分 */}
+              {editingPhotoId === photo.id ? (
+                <div className="p-4 space-y-3 border-b border-border">
+                  <p className="text-sm font-bold text-foreground">写真を変更</p>
+                  <ImageUploader
+                    name={`photo_url_${photo.id}`}
+                    label="新しい写真"
+                    currentUrl={editPhotoUrl || photo.image_url}
+                    onUrlChange={setEditPhotoUrl}
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleUpdatePhoto(photo.id)}
+                      disabled={!editPhotoUrl || isPending}
+                      className="bg-ireland-green hover:bg-ireland-green/90 text-white"
+                    >
+                      <Check className="w-3.5 h-3.5 mr-1" />
+                      保存
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => { setEditingPhotoId(null); setEditPhotoUrl("") }}
+                    >
+                      <X className="w-3.5 h-3.5 mr-1" />
+                      キャンセル
+                    </Button>
+                  </div>
                 </div>
-                <div className="absolute bottom-2 left-2">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${photo.is_active ? "bg-ireland-green text-white" : "bg-gray-500 text-white"}`}>
-                    {photo.is_active ? "表示中" : "非表示"}
-                  </span>
+              ) : (
+                <div className="relative w-full h-44">
+                  <Image src={photo.image_url} alt={photo.caption} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button
+                      onClick={() => { setEditingPhotoId(photo.id); setEditPhotoUrl("") }}
+                      className="w-8 h-8 rounded-lg bg-black/50 hover:bg-ireland-green/80 text-white flex items-center justify-center transition-colors"
+                      title="写真を変更"
+                    >
+                      <ImageIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleToggle(photo.id, photo.is_active)}
+                      className="w-8 h-8 rounded-lg bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors"
+                      title={photo.is_active ? "非表示にする" : "表示する"}
+                    >
+                      {photo.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(photo.id)}
+                      className="w-8 h-8 rounded-lg bg-black/50 hover:bg-red-500/70 text-white flex items-center justify-center transition-colors"
+                      title="削除"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="absolute bottom-2 left-2">
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${photo.is_active ? "bg-ireland-green text-white" : "bg-gray-500 text-white"}`}>
+                      {photo.is_active ? "表示中" : "非表示"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
+              {/* キャプション部分 */}
               <div className="p-3">
                 {editingId === photo.id ? (
                   <div className="flex gap-2">
@@ -185,6 +241,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                     <button
                       onClick={() => { setEditingId(photo.id); setEditCaption(photo.caption) }}
                       className="text-muted-foreground hover:text-foreground shrink-0"
+                      title="キャプションを編集"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>

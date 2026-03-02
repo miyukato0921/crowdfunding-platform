@@ -20,6 +20,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if ("sort_order" in body) {
     await sql`UPDATE gallery_photos SET sort_order = ${body.sort_order}, updated_at = NOW() WHERE id = ${Number(id)}`
   }
+  if ("image_url" in body) {
+    await sql`UPDATE gallery_photos SET image_url = ${body.image_url}, updated_at = NOW() WHERE id = ${Number(id)}`
+  }
   return NextResponse.json({ success: true })
 }
 
