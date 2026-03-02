@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CreditCard, Loader2, Lock } from "lucide-react"
 import { formatYen } from "@/lib/utils"
+import { useLanguage } from "@/components/LanguageProvider"
 
 interface Product {
   id: number
@@ -16,6 +17,7 @@ interface Product {
 }
 
 export default function ShopCheckoutForm({ product }: { product: Product }) {
+  const { t } = useLanguage()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
@@ -23,7 +25,7 @@ export default function ShopCheckoutForm({ product }: { product: Product }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email) { setError("メールアドレスを入力してください。"); return }
+    if (!email) { setError(t("emailAddress") + "を入力してください。"); return }
 
     setLoading(true)
     setError(null)
@@ -52,17 +54,17 @@ export default function ShopCheckoutForm({ product }: { product: Product }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-5">
-      <h2 className="font-bold text-foreground">購入者情報</h2>
+      <h2 className="font-bold text-foreground">{t("buyerInfo")}</h2>
 
       <div className="p-4 bg-ireland-green/10 rounded-xl border border-ireland-green/20">
-        <p className="text-sm text-muted-foreground">購入商品</p>
+        <p className="text-sm text-muted-foreground">{t("shopPurchaseItem")}</p>
         <p className="font-bold text-foreground">{product.name}</p>
         <p className="text-2xl font-black text-ireland-green mt-1">{formatYen(product.price)}</p>
       </div>
 
       <div>
         <Label htmlFor="email" className="text-sm font-medium">
-          メールアドレス <span className="text-destructive">*</span>
+          {t("emailAddress")} <span className="text-destructive">*</span>
         </Label>
         <Input
           id="email"
@@ -73,17 +75,17 @@ export default function ShopCheckoutForm({ product }: { product: Product }) {
           placeholder="your@email.com"
           className="mt-1"
         />
-        <p className="text-xs text-muted-foreground mt-1">購入完了のご連絡をお送りします。</p>
+        <p className="text-xs text-muted-foreground mt-1">{t("purchaseEmailNote")}</p>
       </div>
 
       <div>
-        <Label htmlFor="name" className="text-sm font-medium">お名前</Label>
+        <Label htmlFor="name" className="text-sm font-medium">{t("yourName")}</Label>
         <Input
           id="name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="山田 太郎"
+          placeholder={t("yourNamePlaceholder")}
           className="mt-1"
         />
       </div>
@@ -101,14 +103,14 @@ export default function ShopCheckoutForm({ product }: { product: Product }) {
           disabled={loading}
         >
           {loading ? (
-            <><Loader2 className="w-5 h-5 mr-2 animate-spin" />処理中...</>
+            <><Loader2 className="w-5 h-5 mr-2 animate-spin" />{t("processing")}</>
           ) : (
-            <><CreditCard className="w-5 h-5 mr-2" />Stripeで支払いに進む — {formatYen(product.price)}</>
+            <><CreditCard className="w-5 h-5 mr-2" />{t("proceed")} — {formatYen(product.price)}</>
           )}
         </Button>
         <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-muted-foreground">
           <Lock className="w-3 h-3" />
-          <span>Stripeによる安全な決済処理</span>
+          <span>{t("securePayment")}</span>
         </div>
       </div>
     </form>
