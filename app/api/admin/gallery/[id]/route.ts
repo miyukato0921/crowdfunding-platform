@@ -24,7 +24,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if ("image_url" in body) {
     await sql`UPDATE gallery_photos SET image_url = ${body.image_url}, updated_at = NOW() WHERE id = ${Number(id)}`
   }
-  revalidatePath("/")
+  revalidatePath("/", "layout")
+  revalidatePath("/", "page")
   return NextResponse.json({ success: true })
 }
 
@@ -33,6 +34,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { id } = await params
   await sql`DELETE FROM gallery_photos WHERE id = ${Number(id)}`
-  revalidatePath("/")
+  revalidatePath("/", "layout")
+  revalidatePath("/", "page")
   return NextResponse.json({ success: true })
 }

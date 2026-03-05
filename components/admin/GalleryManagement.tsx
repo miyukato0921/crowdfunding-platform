@@ -195,13 +195,13 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
   }
 
   // --- 写真URL更新 ---
-  const handleUpdatePhoto = (id: number) => {
-    if (!editPicker.url) { alert("新しい画像を選択してください"); return }
+  const handleUpdatePhoto = (id: number, imageUrl: string) => {
+    if (!imageUrl) { alert("新しい画像を選択してください"); return }
     startTransition(async () => {
       await fetch(`/api/admin/gallery/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_url: editPicker.url }),
+        body: JSON.stringify({ image_url: imageUrl }),
       })
       editPicker.reset()
       setEditingPhotoId(null)
@@ -316,7 +316,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                   <div className="flex gap-2 pt-1">
                     <Button
                       size="sm"
-                      onClick={() => handleUpdatePhoto(photo.id)}
+                      onClick={() => handleUpdatePhoto(photo.id, editPicker.url)}
                       disabled={isPending || !editPicker.url || editPicker.uploading}
                       className="bg-ireland-green hover:bg-ireland-green/90 text-white"
                     >

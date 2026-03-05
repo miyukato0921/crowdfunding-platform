@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
     INSERT INTO gallery_photos (campaign_id, image_url, caption, sort_order, is_active)
     VALUES (${campaign_id}, ${image_url}, ${caption || ""}, ${sort_order ?? 0}, true)
   `
-  revalidatePath("/")
+  revalidatePath("/", "layout")
+  revalidatePath("/", "page")
   return NextResponse.json({ success: true })
 }
 
@@ -34,6 +35,7 @@ export async function PUT(request: NextRequest) {
       sql`UPDATE gallery_photos SET sort_order = ${sort_order} WHERE id = ${id}`
     )
   )
-  revalidatePath("/")
+  revalidatePath("/", "layout")
+  revalidatePath("/", "page")
   return NextResponse.json({ success: true })
 }
