@@ -1,5 +1,6 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
+import { revalidatePath } from "next/cache"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
@@ -19,6 +20,7 @@ export async function POST(request: NextRequest) {
     INSERT INTO gallery_photos (campaign_id, image_url, caption, sort_order, is_active)
     VALUES (${campaign_id}, ${image_url}, ${caption || ""}, ${sort_order ?? 0}, true)
   `
+  revalidatePath("/")
   return NextResponse.json({ success: true })
 }
 
@@ -32,5 +34,6 @@ export async function PUT(request: NextRequest) {
       sql`UPDATE gallery_photos SET sort_order = ${sort_order} WHERE id = ${id}`
     )
   )
+  revalidatePath("/")
   return NextResponse.json({ success: true })
 }

@@ -1,5 +1,6 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
+import { revalidatePath } from "next/cache"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest) {
       ${name_ko || null}, ${role_ko || null}, ${bio_ko || null},
       ${name_zh || null}, ${role_zh || null}, ${bio_zh || null})
   `
+  revalidatePath("/")
   return NextResponse.json({ success: true })
 }
 
@@ -37,5 +39,6 @@ export async function PUT(request: NextRequest) {
       sql`UPDATE performers SET sort_order = ${sort_order}, updated_at = NOW() WHERE id = ${id}`
     )
   )
+  revalidatePath("/")
   return NextResponse.json({ success: true })
 }
