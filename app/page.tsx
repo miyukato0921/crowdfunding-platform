@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache"
 import sql from "@/lib/db"
 import type { Campaign, RewardTier } from "@/lib/db"
 import CampaignHero from "@/components/campaign/CampaignHero"
@@ -9,6 +10,7 @@ import StickySupport from "@/components/campaign/StickySupport"
 import CampaignHeader from "@/components/campaign/CampaignHeader"
 
 async function getCampaignData() {
+  noStore()
   const campaigns = await sql<Campaign[]>`
     SELECT * FROM campaigns WHERE status = 'active' ORDER BY id LIMIT 1
   `
