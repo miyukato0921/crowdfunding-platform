@@ -109,26 +109,18 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
     const file = e.target.files?.[0]
     if (!file) return
     const url = await uploadPhotoFile(file)
-    console.log("[v0] uploaded URL:", url)
     if (url) setEditPhotoUrl(url)
-    // reset file input so same file can be re-selected
     e.target.value = ""
   }
 
   const handleUpdatePhoto = (id: number) => {
-    console.log("[v0] handleUpdatePhoto called. id:", id, "editPhotoUrl:", editPhotoUrl)
-    if (!editPhotoUrl) {
-      console.log("[v0] editPhotoUrl is empty — aborting")
-      return
-    }
+    if (!editPhotoUrl) return
     startTransition(async () => {
-      const res = await fetch(`/api/admin/gallery/${id}`, {
+      await fetch(`/api/admin/gallery/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_url: editPhotoUrl }),
       })
-      const json = await res.json()
-      console.log("[v0] PATCH result:", res.status, json)
       setEditingPhotoId(null)
       setEditPhotoUrl("")
       await reload()
@@ -187,6 +179,14 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
+      {/* 共通ファイル入力 — 写真変更モード用 (1つのみ) */}
+      <input
+        ref={photoFileRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        className="hidden"
+        onChange={handlePhotoFileChange}
+      />
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-black text-foreground">フォトギャラリー管理</h1>
@@ -275,13 +275,6 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                     )}
                   </div>
                   {/* ファイル選択ボタン */}
-                  <input
-                    ref={photoFileRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    className="hidden"
-                    onChange={handlePhotoFileChange}
-                  />
                   <Button
                     type="button"
                     size="sm"

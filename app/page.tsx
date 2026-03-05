@@ -1,4 +1,3 @@
-import { connection } from "next/server"
 import sql from "@/lib/db"
 import type { Campaign, RewardTier } from "@/lib/db"
 import CampaignHero from "@/components/campaign/CampaignHero"
@@ -13,7 +12,6 @@ export const dynamic = "force-dynamic"
 export const revalidate = 0
 
 async function getCampaignData() {
-  await connection()
   const campaigns = await sql<Campaign[]>`
     SELECT * FROM campaigns WHERE status = 'active' ORDER BY id LIMIT 1
   `
