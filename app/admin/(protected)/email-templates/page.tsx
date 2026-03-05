@@ -1,5 +1,7 @@
 import sql from "@/lib/db"
 import EmailTemplateEditor from "@/components/admin/EmailTemplateEditor"
+import EmailLogsViewer from "@/components/admin/EmailLogsViewer"
+import EmailTemplatesPageClient from "@/components/admin/EmailTemplatesPageClient"
 import { Mail } from "lucide-react"
 
 export const metadata = { title: "メール配信設定 - 管理画面" }
@@ -20,10 +22,13 @@ export default async function EmailTemplatesPage() {
           支援完了・購入完了などのイベント時に自動送信されるメールのテンプレートを管理します。
         </p>
         <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-300">
-          メール送信には <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded">GMAIL_USER</code> と <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded">GMAIL_APP_PASSWORD</code> の環境変数が必要です。送信元・返信先はいずれも <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded">greenirelandfes@iris-corp.co.jp</code> です。
+          送信元・返信先: <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded">greenirelandfes@iris-corp.co.jp</code> / Gmail認証情報は「共通設定」または環境変数で設定してください。
         </div>
       </div>
-      <EmailTemplateEditor templates={templates} />
+      <EmailTemplatesPageClient
+        templateEditor={<EmailTemplateEditor templates={templates} />}
+        logsViewer={<EmailLogsViewer />}
+      />
     </div>
   )
 }

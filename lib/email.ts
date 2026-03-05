@@ -41,7 +41,11 @@ export async function sendTemplateEmail(
   const rows = await sql`
     SELECT subject, body FROM email_templates WHERE slug = ${slug} AND is_active = true LIMIT 1
   `
-  if (!rows.length) return
+  if (!rows.length) {
+    console.log(`[email] Template "${slug}" not found or inactive — skipping.`)
+    await logEmail(slug, to, `[template: ${slug}]`, "", "skipped", "テンプレートが見つからないか無効です")
+    return
+  }
 
   const { subject, body } = rows[0]
   const renderedSubject = renderTemplate(subject, vars)
@@ -51,17 +55,42 @@ export async function sendTemplateEmail(
 
   if (!transporter) {
     console.log(`[email] Gmail credentials not set — skipping send.`)
-    console.log(`[email] To: ${to} | Subject: ${renderedSubject}`)
+    await logEmail(slug, to, renderedSubject, renderedBody, "failed", "Gmail認証情報が未設定です（GMAIL_USER / GMAIL_APP_PASSWORD）")
     return
   }
 
-  await transporter.sendMail({
-    from: `"Green Ireland Festival" <${FROM_ADDRESS}>`,
-    replyTo: REPLY_TO_ADDRESS,
-    to,
-    subject: renderedSubject,
-    text: renderedBody,
-  })
+  try {
+    await transporter.sendMail({
+      from: `"Green Ireland Festival" <${FROM_ADDRESS}>`,
+      replyTo: REPLY_TO_ADDRESS,
+      to,
+      subject: renderedSubject,
+      text: renderedBody,
+    })
+    await logEmail(slug, to, renderedSubject, renderedBody, "sent", null)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error(`[email] Send failed:`, message)
+    await logEmail(slug, to, renderedSubject, renderedBody, "failed", message)
+  }
+}
+
+async function logEmail(
+  templateSlug: string,
+  toAddress: string,
+  subject: string,
+  body: string,
+  status: "sent" | "failed" | "skipped",
+  errorMessage: string | null
+) {
+  try {
+    await sql`
+      INSERT INTO email_logs (template_slug, to_address, subject, body, status, error_message)
+      VALUES (${templateSlug}, ${toAddress}, ${subject}, ${body}, ${status}, ${errorMessage})
+    `
+  } catch (logErr) {
+    console.error("[email] Failed to write email log:", logErr)
+  }
 }
 
 export async function sendRawEmail({
