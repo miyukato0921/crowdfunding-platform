@@ -75,7 +75,12 @@ export default async function Page() {
                   ? JSON.stringify((campaign as any).page_blocks)
                   : (campaign as any).page_blocks ?? '[]'
               } as any} gallery={gallery as any} performers={performers as any} />
-              <SupportersList supporters={supporters} />
+              <SupportersList supporters={supporters.map((s: any) => ({
+                ...s,
+                created_at: s.created_at instanceof Date
+                  ? s.created_at.toISOString()
+                  : String(s.created_at),
+              }))} />
             </div>
             {/* Right sidebar - rewards */}
             <div className="w-full lg:w-96 shrink-0">
