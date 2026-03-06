@@ -158,6 +158,9 @@ export const translations = {
     phoneRequired: "電話番号を入力してください。",
     emailRequired: "メールアドレスを入力してください。",
     minAmount: "500円以上で入力してください。",
+    contactPhone: "携帯番号/電話番号",
+    contactPhonePlaceholder: "090-0000-0000",
+    contactPhoneRequired: "携帯番号または電話番号を入力してください。",
   },
   en: {
     crowdfunding: "Crowdfunding",
@@ -295,6 +298,9 @@ export const translations = {
     phoneRequired: "Please enter your phone number.",
     emailRequired: "Please enter your email address.",
     minAmount: "Please enter an amount of ¥500 or more.",
+    contactPhone: "Mobile / Phone Number",
+    contactPhonePlaceholder: "090-0000-0000",
+    contactPhoneRequired: "Please enter your mobile or phone number.",
   },
   ko: {
     crowdfunding: "크라우드��딩",
@@ -432,6 +438,9 @@ export const translations = {
     phoneRequired: "전화번호를 입력해 주세요.",
     emailRequired: "이메일 주소를 입력해 주세요.",
     minAmount: "500엔 이상으로 입력해 주세요.",
+    contactPhone: "휴대폰/전화번호",
+    contactPhonePlaceholder: "090-0000-0000",
+    contactPhoneRequired: "휴대폰 번호 또는 전화번호를 입력해 주세요.",
   },
   zh: {
     crowdfunding: "众筹",
@@ -569,6 +578,9 @@ export const translations = {
     phoneRequired: "请输入电话号码。",
     emailRequired: "请输入邮箱地址。",
     minAmount: "请输入500日元以上的金额。",
+    contactPhone: "手机/电话号码",
+    contactPhonePlaceholder: "090-0000-0000",
+    contactPhoneRequired: "请输入手机号码或电话号码。",
   },
 } as const
 
