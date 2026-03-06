@@ -1,18 +1,12 @@
 import sql from "@/lib/db"
 import type { Campaign, RewardTier } from "@/lib/db"
-import dynamic from "next/dynamic"
 import CampaignHero from "@/components/campaign/CampaignHero"
 import FundingProgress from "@/components/campaign/FundingProgress"
 import RewardTiers from "@/components/campaign/RewardTiers"
 import CampaignDescription from "@/components/campaign/CampaignDescription"
+import SupportersList from "@/components/campaign/SupportersList"
 import StickySupport from "@/components/campaign/StickySupport"
 import CampaignHeader from "@/components/campaign/CampaignHeader"
-
-// SSR を無効化してハイドレーション不一致を完全に防ぐ
-const SupportersList = dynamic(
-  () => import("@/components/campaign/SupportersList"),
-  { ssr: false }
-)
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
