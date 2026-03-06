@@ -6,5 +6,5 @@ export async function GET() {
   const admin = await getAdminSession()
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const templates = await sql`SELECT * FROM email_templates ORDER BY id ASC`
-  return NextResponse.json(templates.rows)
+  return NextResponse.json(templates)
 }

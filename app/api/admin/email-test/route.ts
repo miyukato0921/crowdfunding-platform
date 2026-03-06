@@ -11,20 +11,30 @@ export async function POST(req: NextRequest) {
   const { to } = await req.json()
   if (!to) return NextResponse.json({ error: "to is required" }, { status: 400 })
 
-  // 1. Gmail 認証情報を取得
-  const envUser = process.env.GMAIL_USER
-  const envPass = process.env.GMAIL_APP_PASSWORD
-  let gmailUser = envUser
-  let gmailPass = envPass
-  let credSource = "env"
+  // 1. Gmail 認証情報を取得（DB優先 → 環境変数フォールバック / lib/email.ts と同一順序）
+  let gmailUser: string | undefined
+  let gmailPass: string | undefined
+  let credSource = "none"
 
-  if (!gmailUser || !gmailPass) {
+  try {
     const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('gmail_user', 'gmail_app_password')`
     const map: Record<string, string> = {}
     for (const row of rows) map[row.key] = row.value
-    gmailUser = map.gmail_user
-    gmailPass = map.gmail_app_password
-    credSource = "db"
+    if (map.gmail_user && map.gmail_app_password) {
+      gmailUser = map.gmail_user
+      gmailPass = map.gmail_app_password
+      credSource = "db"
+    }
+  } catch { /* DB失敗時は環境変数にフォールバック */ }
+
+  if (!gmailUser || !gmailPass) {
+    const envUser = process.env.GMAIL_USER
+    const envPass = process.env.GMAIL_APP_PASSWORD
+    if (envUser && envPass) {
+      gmailUser = envUser
+      gmailPass = envPass
+      credSource = "env"
+    }
   }
 
   if (!gmailUser || !gmailPass) {

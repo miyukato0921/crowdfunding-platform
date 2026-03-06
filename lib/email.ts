@@ -32,10 +32,14 @@ async function createTransporter() {
   const creds = await getGmailCredentials()
   if (!creds) return null
 
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: { user: creds.user, pass: creds.pass },
-  })
+  return {
+    transporter: nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: creds.user, pass: creds.pass },
+    }),
+    // From は必ず認証アカウントにする（Gmail が別アドレスを書き換えるのを防ぐ）
+    fromAddress: creds.user,
+  }
 }
 
 export async function sendTemplateEmail(
@@ -56,17 +60,20 @@ export async function sendTemplateEmail(
   const renderedSubject = renderTemplate(subject, vars)
   const renderedBody = renderTemplate(body, vars)
 
-  const transporter = await createTransporter()
+  const result = await createTransporter()
 
-  if (!transporter) {
+  if (!result) {
     console.log(`[email] Gmail credentials not set — skipping send.`)
     await logEmail(slug, to, renderedSubject, renderedBody, "failed", "Gmail認証情報が未設定です（GMAIL_USER / GMAIL_APP_PASSWORD）")
     return
   }
 
+  const { transporter, fromAddress } = result
+
   try {
     await transporter.sendMail({
-      from: `"Green Ireland Festival" <${FROM_ADDRESS}>`,
+      // From は認証アカウント自身。Reply-To で問い合わせ先を案内
+      from: `"Green Ireland Festival" <${fromAddress}>`,
       replyTo: REPLY_TO_ADDRESS,
       to,
       subject: renderedSubject,
@@ -109,15 +116,17 @@ export async function sendRawEmail({
   text: string
   html?: string
 }): Promise<void> {
-  const transporter = await createTransporter()
+  const result = await createTransporter()
 
-  if (!transporter) {
+  if (!result) {
     console.log(`[email] Gmail credentials not set — skipping send.`)
     return
   }
 
+  const { transporter, fromAddress } = result
+
   await transporter.sendMail({
-    from: `"Green Ireland Festival" <${FROM_ADDRESS}>`,
+    from: `"Green Ireland Festival" <${fromAddress}>`,
     replyTo: REPLY_TO_ADDRESS,
     to,
     subject,
