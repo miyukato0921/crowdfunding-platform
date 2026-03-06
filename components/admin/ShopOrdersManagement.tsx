@@ -15,7 +15,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Pencil, Trash2, Truck, MapPin, Package, Search, ShoppingBag } from "lucide-react"
+import { Pencil, Trash2, Truck, Search, ShoppingBag, Download, Loader2 } from "lucide-react"
 import { formatYen } from "@/lib/utils"
 
 const shippingStatusConfig: Record<string, { label: string; className: string }> = {
@@ -72,6 +72,30 @@ export default function ShopOrdersManagement({ orders: initialOrders, stats }: P
   const [shippingOrder, setShippingOrder] = useState<Order | null>(null)
   const [deleteId, setDeleteId] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
+  const [exporting, setExporting] = useState(false)
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const res = await fetch("/api/admin/shop-orders/export")
+      if (!res.ok) throw new Error("Export failed")
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      const cd = res.headers.get("Content-Disposition") ?? ""
+      const match = cd.match(/filename="(.+?)"/)
+      a.download = match?.[1] ?? "shop_orders.csv"
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert("CSVエクスポートに失敗しました")
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const [editPaymentStatus, setEditPaymentStatus] = useState("")
   const [editShippingStatus, setEditShippingStatus] = useState("")
@@ -189,15 +213,30 @@ export default function ShopOrdersManagement({ orders: initialOrders, stats }: P
         </div>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="購入者名・メール・商品名・IDで検索..."
-          className="pl-9 rounded-xl"
-        />
+      {/* Search + Export */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="購入者名・メール・商品名・IDで検索..."
+            className="pl-9 rounded-xl"
+          />
+        </div>
+        <Button
+          variant="outline"
+          className="rounded-xl gap-2 shrink-0"
+          onClick={handleExport}
+          disabled={exporting}
+        >
+          {exporting ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          CSVエクスポート
+        </Button>
       </div>
 
       {/* Table */}

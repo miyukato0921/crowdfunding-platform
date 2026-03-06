@@ -39,7 +39,7 @@ export default function ShopClient({ products }: Props) {
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {logoUrl ? (
-              <Image src={logoUrl} alt={title} width={32} height={32} className="rounded-lg object-cover" />
+              <Image src={logoUrl} alt={title} width={32} height={32} className="rounded-lg object-cover" unoptimized />
             ) : (
               <div className="w-8 h-8 bg-ireland-gold rounded-lg flex items-center justify-center shrink-0">
                 <Leaf className="w-4 h-4 text-ireland-dark" />

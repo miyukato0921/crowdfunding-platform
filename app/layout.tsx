@@ -12,6 +12,8 @@ const notoSansJP = Noto_Sans_JP({
   display: "swap",
 })
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: 'Green Ireland Festival 2025 - クラウドファンディング',
   description: 'アイルランドの文化・音楽・食を日本に届けるフェスティバルを一緒に作りましょう！Green Ireland Festival 2025のクラウドファンディングプロジェクト。',

@@ -22,6 +22,7 @@ export default function CampaignHeader() {
               width={36}
               height={36}
               className="rounded-full object-cover"
+              unoptimized
             />
           ) : (
             <div className="w-9 h-9 bg-ireland-gold rounded-full flex items-center justify-center shrink-0">
