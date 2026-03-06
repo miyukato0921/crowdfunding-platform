@@ -142,9 +142,9 @@ export default async function Page() {
         </div>
       </main>
       <StickySupport campaignId={campaign.id} />
-      <footer className="border-t border-border mt-8 py-6 px-4">
+      <footer className="border-t border-border mt-8 pb-24 pt-6 px-4">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
             <Link href="/legal/tokusho" className="hover:text-foreground transition-colors">
               特定商取引法に基づく表記
             </Link>
