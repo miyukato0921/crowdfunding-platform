@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import ImageUploader from "@/components/admin/ImageUploader"
-import BlockEditor, { type PageBlock } from "@/components/admin/BlockEditor"
+import BlockEditor from "@/components/admin/BlockEditor"
+import type { PageBlock } from "@/lib/block-types"
 import type { Campaign } from "@/lib/db"
 import Link from "next/link"
 import { ArrowLeft, Save, Loader2, Languages } from "lucide-react"
@@ -23,13 +24,15 @@ export default function CampaignForm({ action, defaultValues }: Props) {
 
   const d = defaultValues as any
 
-  // ページブロック
+  // ページブロック（jsonb は Neon が自動パースするため配列かどうかで分岐）
   const [blocks, setBlocks] = useState<PageBlock[]>(() => {
-    try {
-      return JSON.parse((d?.page_blocks as string) ?? "[]") as PageBlock[]
-    } catch {
-      return []
+    const raw = d?.page_blocks
+    if (!raw) return []
+    if (Array.isArray(raw)) return raw as PageBlock[]
+    if (typeof raw === "string") {
+      try { return JSON.parse(raw) as PageBlock[] } catch { return [] }
     }
+    return []
   })
 
   // Controlled state for all translatable fields

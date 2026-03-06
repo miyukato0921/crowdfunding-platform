@@ -1,4 +1,4 @@
-import type { PageBlock, FundItem } from "@/components/admin/BlockEditor"
+import type { PageBlock, FundItem } from "@/lib/block-types"
 import Image from "next/image"
 
 // 資金の使い道 — SVGドーナツグラフ

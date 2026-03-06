@@ -11,26 +11,9 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 
-// ブロックの型定義
-export type BlockType = "about" | "fund_usage" | "rich_text" | "image" | "divider" | "heading"
-
-export interface FundItem {
-  label: string
-  percent: number
-  color: string
-  description?: string
-}
-
-export interface PageBlock {
-  id: string
-  type: BlockType
-  title?: string
-  content?: string   // HTML (rich_text / about) or plain text (heading)
-  imageUrl?: string
-  imageAlt?: string
-  imageCaption?: string
-  items?: FundItem[]
-}
+// 型定義は lib/block-types.ts に定義（管理画面・公開ページ共通）
+export type { BlockType, FundItem, PageBlock } from "@/lib/block-types"
+import type { BlockType, FundItem, PageBlock } from "@/lib/block-types"
 
 const BLOCK_TYPES: { type: BlockType; label: string; icon: React.FC<{ className?: string }>; desc: string }[] = [
   { type: "about", label: "プロジェクト説明", icon: FileText, desc: "リッチテキストで詳細説明" },

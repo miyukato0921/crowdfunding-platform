@@ -69,7 +69,12 @@ export default async function Page() {
             {/* Left / Main content */}
             <div className="flex-1 min-w-0">
               <FundingProgress campaign={campaign} />
-              <CampaignDescription campaign={campaign} gallery={gallery as any} performers={performers as any} />
+              <CampaignDescription campaign={{
+                ...campaign,
+                page_blocks: typeof (campaign as any).page_blocks === 'object'
+                  ? JSON.stringify((campaign as any).page_blocks)
+                  : (campaign as any).page_blocks ?? '[]'
+              } as any} gallery={gallery as any} performers={performers as any} />
               <SupportersList supporters={supporters} />
             </div>
             {/* Right sidebar - rewards */}
