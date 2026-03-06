@@ -23,26 +23,25 @@ interface Props {
 const dateLocales: Record<string, Locale> = { ja, en: enUS, ko, zh: zhCN }
 
 function RelativeTime({ dateStr, locale }: { dateStr: string; locale: string }) {
-  const [label, setLabel] = useState<string | null>(null)
   const dateLocale = dateLocales[locale] ?? ja
 
+  // 静的フォーマット（SSR・ハイドレーション両方で同一の値）
+  const d = new Date(dateStr)
+  const staticLabel = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`
+
+  const [label, setLabel] = useState(staticLabel)
+
   useEffect(() => {
-    setLabel(formatDistanceToNow(new Date(dateStr), { addSuffix: true, locale: dateLocale }))
-    // 1分ごとに更新
-    const id = setInterval(() => {
+    // クライアントのみで相対時間に切り替え
+    const update = () =>
       setLabel(formatDistanceToNow(new Date(dateStr), { addSuffix: true, locale: dateLocale }))
-    }, 60_000)
+    update()
+    const id = setInterval(update, 60_000)
     return () => clearInterval(id)
-  }, [dateStr, dateLocale])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateStr, locale])
 
-  // SSR / ハイドレーション前は静的な日付を表示（ミスマッチ防止）
-  if (label === null) {
-    const d = new Date(dateStr)
-    const formatted = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`
-    return <span className="text-xs text-muted-foreground">{formatted}</span>
-  }
-
-  return <span className="text-xs text-muted-foreground">{label}</span>
+  return <span className="text-xs text-muted-foreground" suppressHydrationWarning>{label}</span>
 }
 
 export default function SupportersList({ supporters }: Props) {
