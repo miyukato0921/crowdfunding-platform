@@ -18,6 +18,18 @@ export type Campaign = {
   supporter_count: number
   created_at: string
   updated_at: string
+  // マイグレーションで追加されたカラム
+  page_blocks: unknown
+  description_html: string | null
+  fund_usage_html: string | null
+  event_date: string | null
+  event_venue: string | null
+  title_en: string | null
+  title_ko: string | null
+  title_zh: string | null
+  short_description_en: string | null
+  short_description_ko: string | null
+  short_description_zh: string | null
 }
 
 export type RewardTier = {

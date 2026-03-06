@@ -7,7 +7,7 @@ export default function NewCampaignPage() {
     "use server"
     const title = formData.get("title") as string
     const short_description = formData.get("short_description") as string
-    const description = formData.get("description") as string
+    // description はフォームに入力欄がないため空文字列をセット（NOT NULL制約対応）
     const goal_amount = Number(formData.get("goal_amount"))
     const start_date = formData.get("start_date") as string
     const end_date = formData.get("end_date") as string
@@ -31,7 +31,7 @@ export default function NewCampaignPage() {
 
     await sql`
       INSERT INTO campaigns (title, short_description, description, goal_amount, start_date, end_date, status, hero_image_url, event_date, event_venue, title_en, short_description_en, title_ko, short_description_ko, title_zh, short_description_zh, page_blocks)
-      VALUES (${title}, ${short_description}, ${description}, ${goal_amount}, ${start_date}, ${end_date}, ${status}, ${hero_image_url}, ${event_date || null}, ${event_venue || null}, ${title_en || null}, ${short_description_en || null}, ${title_ko || null}, ${short_description_ko || null}, ${title_zh || null}, ${short_description_zh || null}, ${JSON.stringify(page_blocks_json)}::jsonb)
+      VALUES (${title}, ${short_description}, ${''}, ${goal_amount}, ${start_date}, ${end_date}, ${status}, ${hero_image_url}, ${event_date || null}, ${event_venue || null}, ${title_en || null}, ${short_description_en || null}, ${title_ko || null}, ${short_description_ko || null}, ${title_zh || null}, ${short_description_zh || null}, ${JSON.stringify(page_blocks_json)}::jsonb)
     `
     redirect("/admin/campaigns")
   }

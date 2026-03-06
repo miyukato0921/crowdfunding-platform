@@ -13,7 +13,7 @@ export default async function EditCampaignPage({ params }: { params: Promise<{ i
     "use server"
     const title = formData.get("title") as string
     const short_description = formData.get("short_description") as string
-    const description = formData.get("description") as string
+    // description はフォームに入力欄がないため更新対象から除外（既存値を維持）
     const goal_amount = Number(formData.get("goal_amount"))
     const start_date = formData.get("start_date") as string
     const end_date = formData.get("end_date") as string
@@ -40,7 +40,6 @@ export default async function EditCampaignPage({ params }: { params: Promise<{ i
       UPDATE campaigns SET
         title = ${title},
         short_description = ${short_description},
-        description = ${description},
         goal_amount = ${goal_amount},
         start_date = ${start_date},
         end_date = ${end_date},
