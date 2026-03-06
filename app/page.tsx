@@ -4,9 +4,49 @@ import CampaignHero from "@/components/campaign/CampaignHero"
 import FundingProgress from "@/components/campaign/FundingProgress"
 import RewardTiers from "@/components/campaign/RewardTiers"
 import CampaignDescription from "@/components/campaign/CampaignDescription"
-import SupportersList from "@/components/campaign/SupportersList"
 import StickySupport from "@/components/campaign/StickySupport"
 import CampaignHeader from "@/components/campaign/CampaignHeader"
+import { Heart } from "lucide-react"
+import { formatYen } from "@/lib/utils"
+
+// SupportersList をインラインで定義（外部ファイルの古いキャッシュ問題を回避）
+function SupportersList({ supporters }: {
+  supporters: { supporter_name: string | null; amount: number; message: string | null; is_anonymous: boolean; created_at: string }[]
+}) {
+  if (supporters.length === 0) return null
+  const fmt = (d: string) => {
+    const dt = new Date(d)
+    return `${dt.getFullYear()}/${String(dt.getMonth() + 1).padStart(2, "0")}/${String(dt.getDate()).padStart(2, "0")}`
+  }
+  return (
+    <div className="bg-card rounded-2xl border border-border p-6 mt-6">
+      <h2 className="font-black text-foreground mb-4 flex items-center gap-2">
+        <Heart className="w-4 h-4 text-ireland-green" />
+        支援者
+        <span className="text-sm font-normal text-muted-foreground">（{supporters.length}件）</span>
+      </h2>
+      <div className="space-y-4">
+        {supporters.map((s, i) => (
+          <div key={i} className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-ireland-green/10 flex items-center justify-center shrink-0">
+              <Heart className="w-3.5 h-3.5 text-ireland-green" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-sm text-foreground">
+                  {s.is_anonymous ? "匿名" : (s.supporter_name ?? "匿名")}
+                </span>
+                <span className="text-xs text-muted-foreground">{fmt(s.created_at)}</span>
+              </div>
+              <p className="text-sm font-bold text-ireland-green">{formatYen(s.amount)}</p>
+              {s.message && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.message}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
