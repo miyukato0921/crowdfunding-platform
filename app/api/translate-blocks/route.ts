@@ -1,5 +1,5 @@
-import { generateText } from "ai"
 import { NextRequest, NextResponse } from "next/server"
+import { translateToLang } from "@/lib/translate"
 
 export async function POST(req: NextRequest) {
   const { blocks, targetLang } = await req.json()
@@ -31,32 +31,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ translatedBlocks: blocks })
   }
 
-  const langName = { en: "English", ko: "Korean", zh: "Simplified Chinese" }[targetLang]
-
-  const prompt = `You are a professional translator for a Japanese cultural festival crowdfunding site.
-Translate the following Japanese texts into ${langName}.
-
-IMPORTANT RULES:
-- If a value contains HTML tags (e.g. <p>, <strong>, <h2>, <ul>, <li>, <br>, <a>, <img>), preserve ALL HTML tags exactly as-is. Only translate text between tags.
-- Do NOT translate or modify URLs, image paths, or HTML attribute values.
-- Do NOT add or remove any HTML tags.
-- Return ONLY a valid JSON object. No markdown, no code fences, no extra text.
-
-Return this exact JSON structure:
-{ ${entries.map(([k]) => `"${k}": "..."`).join(", ")} }
-
-Texts to translate:
-${entries.map(([k, v]) => `[${k}]: ${v}`).join("\n")}`
-
   try {
-    const { text } = await generateText({
-      model: "openai/gpt-4o-mini",
-      prompt,
-      maxTokens: 4096,
-    })
-
-    const cleaned = text.replace(/^```(?:json)?\n?/m, "").replace(/\n?```$/m, "").trim()
-    const translated = JSON.parse(cleaned)
+    const translated = await translateToLang(texts, targetLang)
 
     // 翻訳結果をブロック配列に組み戻す
     const translatedBlocks = blocks.map((block: any, i: number) => ({
@@ -77,6 +53,11 @@ ${entries.map(([k, v]) => `[${k}]: ${v}`).join("\n")}`
     return NextResponse.json({ translatedBlocks })
   } catch (err) {
     console.error("[translate-blocks] Error:", err)
-    return NextResponse.json({ translatedBlocks: blocks })
+    const message = err instanceof Error ? err.message : String(err)
+    // エラーを返す（クライアント側でフォールバック判断）
+    return NextResponse.json(
+      { error: "Translation failed", detail: message, translatedBlocks: blocks },
+      { status: 500 }
+    )
   }
 }

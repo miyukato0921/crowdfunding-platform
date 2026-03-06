@@ -200,12 +200,46 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
   const { lang } = useLanguage()
   const [displayBlocks, setDisplayBlocks] = useState<PageBlock[]>(blocks)
   const [isTranslating, setIsTranslating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
+  const doTranslate = (targetLang: string, signal?: AbortSignal) => {
+    setIsTranslating(true)
+    setError(null)
+    fetch("/api/translate-blocks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ blocks, targetLang }),
+      signal,
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok || data.error) {
+          console.error("[BlockRenderer] API error:", data.error, data.detail)
+          setError(data.detail ?? data.error ?? "Translation failed")
+          setDisplayBlocks(blocks)
+          return
+        }
+        if (data.translatedBlocks) {
+          translationCache.set(getCacheKey(blocks, targetLang), data.translatedBlocks)
+          setDisplayBlocks(data.translatedBlocks)
+          setError(null)
+        }
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          console.error("[BlockRenderer] Fetch failed:", err)
+          setError(err.message)
+          setDisplayBlocks(blocks)
+        }
+      })
+      .finally(() => setIsTranslating(false))
+  }
+
   useEffect(() => {
-    // 日本語の場合はそのまま表示
     if (lang === "ja" || !blocks || blocks.length === 0) {
       setDisplayBlocks(blocks)
+      setError(null)
       return
     }
 
@@ -213,36 +247,14 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
     const cached = translationCache.get(cacheKey)
     if (cached) {
       setDisplayBlocks(cached)
+      setError(null)
       return
     }
 
-    // 翻訳API呼び出し
     abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
-
-    setIsTranslating(true)
-
-    fetch("/api/translate-blocks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ blocks, targetLang: lang }),
-      signal: controller.signal,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.translatedBlocks) {
-          translationCache.set(cacheKey, data.translatedBlocks)
-          setDisplayBlocks(data.translatedBlocks)
-        }
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") {
-          console.error("[BlockRenderer] Translation failed:", err)
-          setDisplayBlocks(blocks)
-        }
-      })
-      .finally(() => setIsTranslating(false))
+    doTranslate(lang, controller.signal)
 
     return () => controller.abort()
   }, [lang, blocks])
@@ -272,6 +284,32 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
 
   if (isTranslating) {
     return <BlockSkeleton />
+  }
+
+  if (error && lang !== "ja") {
+    return (
+      <div className="space-y-4">
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 flex items-start justify-between gap-3">
+          <p className="text-xs text-amber-700 dark:text-amber-300">
+            翻訳に失敗しました（日本語で表示中）
+          </p>
+          <button
+            onClick={() => {
+              translationCache.delete(getCacheKey(blocks, lang))
+              doTranslate(lang)
+            }}
+            className="text-xs font-bold text-ireland-green underline shrink-0"
+          >
+            再翻訳する
+          </button>
+        </div>
+        <div className="space-y-4">
+          {displayBlocks.map((block) => (
+            <RenderBlock key={block.id} block={block} />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
