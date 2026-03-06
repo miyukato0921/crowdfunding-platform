@@ -5,6 +5,7 @@ import { useState } from "react"
 import type { Campaign } from "@/lib/db"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/components/LanguageProvider"
+import { useTranslateTexts } from "@/hooks/use-translate-text"
 import BlockRenderer from "@/components/campaign/BlockRenderer"
 import type { PageBlock } from "@/lib/block-types"
 
@@ -59,16 +60,23 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const prev = () => setLightbox((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length))
   const next = () => setLightbox((i) => (i === null ? null : (i + 1) % gallery.length))
 
-  // SSR/クライアント両方で同一値を出すため UTC基準の固定フォーマットを使う
-  // (toLocaleString はサーバー/ブラウザ環境で差異が出るため使わない)
-  const deadlineLabel = campaign.end_date
+  // 締切日（日本語形式で生成 → 翻訳hookに渡す）
+  const jaDeadline = campaign.end_date
     ? (() => {
         const ms = new Date(campaign.end_date).getTime()
-        // JST = UTC + 9h
         const jst = new Date(ms + 9 * 60 * 60 * 1000)
         return `${jst.getUTCFullYear()}年${jst.getUTCMonth() + 1}月${jst.getUTCDate()}日`
       })()
     : t("tba")
+
+  const jaEventDate = (campaign as any).event_date || "2026年3月14日（土）・15日（日）"
+  const jaEventVenue = (campaign as any).event_venue || "代々木公園イベント広場"
+
+  const translatedEvent = useTranslateTexts({
+    eventDate: jaEventDate,
+    eventVenue: jaEventVenue,
+    deadline: jaDeadline,
+  })
 
   return (
     <div className="space-y-6 mb-6">
@@ -230,9 +238,9 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
           {[
-            { labelKey: "eventDate" as const, value: (campaign as any).event_date || "2026年3月15日（日）" },
-            { labelKey: "venue" as const,     value: (campaign as any).event_venue || "東京（詳細は支援者にご連絡）" },
-            { labelKey: "deadline" as const,  value: deadlineLabel },
+            { labelKey: "eventDate" as const, value: translatedEvent.eventDate },
+            { labelKey: "venue" as const,     value: translatedEvent.eventVenue },
+            { labelKey: "deadline" as const,  value: translatedEvent.deadline },
           ].map((item) => (
             <div key={item.labelKey} className="p-5 text-center">
               <p className="text-xs text-muted-foreground mb-1">{t(item.labelKey)}</p>

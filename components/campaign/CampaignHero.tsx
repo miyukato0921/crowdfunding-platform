@@ -5,6 +5,7 @@ import type { Campaign } from "@/lib/db"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin } from "lucide-react"
 import { useLanguage } from "@/components/LanguageProvider"
+import { useTranslateTexts } from "@/hooks/use-translate-text"
 
 interface Props {
   campaign: Campaign
@@ -25,6 +26,14 @@ export default function CampaignHero({ campaign }: Props) {
     lang === "ko" && c.short_description_ko ? c.short_description_ko :
     lang === "zh" && c.short_description_zh ? c.short_description_zh :
     campaign.short_description
+
+  const jaEventDate = c.event_date || "2026年3月14日（土）・15日（日）"
+  const jaEventVenue = c.event_venue || "代々木公園イベント広場"
+
+  const translatedEvent = useTranslateTexts({
+    eventDate: jaEventDate,
+    eventVenue: jaEventVenue,
+  })
 
   return (
     <section className="relative">
@@ -56,11 +65,11 @@ export default function CampaignHero({ campaign }: Props) {
             <div className="flex flex-wrap gap-4 mt-4">
               <div className="flex items-center gap-1.5 text-white/80 text-sm">
                 <Calendar className="w-4 h-4 text-ireland-gold shrink-0" />
-                <span>{c.event_date || "2026年3月15日（日）"}</span>
+                <span>{translatedEvent.eventDate}</span>
               </div>
               <div className="flex items-center gap-1.5 text-white/80 text-sm">
                 <MapPin className="w-4 h-4 text-ireland-gold shrink-0" />
-                <span>{c.event_venue || "東京（詳細は支援者にご連絡）"}</span>
+                <span>{translatedEvent.eventVenue}</span>
               </div>
             </div>
           </div>
