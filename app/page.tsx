@@ -1,5 +1,6 @@
 import sql from "@/lib/db"
 import type { Campaign, RewardTier } from "@/lib/db"
+import Link from "next/link"
 import CampaignHero from "@/components/campaign/CampaignHero"
 import FundingProgress from "@/components/campaign/FundingProgress"
 import RewardTiers from "@/components/campaign/RewardTiers"
@@ -141,14 +142,27 @@ export default async function Page() {
         </div>
       </main>
       <StickySupport campaignId={campaign.id} />
-      <footer className="border-t border-border mt-8 py-3 px-4">
-        <p className="text-[10px] text-muted-foreground/50 font-mono">
-          {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
-            ? `v${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ?? "main"}`
-            : process.env.VERCEL_GIT_COMMIT_SHA
-              ? `v${process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.VERCEL_GIT_COMMIT_REF ?? "main"}`
-              : "dev"}
-        </p>
+      <footer className="border-t border-border mt-8 py-6 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+            <Link href="/legal/tokusho" className="hover:text-foreground transition-colors">
+              特定商取引法に基づく表記
+            </Link>
+            <Link href="/legal/privacy" className="hover:text-foreground transition-colors">
+              プライバシーポリシー
+            </Link>
+            <Link href="/legal/system" className="hover:text-foreground transition-colors">
+              システム提供・決済代行
+            </Link>
+          </div>
+          <p className="text-[10px] text-muted-foreground/50 font-mono">
+            {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
+              ? `v${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ?? "main"}`
+              : process.env.VERCEL_GIT_COMMIT_SHA
+                ? `v${process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.VERCEL_GIT_COMMIT_REF ?? "main"}`
+                : "dev"}
+          </p>
+        </div>
       </footer>
     </div>
   )
