@@ -27,6 +27,7 @@ export default async function EditCampaignPage({ params }: { params: Promise<{ i
     const short_description_ko = formData.get("short_description_ko") as string
     const title_zh = formData.get("title_zh") as string
     const short_description_zh = formData.get("short_description_zh") as string
+    const page_blocks = formData.get("page_blocks") as string
 
     await sql`
       UPDATE campaigns SET
@@ -46,6 +47,7 @@ export default async function EditCampaignPage({ params }: { params: Promise<{ i
         short_description_ko = ${short_description_ko || null},
         title_zh = ${title_zh || null},
         short_description_zh = ${short_description_zh || null},
+        page_blocks = ${page_blocks || "[]"},
         updated_at = NOW()
       WHERE id = ${campaign.id}
     `

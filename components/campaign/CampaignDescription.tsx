@@ -5,6 +5,8 @@ import { useState } from "react"
 import type { Campaign } from "@/lib/db"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/components/LanguageProvider"
+import BlockRenderer from "@/components/campaign/BlockRenderer"
+import type { PageBlock } from "@/components/admin/BlockEditor"
 
 interface GalleryPhoto {
   id: number
@@ -35,6 +37,17 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const [lightbox, setLightbox] = useState<number | null>(null)
   const { t, locale, lang } = useLanguage()
 
+  // page_blocks JSON をパース
+  const blocks: PageBlock[] = (() => {
+    try {
+      return JSON.parse((campaign as any).page_blocks ?? "[]") as PageBlock[]
+    } catch {
+      return []
+    }
+  })()
+
+  const hasBlocks = blocks.length > 0
+
   const localizePerformer = (p: Performer) => ({
     name: (lang !== "ja" && (p as any)[`name_${lang}`]) || p.name,
     role: (lang !== "ja" && (p as any)[`role_${lang}`]) || p.role,
@@ -54,7 +67,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   return (
     <div className="space-y-6 mb-6">
 
-      {/* ─── イントロ ─── */}
+      {/* ─── イントロ ヒーロー画像（常に表示） ─── */}
       <div className="bg-card rounded-2xl border border-border overflow-hidden">
         <div className="relative w-full h-56 md:h-72">
           <Image
@@ -71,21 +84,32 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
             </h2>
           </div>
         </div>
-        <div className="p-6 space-y-4 text-sm text-foreground/80 leading-relaxed">
-          {campaign.description
-            ? campaign.description.split(/\n\n+/).map((para, i) => (
-                <p key={i}>{para}</p>
-              ))
-            : (
-              <>
-                <p>{t("aboutP1")}</p>
-                <p>{t("aboutP2")}</p>
-                <p>{t("aboutP3")}</p>
-              </>
-            )
-          }
-        </div>
       </div>
+
+      {/* ─── ブロックコンテンツ（設定済みの場合）or デフォルト About ─── */}
+      {hasBlocks ? (
+        <BlockRenderer blocks={blocks} />
+      ) : (
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="font-black text-foreground">{t("aboutProject")}</h2>
+          </div>
+          <div className="p-6 space-y-4 text-sm text-foreground/80 leading-relaxed">
+            {campaign.description
+              ? campaign.description.split(/\n\n+/).map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))
+              : (
+                <>
+                  <p>{t("aboutP1")}</p>
+                  <p>{t("aboutP2")}</p>
+                  <p>{t("aboutP3")}</p>
+                </>
+              )
+            }
+          </div>
+        </div>
+      )}
 
       {/* ─── フォトギャラリー ─── */}
       <div className="bg-card rounded-2xl border border-border p-6">
@@ -159,7 +183,8 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
         )}
       </div>
 
-      {/* ─── 資金の使い道 ─── */}
+      {/* ─── 資金の使い道（ブロックに fund_usage がない場合のみデフォルト表示） ─── */}
+      {!blocks.some(b => b.type === "fund_usage") && (
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
           <span className="w-1 h-5 rounded-full bg-ireland-green inline-block" />
@@ -185,6 +210,8 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
           ))}
         </div>
       </div>
+
+      )}
 
       {/* ─── イベント概要 ─── */}
       <div className="bg-card rounded-2xl border border-border overflow-hidden">

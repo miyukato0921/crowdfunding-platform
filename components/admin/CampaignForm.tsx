@@ -4,8 +4,8 @@ import { useRef, useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import ImageUploader from "@/components/admin/ImageUploader"
+import BlockEditor, { type PageBlock } from "@/components/admin/BlockEditor"
 import type { Campaign } from "@/lib/db"
 import Link from "next/link"
 import { ArrowLeft, Save, Loader2, Languages } from "lucide-react"
@@ -22,6 +22,15 @@ export default function CampaignForm({ action, defaultValues }: Props) {
   const [imageUrl, setImageUrl] = useState<string>(defaultValues?.hero_image_url ?? "")
 
   const d = defaultValues as any
+
+  // ページブロック
+  const [blocks, setBlocks] = useState<PageBlock[]>(() => {
+    try {
+      return JSON.parse((d?.page_blocks as string) ?? "[]") as PageBlock[]
+    } catch {
+      return []
+    }
+  })
 
   // Controlled state for all translatable fields
   const [fields, setFields] = useState({
@@ -78,12 +87,21 @@ export default function CampaignForm({ action, defaultValues }: Props) {
     }
   }
 
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const fd = new FormData()
+    fd.append("file", file)
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd })
+    const data = await res.json()
+    return data.url ?? ""
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = formRef.current
     if (!form) return
     const fd = new FormData(form)
     fd.set("hero_image_url", imageUrl)
+    fd.set("page_blocks", JSON.stringify(blocks))
     // Overwrite with controlled state values
     Object.entries(fields).forEach(([k, v]) => fd.set(k, v))
     startTransition(() => action(fd))
@@ -161,28 +179,26 @@ export default function CampaignForm({ action, defaultValues }: Props) {
           </div>
         </div>
 
-        <div>
-          <Label htmlFor="description" className="text-sm font-bold">
-            詳細説明（日本語）
-            <span className="ml-2 text-xs font-normal text-ireland-green">← 公開ページの「About This Project」に反映されます</span>
-          </Label>
-          <Textarea
-            id="description"
-            name="description"
-            rows={8}
-            defaultValue={defaultValues?.description}
-            placeholder={"プロジェクトの詳細な説明文を入力してください。\n\n段落を分けるには空行を入れてください。\n\n例：このプロジェクトは..."}
-            className="mt-1.5 resize-y font-sans text-sm leading-relaxed"
-          />
-          <p className="text-xs text-muted-foreground mt-1.5">
-            空行で段落を区切ると、公開ページでも段落ごとに表示されます。未入力の場合はデフォルトの固定テキストが表示されます。
-          </p>
-        </div>
         <ImageUploader
           name="hero_image_url"
           label="ヒーロー画像"
           defaultValue={defaultValues?.hero_image_url}
           onUrlChange={setImageUrl}
+        />
+      </div>
+
+      {/* ページコンテンツブロック */}
+      <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <div>
+          <h2 className="text-sm font-black text-foreground">ページコンテンツ</h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            ブロックを追加・並び替えて公開ページのレイアウトを自由に構成できます。「プロジェクト説明」や「資金の使い道」ブロックが公開ページに反映されます。
+          </p>
+        </div>
+        <BlockEditor
+          initialBlocks={blocks}
+          onChange={setBlocks}
+          onImageUpload={handleImageUpload}
         />
       </div>
 
