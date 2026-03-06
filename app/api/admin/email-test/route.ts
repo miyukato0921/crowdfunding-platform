@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     await transporter.verify()
 
     await transporter.sendMail({
-      from: `"Green Ireland Festival" <greenirelandfes@iris-corp.co.jp>`,
+      from: `"Green Ireland Festival" <${gmailUser}>`,
       replyTo: "greenirelandfes@iris-corp.co.jp",
       to,
       subject: "【テスト送信】Green Ireland Festival メール配信テスト",

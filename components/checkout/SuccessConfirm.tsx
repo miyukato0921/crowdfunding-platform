@@ -1,6 +1,7 @@
-// Server component: confirms payment with Stripe, updates DB, returns shipping info
+// Server component: confirms payment with Stripe, updates DB, sends email, returns shipping info
 import { getStripe } from "@/lib/stripe"
 import sql from "@/lib/db"
+import { sendTemplateEmail } from "@/lib/email"
 import ShippingForm from "./ShippingForm"
 
 interface Props {
@@ -50,6 +51,29 @@ export default async function SuccessConfirm({ sessionId }: Props) {
             updated_at    = NOW()
           WHERE id = ${rewardTierId}
         `
+      }
+
+      // ─── メール送信（Webhook に依存せず、ここで確実に送る） ───
+      try {
+        const pledgeRows = await sql`
+          SELECT p.supporter_name, p.supporter_email, rt.title as reward_title
+          FROM pledges p
+          LEFT JOIN reward_tiers rt ON rt.id = p.reward_tier_id
+          WHERE p.stripe_session_id = ${sessionId}
+          LIMIT 1
+        `
+        if (pledgeRows.length > 0 && pledgeRows[0].supporter_email) {
+          const { supporter_name, supporter_email, reward_title } = pledgeRows[0]
+          await sendTemplateEmail("pledge_confirmation", supporter_email, {
+            supporter_name: supporter_name ?? "サポーター",
+            reward_title: reward_title ?? "カスタム支援",
+            amount: `¥${amount.toLocaleString("ja-JP")}`,
+            email: supporter_email,
+          })
+        }
+      } catch (emailErr) {
+        console.error("[SuccessConfirm] Email send failed:", emailErr)
+        // メール送信失敗はページ表示に影響させない
       }
     }
 

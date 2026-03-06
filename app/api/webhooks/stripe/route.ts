@@ -75,14 +75,28 @@ export async function POST(req: NextRequest) {
           `
         }
 
-        // 購入完了メール送信
+        // 購入完了メール送信（成功ページで送信済みならスキップ）
         if (buyerEmail) {
-          await sendTemplateEmail("shop_purchase_confirmation", buyerEmail, {
-            buyer_name: buyerName || "お客様",
-            product_name: product?.name ?? "商品",
-            amount: amountFormatted,
-            email: buyerEmail,
-          })
+          try {
+            const alreadySent = await sql`
+              SELECT id FROM email_logs
+              WHERE template_slug = 'shop_purchase_confirmation'
+                AND to_address = ${buyerEmail}
+                AND status = 'sent'
+                AND created_at > NOW() - INTERVAL '10 minutes'
+              LIMIT 1
+            `
+            if (alreadySent.length === 0) {
+              await sendTemplateEmail("shop_purchase_confirmation", buyerEmail, {
+                buyer_name: buyerName || "お客様",
+                product_name: product?.name ?? "商品",
+                amount: amountFormatted,
+                email: buyerEmail,
+              })
+            }
+          } catch (emailErr) {
+            console.error("[webhook] Shop email send failed:", emailErr)
+          }
         }
       } catch (shopErr) {
         console.error("[webhook] Shop order processing failed:", shopErr)
@@ -126,6 +140,7 @@ export async function POST(req: NextRequest) {
           `
         }
 
+        // 確認メール送信（成功ページで送信済みならスキップ）
         try {
           const pledgeRows = await sql`
             SELECT p.supporter_name, p.supporter_email, rt.title as reward_title
@@ -136,13 +151,22 @@ export async function POST(req: NextRequest) {
           `
           if (pledgeRows.length > 0 && pledgeRows[0].supporter_email) {
             const { supporter_name, supporter_email, reward_title } = pledgeRows[0]
-            await sendTemplateEmail("pledge_confirmation", supporter_email, {
-              supporter_name: supporter_name ?? "サポーター",
-              reward_title: reward_title ?? "カスタム支援",
-              // JPY はゼロデシマル: amount をそのまま表示
-              amount: amountFormatted,
-              email: supporter_email,
-            })
+            const alreadySent = await sql`
+              SELECT id FROM email_logs
+              WHERE template_slug = 'pledge_confirmation'
+                AND to_address = ${supporter_email}
+                AND status = 'sent'
+                AND created_at > NOW() - INTERVAL '10 minutes'
+              LIMIT 1
+            `
+            if (alreadySent.length === 0) {
+              await sendTemplateEmail("pledge_confirmation", supporter_email, {
+                supporter_name: supporter_name ?? "サポーター",
+                reward_title: reward_title ?? "カスタム支援",
+                amount: amountFormatted,
+                email: supporter_email,
+              })
+            }
           }
         } catch (emailErr) {
           console.error("[webhook] Email send failed:", emailErr)

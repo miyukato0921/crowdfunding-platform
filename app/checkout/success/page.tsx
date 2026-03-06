@@ -15,7 +15,7 @@ export default async function SuccessPage({
   // キャンペーンタイトルを取得
   let campaignTitle = "Green Ireland Festival 2026"
   try {
-    const campaigns = await sql`SELECT title FROM campaigns WHERE is_active = true ORDER BY id LIMIT 1`
+    const campaigns = await sql`SELECT title FROM campaigns WHERE status = 'active' ORDER BY id LIMIT 1`
     campaignTitle = campaigns[0]?.title ?? campaignTitle
   } catch {
     // DB取得失敗時はデフォルト値を使用
