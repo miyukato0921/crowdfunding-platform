@@ -55,35 +55,57 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const currentRequestRef = useRef<string | null>(null)
 
   const translateBlocks = useCallback(async (targetLang: string) => {
+    console.log(`[BlockTranslate] Start: lang=${targetLang}, jaBlocks=${jaBlocks.length}`)
+
     if (targetLang === "ja") {
+      console.log("[BlockTranslate] Japanese - using original blocks")
       setDisplayBlocks(jaBlocks)
       return
     }
     if (translationCacheRef.current[targetLang]) {
+      console.log("[BlockTranslate] Cache hit")
       setDisplayBlocks(translationCacheRef.current[targetLang])
       return
     }
-    if (jaBlocks.length === 0) return
-    if (currentRequestRef.current === targetLang) return
+    if (jaBlocks.length === 0) {
+      console.log("[BlockTranslate] No blocks to translate")
+      return
+    }
+    if (currentRequestRef.current === targetLang) {
+      console.log("[BlockTranslate] Already in progress, skipping")
+      return
+    }
     currentRequestRef.current = targetLang
     setIsBlockTranslating(true)
+
+    console.log("[BlockTranslate] Fetching /api/translate-blocks...")
+
     try {
       const res = await fetch("/api/translate-blocks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ blocks: jaBlocks, targetLang }),
       })
+
+      console.log(`[BlockTranslate] Response: status=${res.status}`)
+
       const data = await res.json()
-      if (currentRequestRef.current !== targetLang) return
+      console.log("[BlockTranslate] Response data:", JSON.stringify(data).slice(0, 300))
+
+      if (currentRequestRef.current !== targetLang) {
+        console.log("[BlockTranslate] Language changed during request, discarding")
+        return
+      }
       if (res.ok && data.translatedBlocks && !data.error) {
+        console.log(`[BlockTranslate] SUCCESS: ${data.translatedBlocks.length} blocks translated`)
         translationCacheRef.current[targetLang] = data.translatedBlocks
         setDisplayBlocks(data.translatedBlocks)
       } else {
-        console.error("[CampaignDescription] Block translation failed:", data.error, data.detail)
+        console.error("[BlockTranslate] FAILED:", data.error, data.detail)
         setDisplayBlocks(jaBlocks)
       }
     } catch (err) {
-      console.error("[CampaignDescription] Block translation error:", err)
+      console.error("[BlockTranslate] FETCH ERROR:", err)
       setDisplayBlocks(jaBlocks)
     } finally {
       if (currentRequestRef.current === targetLang) currentRequestRef.current = null
