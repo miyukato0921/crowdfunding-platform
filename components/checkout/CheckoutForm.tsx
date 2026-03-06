@@ -37,10 +37,10 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email) { setError(t("emailAddress") + "を入力してください。"); return }
-    if (!mobile) { setError("携帯番号を入力してください。"); return }
-    if (!phone) { setError("電話番号を入力してください。"); return }
-    if (isCustom && customAmount < 500) { setError("500円以上で入力してください。"); return }
+    if (!email) { setError(t("emailRequired")); return }
+    if (!mobile) { setError(t("mobileRequired")); return }
+    if (!phone) { setError(t("phoneRequired")); return }
+    if (isCustom && customAmount < 500) { setError(t("minAmount")); return }
 
     setLoading(true)
     setError(null)
@@ -139,7 +139,7 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
 
       <div>
         <Label htmlFor="mobile" className="text-sm font-medium">
-          携帯番号 <span className="text-destructive">*</span>
+          {t("mobileNumber")} <span className="text-destructive">*</span>
         </Label>
         <Input
           id="mobile"
@@ -147,14 +147,14 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
           required
           value={mobile}
           onChange={(e) => setMobile(e.target.value)}
-          placeholder="090-0000-0000"
+          placeholder={t("mobilePlaceholder")}
           className="mt-1"
         />
       </div>
 
       <div>
         <Label htmlFor="phone" className="text-sm font-medium">
-          電話番号 <span className="text-destructive">*</span>
+          {t("phoneNumber")} <span className="text-destructive">*</span>
         </Label>
         <Input
           id="phone"
@@ -162,7 +162,7 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
           required
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="03-0000-0000"
+          placeholder={t("phoneNumberPlaceholder")}
           className="mt-1"
         />
       </div>
