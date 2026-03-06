@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useMemo } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import type { Campaign } from "@/lib/db"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/components/LanguageProvider"
@@ -38,18 +38,64 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const [lightbox, setLightbox] = useState<number | null>(null)
   const { t, locale, lang } = useLanguage()
 
-  // 日本語ブロックのみ渡す。翻訳はBlockRenderer内でリアルタイム自動実行
-  // useMemoで参照を安定化（再レンダー毎に新しい配列が生成されるのを防ぎ、BlockRendererのuseEffectが正しく動作するようにする）
+  // ─── ブロック翻訳管理 ───
   const rawPageBlocks = (campaign as any).page_blocks
-  const blocks = useMemo<PageBlock[]>(() => {
+  const jaBlocks: PageBlock[] = (() => {
     if (!rawPageBlocks) return []
     if (Array.isArray(rawPageBlocks)) return rawPageBlocks as PageBlock[]
     if (typeof rawPageBlocks === "string") {
       try { return JSON.parse(rawPageBlocks) as PageBlock[] } catch { return [] }
     }
     return []
-  }, [rawPageBlocks])
-  const hasBlocks = blocks.length > 0
+  })()
+
+  const [displayBlocks, setDisplayBlocks] = useState<PageBlock[]>(jaBlocks)
+  const [isBlockTranslating, setIsBlockTranslating] = useState(false)
+  const translationCacheRef = useRef<Record<string, PageBlock[]>>({})
+  const currentRequestRef = useRef<string | null>(null)
+
+  const translateBlocks = useCallback(async (targetLang: string) => {
+    if (targetLang === "ja") {
+      setDisplayBlocks(jaBlocks)
+      return
+    }
+    if (translationCacheRef.current[targetLang]) {
+      setDisplayBlocks(translationCacheRef.current[targetLang])
+      return
+    }
+    if (jaBlocks.length === 0) return
+    if (currentRequestRef.current === targetLang) return
+    currentRequestRef.current = targetLang
+    setIsBlockTranslating(true)
+    try {
+      const res = await fetch("/api/translate-blocks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ blocks: jaBlocks, targetLang }),
+      })
+      const data = await res.json()
+      if (currentRequestRef.current !== targetLang) return
+      if (res.ok && data.translatedBlocks && !data.error) {
+        translationCacheRef.current[targetLang] = data.translatedBlocks
+        setDisplayBlocks(data.translatedBlocks)
+      } else {
+        console.error("[CampaignDescription] Block translation failed:", data.error, data.detail)
+        setDisplayBlocks(jaBlocks)
+      }
+    } catch (err) {
+      console.error("[CampaignDescription] Block translation error:", err)
+      setDisplayBlocks(jaBlocks)
+    } finally {
+      if (currentRequestRef.current === targetLang) currentRequestRef.current = null
+      setIsBlockTranslating(false)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    translateBlocks(lang)
+  }, [lang]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const hasBlocks = jaBlocks.length > 0
 
   const localizePerformer = (p: Performer) => ({
     name: (lang !== "ja" && (p as any)[`name_${lang}`]) || p.name,
@@ -102,7 +148,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
 
       {/* ─── ブロックコンテンツ（設定済みの場合）or デフォルト About ─── */}
       {hasBlocks ? (
-        <BlockRenderer blocks={blocks} />
+        <BlockRenderer blocks={displayBlocks} isTranslating={isBlockTranslating} />
       ) : (
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="px-6 py-4 border-b border-border">
@@ -198,7 +244,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       </div>
 
       {/* ─── 資金の使い道（ブロックに fund_usage がない場合のみデフォルト表示） ─── */}
-      {!blocks.some(b => b.type === "fund_usage") && (
+      {!jaBlocks.some(b => b.type === "fund_usage") && (
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
           <span className="w-1 h-5 rounded-full bg-ireland-green inline-block" />
