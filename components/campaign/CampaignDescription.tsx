@@ -78,24 +78,6 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const prev = () => setLightbox((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length))
   const next = () => setLightbox((i) => (i === null ? null : (i + 1) % gallery.length))
 
-  // 締切日（日本語形式で生成 → 翻訳hookに渡す）
-  const jaDeadline = campaign.end_date
-    ? (() => {
-        const ms = new Date(campaign.end_date).getTime()
-        const jst = new Date(ms + 9 * 60 * 60 * 1000)
-        return `${jst.getUTCFullYear()}年${jst.getUTCMonth() + 1}月${jst.getUTCDate()}日`
-      })()
-    : t("tba")
-
-  const jaEventDate = (campaign as any).event_date || "2026年3月14日（土）・15日（日）"
-  const jaEventVenue = (campaign as any).event_venue || "代々木公園イベント広場"
-
-  const translatedEvent = useTranslateTexts({
-    eventDate: jaEventDate,
-    eventVenue: jaEventVenue,
-    deadline: jaDeadline,
-  })
-
   return (
     <div className="space-y-6 mb-6">
 
