@@ -1,8 +1,5 @@
-"use client"
-
 import { formatYen } from "@/lib/utils"
 import { Heart } from "lucide-react"
-import { useLanguage } from "@/components/LanguageProvider"
 
 interface Supporter {
   supporter_name: string | null
@@ -16,20 +13,17 @@ interface Props {
   supporters: Supporter[]
 }
 
-// 日付をフォーマット（静的・SSRセーフ）
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`
 }
 
 export default function SupportersList({ supporters }: Props) {
-  const { t } = useLanguage()
-
   if (supporters.length === 0) {
     return (
       <div className="bg-card rounded-2xl border border-border p-6 text-center">
         <Heart className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-        <p className="text-muted-foreground">{t("noSupporters")}</p>
+        <p className="text-muted-foreground">まだ支援者はいません</p>
       </div>
     )
   }
@@ -38,7 +32,7 @@ export default function SupportersList({ supporters }: Props) {
     <div className="bg-card rounded-2xl border border-border p-6">
       <h2 className="text-xl font-bold text-foreground mb-5 pb-4 border-b border-border flex items-center gap-2">
         <Heart className="w-5 h-5 text-ireland-gold fill-ireland-gold" />
-        {t("supportersTitle")}
+        支援者一覧
       </h2>
       <div className="space-y-4">
         {supporters.map((s, i) => (
@@ -49,7 +43,7 @@ export default function SupportersList({ supporters }: Props) {
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-2 flex-wrap">
                 <span className={`font-bold text-sm ${s.is_anonymous ? "text-muted-foreground italic" : "text-foreground"}`}>
-                  {s.is_anonymous ? t("anonymous") : (s.supporter_name ?? t("anonymous"))}
+                  {s.is_anonymous ? "匿名" : (s.supporter_name ?? "匿名")}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {formatDate(s.created_at)}

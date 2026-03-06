@@ -50,9 +50,13 @@ export default function CampaignForm({ action, defaultValues }: Props) {
   const set = (key: keyof typeof fields) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setFields((prev) => ({ ...prev, [key]: e.target.value }))
 
-  const toDateInput = (dateStr?: string) => {
+  const toDateTimeInput = (dateStr?: string) => {
     if (!dateStr) return ""
-    return new Date(dateStr).toISOString().slice(0, 10)
+    // "YYYY-MM-DDTHH:MM" 形式（datetime-local の value 形式）
+    const d = new Date(dateStr)
+    if (isNaN(d.getTime())) return ""
+    const pad = (n: number) => String(n).padStart(2, "0")
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
   }
 
   const handleAutoTranslate = async () => {
@@ -212,12 +216,12 @@ export default function CampaignForm({ action, defaultValues }: Props) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="start_date" className="text-sm font-bold">開始日 <span className="text-destructive">*</span></Label>
-            <Input id="start_date" name="start_date" type="date" required defaultValue={toDateInput(defaultValues?.start_date)} className="mt-1.5" />
+            <Label htmlFor="start_date" className="text-sm font-bold">開始日時 <span className="text-destructive">*</span></Label>
+            <Input id="start_date" name="start_date" type="datetime-local" required defaultValue={toDateTimeInput(defaultValues?.start_date)} className="mt-1.5" />
           </div>
           <div>
-            <Label htmlFor="end_date" className="text-sm font-bold">終了日 <span className="text-destructive">*</span></Label>
-            <Input id="end_date" name="end_date" type="date" required defaultValue={toDateInput(defaultValues?.end_date)} className="mt-1.5" />
+            <Label htmlFor="end_date" className="text-sm font-bold">終了日時 <span className="text-destructive">*</span></Label>
+            <Input id="end_date" name="end_date" type="datetime-local" required defaultValue={toDateTimeInput(defaultValues?.end_date)} className="mt-1.5" />
           </div>
         </div>
         <div>
