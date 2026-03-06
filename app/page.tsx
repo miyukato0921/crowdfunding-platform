@@ -134,9 +134,11 @@ export default async function Page() {
       <StickySupport campaignId={campaign.id} />
       <footer className="border-t border-border mt-8 py-3 px-4">
         <p className="text-[10px] text-muted-foreground/50 font-mono">
-          {process.env.VERCEL_GIT_COMMIT_SHA
-            ? `v${process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.VERCEL_GIT_COMMIT_REF ?? "main"}`
-            : "dev"}
+          {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
+            ? `v${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ?? "main"}`
+            : process.env.VERCEL_GIT_COMMIT_SHA
+              ? `v${process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.VERCEL_GIT_COMMIT_REF ?? "main"}`
+              : "dev"}
         </p>
       </footer>
     </div>
