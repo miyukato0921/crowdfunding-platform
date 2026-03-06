@@ -33,11 +33,8 @@ export default function CampaignForm({ action, defaultValues }: Props) {
     return []
   }
 
-  // ページブロック（jsonb は Neon が自動パースするため配列かどうかで分岐）
+  // ページブロック（日本語のみ。翻訳はBlockRenderer内でリアルタイム実行）
   const [blocks, setBlocks] = useState<PageBlock[]>(() => parseBlocks(d?.page_blocks))
-  const [blocksEn, setBlocksEn] = useState<PageBlock[]>(() => parseBlocks(d?.page_blocks_en))
-  const [blocksKo, setBlocksKo] = useState<PageBlock[]>(() => parseBlocks(d?.page_blocks_ko))
-  const [blocksZh, setBlocksZh] = useState<PageBlock[]>(() => parseBlocks(d?.page_blocks_zh))
 
   // Controlled state for all translatable fields
   const [fields, setFields] = useState({
@@ -64,38 +61,15 @@ export default function CampaignForm({ action, defaultValues }: Props) {
   }
 
   const handleAutoTranslate = async () => {
-    if (!fields.title && !fields.short_description && blocks.length === 0) {
-      alert("日本語のタイトル・説明文またはページコンテンツを入力してください。")
+    if (!fields.title && !fields.short_description) {
+      alert("日本語のタイトルまたは説明文を入力してください。")
       return
     }
     setIsTranslating(true)
     try {
-      // --- タイトル・説明文 ---
       const texts: Record<string, string> = {}
       if (fields.title) texts.title = fields.title
       if (fields.short_description) texts.short_description = fields.short_description
-
-      // --- ブロック内テキストを抽出 ---
-      blocks.forEach((block, i) => {
-        if (block.title) texts[`block_${i}_title`] = block.title
-        if (block.content && block.type !== "divider") {
-          texts[`block_${i}_content`] = block.content
-        }
-        if (block.imageCaption) texts[`block_${i}_caption`] = block.imageCaption
-        if (block.imageAlt) texts[`block_${i}_alt`] = block.imageAlt
-        if (block.items) {
-          block.items.forEach((item, j) => {
-            if (item.label) texts[`block_${i}_item_${j}_label`] = item.label
-            if (item.description) texts[`block_${i}_item_${j}_desc`] = item.description
-          })
-        }
-      })
-
-      if (Object.keys(texts).length === 0) {
-        alert("翻訳するテキストがありません。")
-        setIsTranslating(false)
-        return
-      }
 
       const res = await fetch("/api/admin/translate", {
         method: "POST",
@@ -105,7 +79,6 @@ export default function CampaignForm({ action, defaultValues }: Props) {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
 
-      // --- タイトル・説明文の翻訳を反映 ---
       setFields((prev) => ({
         ...prev,
         title_en: data.translations.en?.title ?? prev.title_en,
@@ -115,30 +88,6 @@ export default function CampaignForm({ action, defaultValues }: Props) {
         title_zh: data.translations.zh?.title ?? prev.title_zh,
         short_description_zh: data.translations.zh?.short_description ?? prev.short_description_zh,
       }))
-
-      // --- ブロックの翻訳を各言語に反映 ---
-      const buildTranslatedBlocks = (lang: string): PageBlock[] => {
-        return blocks.map((block, i) => ({
-          ...block,
-          title: data.translations[lang]?.[`block_${i}_title`] ?? block.title,
-          content: block.type !== "divider"
-            ? (data.translations[lang]?.[`block_${i}_content`] ?? block.content)
-            : block.content,
-          imageCaption: data.translations[lang]?.[`block_${i}_caption`] ?? block.imageCaption,
-          imageAlt: data.translations[lang]?.[`block_${i}_alt`] ?? block.imageAlt,
-          items: block.items?.map((item, j) => ({
-            ...item,
-            label: data.translations[lang]?.[`block_${i}_item_${j}_label`] ?? item.label,
-            description: data.translations[lang]?.[`block_${i}_item_${j}_desc`] ?? item.description,
-          })),
-        }))
-      }
-
-      if (blocks.length > 0) {
-        setBlocksEn(buildTranslatedBlocks("en"))
-        setBlocksKo(buildTranslatedBlocks("ko"))
-        setBlocksZh(buildTranslatedBlocks("zh"))
-      }
     } catch (err) {
       alert("翻訳に失敗しました。しばらくしてから再度お試しください。")
     } finally {
@@ -161,9 +110,6 @@ export default function CampaignForm({ action, defaultValues }: Props) {
     const fd = new FormData(form)
     fd.set("hero_image_url", imageUrl)
     fd.set("page_blocks", JSON.stringify(blocks))
-    fd.set("page_blocks_en", JSON.stringify(blocksEn))
-    fd.set("page_blocks_ko", JSON.stringify(blocksKo))
-    fd.set("page_blocks_zh", JSON.stringify(blocksZh))
     // Overwrite with controlled state values
     Object.entries(fields).forEach(([k, v]) => fd.set(k, v))
     startTransition(() => action(fd))
@@ -176,7 +122,7 @@ export default function CampaignForm({ action, defaultValues }: Props) {
         {/* 日本語 */}
         <div className="pb-5 border-b border-border space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">日本語</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">��本語</p>
           </div>
           <div>
             <Label htmlFor="title" className="text-sm font-bold">タイトル <span className="text-destructive">*</span></Label>
@@ -191,13 +137,13 @@ export default function CampaignForm({ action, defaultValues }: Props) {
           <Button
             type="button"
             onClick={handleAutoTranslate}
-            disabled={isTranslating || (!fields.title && !fields.short_description && blocks.length === 0)}
+            disabled={isTranslating || (!fields.title && !fields.short_description)}
             variant="outline"
             className="border-ireland-green text-ireland-green hover:bg-ireland-green/10 rounded-xl font-bold"
           >
             {isTranslating
-              ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />翻訳中（タイトル＋ブロック）...</>
-              : <><Languages className="w-4 h-4 mr-2" />EN / KO / ZH に自動翻訳（タイトル＋ブロック）</>
+              ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />翻訳中...</>
+              : <><Languages className="w-4 h-4 mr-2" />EN / KO / ZH に自動翻訳</>
             }
           </Button>
         </div>
@@ -249,48 +195,15 @@ export default function CampaignForm({ action, defaultValues }: Props) {
         />
       </div>
 
-      {/* ページコンテンツブロック（日本語） */}
+      {/* ページコンテンツブロック */}
       <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
         <div>
-          <h2 className="text-sm font-black text-foreground">ページコンテンツ（日本語）</h2>
+          <h2 className="text-sm font-black text-foreground">ページコンテンツ</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            ブロックを追加・並び替えて公開ページのレイアウトを自由に構成できます。
+            ブロックを追加・並び替えて公開ページのレイアウトを自由に構成できます。公開ページでは言語切り替え時にブロック内のテキストが自動翻訳されます。
           </p>
         </div>
         <BlockEditor initialBlocks={blocks} onChange={setBlocks} onImageUpload={handleImageUpload} />
-      </div>
-
-      {/* ページコンテンツブロック（English） */}
-      <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
-        <div>
-          <h2 className="text-sm font-black text-foreground">ページコンテンツ（English）</h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            English version of page blocks. Leave empty to fall back to Japanese.
-          </p>
-        </div>
-        <BlockEditor initialBlocks={blocksEn} onChange={setBlocksEn} onImageUpload={handleImageUpload} />
-      </div>
-
-      {/* ページコンテンツブロック（한국어） */}
-      <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
-        <div>
-          <h2 className="text-sm font-black text-foreground">ページコンテンツ（한국어）</h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            한국어 버전 페이지 블록. 비워두면 일본어로 대체됩니다.
-          </p>
-        </div>
-        <BlockEditor initialBlocks={blocksKo} onChange={setBlocksKo} onImageUpload={handleImageUpload} />
-      </div>
-
-      {/* ページコンテンツブロック（中文） */}
-      <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
-        <div>
-          <h2 className="text-sm font-black text-foreground">ページコンテンツ（中文）</h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            中文版页面块。留空则回退到日语。
-          </p>
-        </div>
-        <BlockEditor initialBlocks={blocksZh} onChange={setBlocksZh} onImageUpload={handleImageUpload} />
       </div>
 
       <div className="bg-card rounded-2xl border border-border p-6 space-y-5">

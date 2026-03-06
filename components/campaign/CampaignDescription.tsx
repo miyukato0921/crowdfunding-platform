@@ -46,15 +46,8 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
     return []
   }
 
-  // 言語別ブロックを取得（空の場合は日本語にフォールバック）
-  const jaBlocks = parseBlocks((campaign as any).page_blocks)
-  const langBlocks: Record<string, PageBlock[]> = {
-    ja: jaBlocks,
-    en: parseBlocks((campaign as any).page_blocks_en),
-    ko: parseBlocks((campaign as any).page_blocks_ko),
-    zh: parseBlocks((campaign as any).page_blocks_zh),
-  }
-  const blocks = (langBlocks[lang]?.length > 0 ? langBlocks[lang] : jaBlocks)
+  // 日本語ブロックのみ渡す。翻訳はBlockRenderer内でリアルタイム自動実行
+  const blocks = parseBlocks((campaign as any).page_blocks)
   const hasBlocks = blocks.length > 0
 
   const localizePerformer = (p: Performer) => ({
