@@ -134,7 +134,7 @@ export default async function Page() {
             </div>
             {/* Right sidebar - rewards */}
             <div className="w-full lg:w-96 shrink-0">
-              <div className="sticky top-4">
+              <div id="rewards-section" className="sticky top-4">
                 <RewardTiers rewards={rewards} campaignId={campaign.id} />
               </div>
             </div>

@@ -43,7 +43,10 @@ export default function StickySupport({ campaignId }: Props) {
           <Button
             size="sm"
             className="bg-ireland-green hover:bg-ireland-green/90 text-white font-bold rounded-full px-5"
-            onClick={() => router.push(`/checkout?campaign_id=${campaignId}`)}
+            onClick={() => {
+              const el = document.getElementById("rewards-section")
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+            }}
           >
             <Heart className="w-4 h-4 mr-1.5 fill-white" />
             {t("support")}
