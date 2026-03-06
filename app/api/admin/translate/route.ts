@@ -14,7 +14,14 @@ export async function POST(req: NextRequest) {
 
   const prompt = `You are a professional translator specializing in Japanese event/crowdfunding content.
 Translate the following Japanese texts into English (en), Korean (ko), and Simplified Chinese (zh).
-Return ONLY a valid JSON object with this exact structure (no markdown, no extra text):
+
+IMPORTANT RULES:
+- If a value contains HTML tags (e.g. <p>, <strong>, <h2>, <ul>, <li>, <br>, <a>, <img>), preserve ALL HTML tags exactly as-is and only translate the text content between tags.
+- Do NOT translate URLs, image paths, or HTML attribute values.
+- Do NOT add or remove any HTML tags.
+- Return ONLY a valid JSON object with no markdown, no code fences, no extra text.
+
+Return this exact JSON structure:
 {
   "en": { ${entries.map(([k]) => `"${k}": "..."`).join(", ")} },
   "ko": { ${entries.map(([k]) => `"${k}": "..."`).join(", ")} },
@@ -27,6 +34,7 @@ ${entries.map(([k, v]) => `[${k}]: ${v}`).join("\n")}`
   const { text } = await generateText({
     model: "openai/gpt-4o-mini",
     prompt,
+    maxTokens: 4096,
   })
 
   try {
