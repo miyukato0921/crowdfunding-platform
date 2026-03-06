@@ -1,5 +1,6 @@
 import { getStripe } from "@/lib/stripe"
 import sql from "@/lib/db"
+import { sendTemplateEmail } from "@/lib/email"
 import ShopSuccessPageClient from "@/components/checkout/ShopSuccessPageClient"
 
 async function confirmOrder(sessionId: string) {
@@ -22,9 +23,12 @@ async function confirmOrder(sessionId: string) {
     `
 
     let orderId: number
+    let isNewOrder = false
+
     if (existing.length > 0) {
       orderId = existing[0].id
     } else {
+      isNewOrder = true
       const inserted = await sql`
         INSERT INTO shop_orders (
           stripe_session_id, stripe_payment_intent_id,
@@ -46,6 +50,23 @@ async function confirmOrder(sessionId: string) {
       // Decrement stock
       if (product.stock_count !== null && product.stock_count > 0) {
         await sql`UPDATE products SET stock_count = stock_count - 1 WHERE id = ${product.id} AND stock_count > 0`
+      }
+    }
+
+    // ─── メール送信（新規注文時のみ） ───
+    if (isNewOrder) {
+      const emailTo = session.customer_email ?? buyer_email
+      if (emailTo) {
+        try {
+          await sendTemplateEmail("shop_purchase_confirmation", emailTo, {
+            buyer_name: buyer_name || "お客様",
+            product_name: product.name,
+            amount: `¥${product.price.toLocaleString("ja-JP")}`,
+            email: emailTo,
+          })
+        } catch (emailErr) {
+          console.error("[shop/success] Email send failed:", emailErr)
+        }
       }
     }
 
