@@ -62,7 +62,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const deadlineLabel = campaign.end_date
     ? new Date(campaign.end_date).toLocaleDateString(
         locale === "ja" ? "ja-JP" : locale === "ko" ? "ko-KR" : "en-US",
-        { year: "numeric", month: "long", day: "numeric" }
+        { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Tokyo" }
       )
     : t("tba")
 
