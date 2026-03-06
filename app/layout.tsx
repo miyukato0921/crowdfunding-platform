@@ -1,3 +1,4 @@
+// Build refresh: 2024-03-06T12:00:00Z - Fixed SupportersList hydration
 import type { Metadata } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
