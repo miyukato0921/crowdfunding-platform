@@ -113,7 +113,16 @@ export default async function Page() {
                 ...campaign,
                 page_blocks: typeof (campaign as any).page_blocks === 'object'
                   ? JSON.stringify((campaign as any).page_blocks)
-                  : (campaign as any).page_blocks ?? '[]'
+                  : (campaign as any).page_blocks ?? '[]',
+                page_blocks_en: typeof (campaign as any).page_blocks_en === 'object'
+                  ? JSON.stringify((campaign as any).page_blocks_en)
+                  : (campaign as any).page_blocks_en ?? '[]',
+                page_blocks_ko: typeof (campaign as any).page_blocks_ko === 'object'
+                  ? JSON.stringify((campaign as any).page_blocks_ko)
+                  : (campaign as any).page_blocks_ko ?? '[]',
+                page_blocks_zh: typeof (campaign as any).page_blocks_zh === 'object'
+                  ? JSON.stringify((campaign as any).page_blocks_zh)
+                  : (campaign as any).page_blocks_zh ?? '[]',
               } as any} gallery={gallery as any} performers={performers as any} />
               <SupportersList supporters={supporters.map((s: any) => ({
                 ...s,
