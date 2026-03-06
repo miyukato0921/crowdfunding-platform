@@ -88,8 +88,22 @@ async function getCampaignData() {
   return { campaign, rewards, supporters, gallery, performers }
 }
 
+async function getSiteSettings() {
+  try {
+    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('logo_url', 'site_title')`
+    const map: Record<string, string> = {}
+    for (const r of rows) map[r.key] = r.value
+    return map
+  } catch {
+    return {}
+  }
+}
+
 export default async function Page() {
-  const { campaign, rewards, supporters, gallery, performers } = await getCampaignData()
+  const [{ campaign, rewards, supporters, gallery, performers }, siteSettings] = await Promise.all([
+    getCampaignData(),
+    getSiteSettings(),
+  ])
 
   if (!campaign) {
     return (
@@ -101,7 +115,7 @@ export default async function Page() {
 
   return (
     <div className="min-h-screen bg-background">
-      <CampaignHeader />
+      <CampaignHeader logoUrl={siteSettings.logo_url} siteTitle={siteSettings.site_title} />
       <main>
         <CampaignHero campaign={campaign} />
         <div className="max-w-6xl mx-auto px-4 py-8">
