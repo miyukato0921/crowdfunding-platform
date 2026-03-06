@@ -66,6 +66,11 @@ export default function AdminSidebar({ admin }: Props) {
           <div>
             <p className="font-black text-sidebar-foreground text-sm">Green Ireland</p>
             <p className="text-sidebar-foreground/50 text-xs">管理画面</p>
+            {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA && (
+              <p className="text-sidebar-foreground/25 text-[10px] font-mono leading-none mt-0.5">
+                {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.slice(0, 7)}
+              </p>
+            )}
           </div>
         </div>
       </div>
