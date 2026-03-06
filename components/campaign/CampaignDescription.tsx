@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import type { Campaign } from "@/lib/db"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/components/LanguageProvider"
@@ -38,17 +38,17 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
   const [lightbox, setLightbox] = useState<number | null>(null)
   const { t, locale, lang } = useLanguage()
 
-  const parseBlocks = (raw: unknown): PageBlock[] => {
-    if (!raw) return []
-    if (Array.isArray(raw)) return raw as PageBlock[]
-    if (typeof raw === "string") {
-      try { return JSON.parse(raw) as PageBlock[] } catch { return [] }
+  // 日本語ブロックのみ渡す。翻訳はBlockRenderer内でリアルタイム自動実行
+  // useMemoで参照を安定化（再レンダー毎に新しい配列が生成されるのを防ぎ、BlockRendererのuseEffectが正しく動作するようにする）
+  const rawPageBlocks = (campaign as any).page_blocks
+  const blocks = useMemo<PageBlock[]>(() => {
+    if (!rawPageBlocks) return []
+    if (Array.isArray(rawPageBlocks)) return rawPageBlocks as PageBlock[]
+    if (typeof rawPageBlocks === "string") {
+      try { return JSON.parse(rawPageBlocks) as PageBlock[] } catch { return [] }
     }
     return []
-  }
-
-  // 日本語ブロックのみ渡す。翻訳はBlockRenderer内でリアルタイム自動実行
-  const blocks = parseBlocks((campaign as any).page_blocks)
+  }, [rawPageBlocks])
   const hasBlocks = blocks.length > 0
 
   const localizePerformer = (p: Performer) => ({

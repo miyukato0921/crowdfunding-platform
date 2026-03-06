@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import type { PageBlock, FundItem } from "@/lib/block-types"
 import Image from "next/image"
 import { useLanguage } from "@/components/LanguageProvider"
@@ -203,9 +203,19 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
   const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
+  // ブロックの安定したキー（参照比較ではなくID文字列で比較）
+  const blocksKey = useMemo(
+    () => blocks.map((b) => b.id).join(","),
+    [blocks]
+  )
+
   const doTranslate = (targetLang: string, signal?: AbortSignal) => {
     setIsTranslating(true)
     setError(null)
+
+    // 25秒タイムアウト（Vercel Serverless の上限に合わせる）
+    const timeoutId = setTimeout(() => abortRef.current?.abort(), 25000)
+
     fetch("/api/translate-blocks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -213,20 +223,26 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
       signal,
     })
       .then(async (res) => {
+        clearTimeout(timeoutId)
         const data = await res.json()
         if (!res.ok || data.error) {
-          console.error("[BlockRenderer] API error:", data.error, data.detail)
-          setError(data.detail ?? data.error ?? "Translation failed")
+          console.error("[BlockRenderer] API error:", res.status, data.error, data.detail)
+          setError(data.detail ?? data.error ?? `HTTP ${res.status}`)
           setDisplayBlocks(blocks)
           return
         }
-        if (data.translatedBlocks) {
+        if (data.translatedBlocks && Array.isArray(data.translatedBlocks) && data.translatedBlocks.length > 0) {
           translationCache.set(getCacheKey(blocks, targetLang), data.translatedBlocks)
           setDisplayBlocks(data.translatedBlocks)
           setError(null)
+        } else {
+          console.warn("[BlockRenderer] No translatedBlocks in response")
+          setError("Empty translation response")
+          setDisplayBlocks(blocks)
         }
       })
       .catch((err) => {
+        clearTimeout(timeoutId)
         if (err.name !== "AbortError") {
           console.error("[BlockRenderer] Fetch failed:", err)
           setError(err.message)
@@ -236,6 +252,7 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
       .finally(() => setIsTranslating(false))
   }
 
+  // lang または blocksKey が変化したときだけ翻訳を実行
   useEffect(() => {
     if (lang === "ja" || !blocks || blocks.length === 0) {
       setDisplayBlocks(blocks)
@@ -257,7 +274,13 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
     doTranslate(lang, controller.signal)
 
     return () => controller.abort()
-  }, [lang, blocks])
+  // blocksKeyを使うことで、ブロックの内容が同じなら再実行しない
+  }, [lang, blocksKey])
+
+  // 日本語表示時にブロックが更新された場合は即反映
+  useEffect(() => {
+    if (lang === "ja") setDisplayBlocks(blocks)
+  }, [blocks, lang])
 
   if (!blocks || blocks.length === 0) {
     if (fallbackAboutHtml) {

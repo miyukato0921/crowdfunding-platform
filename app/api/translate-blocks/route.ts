@@ -2,7 +2,17 @@ import { NextRequest, NextResponse } from "next/server"
 import { translateToLang } from "@/lib/translate"
 
 export async function POST(req: NextRequest) {
-  const { blocks, targetLang } = await req.json()
+  let blocks: any[]
+  let targetLang: string
+
+  try {
+    const body = await req.json()
+    blocks = body.blocks
+    targetLang = body.targetLang
+  } catch (err) {
+    console.error("[translate-blocks] Invalid request body:", err)
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+  }
 
   if (!blocks || !Array.isArray(blocks) || blocks.length === 0) {
     return NextResponse.json({ translatedBlocks: [] })
@@ -31,10 +41,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ translatedBlocks: blocks })
   }
 
+  console.log(`[translate-blocks] Translating ${entries.length} texts to ${targetLang}`)
+
   try {
     const translated = await translateToLang(texts, targetLang)
+    console.log(`[translate-blocks] Success: got ${Object.keys(translated).length} translations`)
 
-    // 翻訳結果をブロック配列に組み戻す
     const translatedBlocks = blocks.map((block: any, i: number) => ({
       ...block,
       title: translated[`b${i}_title`] ?? block.title,
@@ -52,11 +64,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ translatedBlocks })
   } catch (err) {
-    console.error("[translate-blocks] Error:", err)
     const message = err instanceof Error ? err.message : String(err)
-    // エラーを返す（クライアント側でフォールバック判断）
+    const stack = err instanceof Error ? err.stack : undefined
+    console.error(`[translate-blocks] FAILED: ${message}`)
+    if (stack) console.error(stack)
+    // エラーレスポンスにフォールバックブロックを含めない（クライアントが誤判定しないよう）
     return NextResponse.json(
-      { error: "Translation failed", detail: message, translatedBlocks: blocks },
+      { error: "Translation failed", detail: message },
       { status: 500 }
     )
   }
