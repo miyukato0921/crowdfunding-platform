@@ -42,7 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_receipts_pledge ON receipts(pledge_id);
 CREATE INDEX IF NOT EXISTS idx_receipts_token ON receipts(download_token);
 CREATE INDEX IF NOT EXISTS idx_receipts_number ON receipts(receipt_number);
 
--- デフォルトテンプレートを挿入
+-- デフォルトテンプレートを挿入（既存チェック付き）
 INSERT INTO receipt_templates (name, issuer_name, default_proviso)
-VALUES ('デフォルト', '在日アイルランド商工会議所', 'クラウドファンディング支援金として')
-ON CONFLICT DO NOTHING;
+SELECT 'デフォルト', '在日アイルランド商工会議所', 'クラウドファンディング支援金として'
+WHERE NOT EXISTS (SELECT 1 FROM receipt_templates WHERE is_default = TRUE);
