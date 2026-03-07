@@ -17,7 +17,7 @@ export default async function TokushoPage() {
 <tr><td><strong>運営統括責任者</strong></td><td>会頭</td></tr>
 <tr><td><strong>所在地</strong></td><td>請求があった場合には遅滞なく開示いたします</td></tr>
 <tr><td><strong>電話番号</strong></td><td>請求があった場合には遅滞なく開示いたします</td></tr>
-<tr><td><strong>メールアドレス</strong></td><td>greenirelandfes@iris-corp.co.jp</td></tr>
+<tr><td><strong>メールアドレス</strong></td><td>greenirelandfes@enwa.info</td></tr>
 <tr><td><strong>販売URL</strong></td><td>https://greenirelandfes.atouch.dev</td></tr>
 <tr><td><strong>販売価格</strong></td><td>各プロジェクトページおよびリターン欄に記載の金額（税込）</td></tr>
 <tr><td><strong>商品代金以外の必要料金</strong></td><td>なし（配送料が発生する場合は各リターン欄に記載いたします）</td></tr>

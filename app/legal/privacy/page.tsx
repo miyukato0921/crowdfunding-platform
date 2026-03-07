@@ -76,7 +76,7 @@ export default async function PrivacyPage() {
 <p>個人情報の取り扱いに関するお問い合わせ・ご請求は、以下までご連絡ください。</p>
 <p><strong>在日アイルランド商工会議所</strong><br>
 Green Ireland Festival 運営事務局<br>
-メール: <a href="mailto:greenirelandfes@iris-corp.co.jp">greenirelandfes@iris-corp.co.jp</a></p>
+メール: <a href="mailto:greenirelandfes@enwa.info">greenirelandfes@enwa.info</a></p>
 
 <p style="margin-top: 24px; font-size: 13px; color: #666;">制定日: 2025年3月1日</p>`
 

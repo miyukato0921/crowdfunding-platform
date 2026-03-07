@@ -126,7 +126,8 @@ export default function SiteSettingsForm({ initial }: Props) {
   const [showSmtpPass, setShowSmtpPass] = useState(false)
   const [smtpPassEditing, setSmtpPassEditing] = useState(false)
 
-  const [emailFrom, setEmailFrom] = useState(initial.email_from ?? "greenirelandfes@iris-corp.co.jp")
+  const [emailFrom, setEmailFrom] = useState(initial.email_from ?? "greenirelandfes@enwa.info")
+  const [emailReplyTo, setEmailReplyTo] = useState(initial.email_reply_to ?? "greenirelandfes@enwa.info")
 
   // 完了画面QRコード・リンク
   const [successQrUrl, setSuccessQrUrl] = useState(initial.success_qr_url ?? "")
@@ -147,6 +148,7 @@ export default function SiteSettingsForm({ initial }: Props) {
         smtp_port: smtpPort,
         smtp_user: smtpUser,
         email_from: emailFrom,
+        email_reply_to: emailReplyTo,
         stripe_publishable_key: stripePubKey,
         stripe_test_publishable_key: stripeTestPubKey,
         success_qr_url: successQrUrl,
@@ -181,7 +183,7 @@ export default function SiteSettingsForm({ initial }: Props) {
   return (
     <div className="space-y-8 max-w-2xl">
 
-      {/* ロゴ */}
+      {/* ��ゴ */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-2 mb-1">
           <Globe className="w-4 h-4 text-ireland-green" />
@@ -379,7 +381,7 @@ export default function SiteSettingsForm({ initial }: Props) {
           <h2 className="font-bold text-foreground">メール送信設定（SMTP）</h2>
         </div>
         <p className="text-xs text-muted-foreground">
-          返信先アドレス: <code className="font-mono bg-muted px-1 rounded">greenirelandfes@iris-corp.co.jp</code>
+          返信先アドレス: <code className="font-mono bg-muted px-1 rounded">{emailReplyTo}</code>（下記で変更可能）
         </p>
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-2 space-y-2">
@@ -447,11 +449,25 @@ export default function SiteSettingsForm({ initial }: Props) {
             type="email"
             value={emailFrom}
             onChange={(e) => setEmailFrom(e.target.value)}
-            placeholder="greenirelandfes@iris-corp.co.jp"
+            placeholder="greenirelandfes@enwa.info"
             className="font-mono text-sm"
           />
           <p className="text-xs text-muted-foreground">
             メールの From に表示されるアドレスです。SMTPサーバーで送信が許可されたアドレスを指定してください。
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email_reply_to">返信先メールアドレス</Label>
+          <Input
+            id="email_reply_to"
+            type="email"
+            value={emailReplyTo}
+            onChange={(e) => setEmailReplyTo(e.target.value)}
+            placeholder="greenirelandfes@enwa.info"
+            className="font-mono text-sm"
+          />
+          <p className="text-xs text-muted-foreground">
+            メールの返信先（Reply-To）に設定されるアドレスです。受信者が返信するとこのアドレスに届きます。
           </p>
         </div>
       </div>

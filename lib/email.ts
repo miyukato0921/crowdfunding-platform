@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer"
 import sql from "@/lib/db"
 
-const DEFAULT_FROM = "greenirelandfes@iris-corp.co.jp"
-const REPLY_TO_ADDRESS = "greenirelandfes@iris-corp.co.jp"
+const DEFAULT_FROM = "greenirelandfes@enwa.info"
+const DEFAULT_REPLY_TO = "greenirelandfes@enwa.info"
 
 function renderTemplate(body: string, vars: Record<string, string>): string {
   return body.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? "")
@@ -67,6 +67,13 @@ async function createTransporter() {
   const creds = await getSmtpCredentials()
   if (!creds) return null
 
+  // 返信先アドレスをDBから取得
+  let replyTo = DEFAULT_REPLY_TO
+  try {
+    const rows = await sql`SELECT value FROM site_settings WHERE key = 'email_reply_to' LIMIT 1`
+    if (rows[0]?.value) replyTo = rows[0].value
+  } catch {}
+
   return {
     transporter: nodemailer.createTransport({
       host: creds.host,
@@ -75,6 +82,7 @@ async function createTransporter() {
       auth: { user: creds.user, pass: creds.pass },
     }),
     fromAddress: creds.from,
+    replyToAddress: replyTo,
   }
 }
 
@@ -104,12 +112,12 @@ export async function sendTemplateEmail(
     return
   }
 
-  const { transporter, fromAddress } = result
+  const { transporter, fromAddress, replyToAddress } = result
 
   try {
     await transporter.sendMail({
       from: `"Green Ireland Festival" <${fromAddress}>`,
-      replyTo: REPLY_TO_ADDRESS,
+      replyTo: replyToAddress,
       to,
       subject: renderedSubject,
       text: renderedBody,
@@ -158,11 +166,11 @@ export async function sendRawEmail({
     return
   }
 
-  const { transporter, fromAddress } = result
+  const { transporter, fromAddress, replyToAddress } = result
 
   await transporter.sendMail({
     from: `"Green Ireland Festival" <${fromAddress}>`,
-    replyTo: REPLY_TO_ADDRESS,
+    replyTo: replyToAddress,
     to,
     subject,
     text,

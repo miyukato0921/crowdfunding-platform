@@ -22,7 +22,7 @@ export default async function EmailTemplatesPage() {
           支援完了・購入完了などのイベント時に自動送信されるメールのテンプレートを管理します。
         </p>
         <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-300">
-          送信元・返信先: <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded">greenirelandfes@iris-corp.co.jp</code> / Gmail認証情報は「共通設定」または環境変数で設定してください。
+          送信元・返信先: <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded">greenirelandfes@enwa.info</code>（共通設定で変更可能）/ 認証情報は「共通設定」または環境変数で設定してください。
         </div>
       </div>
       <EmailTemplatesPageClient

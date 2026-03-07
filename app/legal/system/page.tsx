@@ -19,7 +19,7 @@ export default async function SystemProviderPage() {
 <tr><td><strong>事業者名</strong></td><td>ENWA株式会社</td></tr>
 <tr><td><strong>代表者</strong></td><td>代表取締役</td></tr>
 <tr><td><strong>所在地</strong></td><td>請求があった場合には遅滞なく開示いたします</td></tr>
-<tr><td><strong>メールアドレス</strong></td><td><a href="mailto:greenirelandfes@iris-corp.co.jp">greenirelandfes@iris-corp.co.jp</a></td></tr>
+<tr><td><strong>メールアドレス</strong></td><td><a href="mailto:greenirelandfes@enwa.info">greenirelandfes@enwa.info</a></td></tr>
 </table>
 
 <h3>当社が提供するサービス</h3>

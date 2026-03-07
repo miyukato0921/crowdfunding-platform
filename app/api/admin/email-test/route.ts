@@ -16,13 +16,14 @@ export async function POST(req: NextRequest) {
   let smtpPort = 587
   let smtpUser: string | undefined
   let smtpPass: string | undefined
-  let emailFrom = "greenirelandfes@iris-corp.co.jp"
+  let emailFrom = "greenirelandfes@enwa.info"
+  let emailReplyTo = "greenirelandfes@enwa.info"
   let credSource = "none"
 
   let legacyGmailWarning: string | null = null
 
   try {
-    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'email_from', 'gmail_user', 'gmail_app_password')`
+    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'email_from', 'email_reply_to', 'gmail_user', 'gmail_app_password')`
     const map: Record<string, string> = {}
     for (const row of rows) map[row.key] = row.value
 
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
       smtpUser = map.smtp_user
       smtpPass = map.smtp_pass
       emailFrom = map.email_from || emailFrom
+      emailReplyTo = map.email_reply_to || emailReplyTo
       credSource = "db"
     } else if (map.gmail_user && map.gmail_app_password) {
       // 旧 Gmail 設定が残っている場合は自動変換して使用
@@ -86,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail({
       from: `"Green Ireland Festival" <${emailFrom}>`,
-      replyTo: "greenirelandfes@iris-corp.co.jp",
+      replyTo: emailReplyTo,
       to,
       subject: "【テスト送信】Green Ireland Festival メール配信テスト",
       text: `このメールはテスト送信です。\n\nSMTP認証情報: ${credSource}から取得\nSMTPホスト: ${smtpHost}\nSMTPユーザー: ${smtpUser}\n送信元: ${emailFrom}\n\nメール配信設定は正常に機能しています。`,
