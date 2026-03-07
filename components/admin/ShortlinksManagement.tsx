@@ -391,3 +391,6 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
