@@ -135,7 +135,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
   const dragItem = useRef<number | null>(null)
 
   const reload = async () => {
-    const res = await fetch(`/api/admin/gallery?campaign_id=${campaignId}`)
+    const res = await fetch(`/api/admin/gallery?campaign_id=${campaignId}&_t=${Date.now()}`)
     if (res.ok) setPhotos(await res.json())
   }
 
@@ -198,11 +198,12 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
   const handleUpdatePhoto = (id: number, imageUrl: string) => {
     if (!imageUrl) { alert("新しい画像を選択してください"); return }
     startTransition(async () => {
-      await fetch(`/api/admin/gallery/${id}`, {
+      const res = await fetch(`/api/admin/gallery/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_url: imageUrl }),
       })
+      if (!res.ok) { alert("画像の更新に失敗しました"); return }
       editPicker.reset()
       setEditingPhotoId(null)
       await reload()
@@ -312,6 +313,12 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
               {editingPhotoId === photo.id ? (
                 <div className="p-4 space-y-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
                   <p className="text-sm font-bold text-foreground">写真を変更</p>
+                  <div className="relative w-full h-28 rounded-xl overflow-hidden border border-border bg-muted mb-2">
+                    <Image src={`${photo.image_url}${photo.image_url.includes('?') ? '&' : '?'}v=${photo.id}`} alt="現在の写真" fill className="object-cover" unoptimized />
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold bg-black/50 px-2 py-1 rounded">現在の写真</span>
+                    </div>
+                  </div>
                   <PhotoPicker {...editPicker} placeholder="新しい画像のURLを入力..." />
                   <div className="flex gap-2 pt-1">
                     <Button
@@ -321,7 +328,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                       className="bg-ireland-green hover:bg-ireland-green/90 text-white"
                     >
                       <Check className="w-3.5 h-3.5 mr-1" />
-                      保存
+                      変更を保存
                     </Button>
                     <Button
                       size="sm"
@@ -335,7 +342,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                 </div>
               ) : (
                 <div className="relative w-full h-44">
-                  <Image src={photo.image_url} alt={photo.caption || ""} fill className="object-cover" unoptimized />
+                  <Image src={`${photo.image_url}${photo.image_url.includes('?') ? '&' : '?'}v=${photo.id}`} alt={photo.caption || ""} fill className="object-cover" unoptimized />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-black/50 text-white flex items-center justify-center cursor-grab">
                     <GripVertical className="w-4 h-4" />
@@ -372,7 +379,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
               )}
 
               {/* キャプション */}
-              <div className="p-3">
+              <div className="p-3 space-y-3">
                 {editingCaptionId === photo.id ? (
                   <div className="flex gap-2">
                     <Input value={editCaption} onChange={(e) => setEditCaption(e.target.value)} className="text-sm h-8" autoFocus />
@@ -387,6 +394,24 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
                   </div>
+                )}
+
+                {/* 写真を変更ボタン */}
+                {editingPhotoId !== photo.id && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      editPicker.reset()
+                      setEditingPhotoId(photo.id)
+                    }}
+                  >
+                    <ImageIcon className="w-3.5 h-3.5 mr-1.5" />
+                    写真を変更
+                  </Button>
                 )}
               </div>
             </div>
