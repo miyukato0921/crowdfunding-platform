@@ -349,7 +349,7 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
                       </div>
                     )}
                     <div className="flex gap-3 mt-1.5 text-[10px] text-muted-foreground/50">
-                      <span>Total: {link.total_clicks}</span>
+                      <span>Total: {link.click_count}</span>
                       <span>24h: {link.clicks_24h}</span>
                       <span>{new Date(link.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}</span>
                     </div>
