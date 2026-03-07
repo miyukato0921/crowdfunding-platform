@@ -8,15 +8,16 @@ import { Trash2, Copy, Check, Link as LinkIcon } from "lucide-react"
 
 interface Shortlink {
   id: number
-  shortcode: string
-  target_url: string
+  slug: string
+  url_default: string
+  title: string
   created_at: string
 }
 
 export default function ShortlinksManagement() {
   const [links, setLinks] = useState<Shortlink[]>([])
-  const [shortcode, setShortcode] = useState("")
-  const [targetUrl, setTargetUrl] = useState("")
+  const [slug, setSlug] = useState("")
+  const [urlDefault, setUrlDefault] = useState("")
   const [error, setError] = useState("")
   const [copied, setCopied] = useState<number | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -32,23 +33,23 @@ export default function ShortlinksManagement() {
 
   const handleCreate = () => {
     setError("")
-    if (!shortcode.trim()) { setError("shortcodeを入力してください"); return }
-    if (!targetUrl.trim()) { setError("target URLを入力してください"); return }
-    if (!/^[a-z0-9\-_]+$/.test(shortcode)) { setError("shortcode: lowercase letters, numbers, -, _ only"); return }
+    if (!slug.trim()) { setError("slugを入力してください"); return }
+    if (!urlDefault.trim()) { setError("target URLを入力してください"); return }
+    if (!/^[a-z0-9\-_]+$/.test(slug)) { setError("slug: lowercase letters, numbers, -, _ only"); return }
 
     startTransition(async () => {
       const res = await fetch("/api/admin/shortlinks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shortcode, target_url: targetUrl }),
+        body: JSON.stringify({ slug, url_default: urlDefault }),
       })
       if (!res.ok) {
         const data = await res.json()
         setError(data.error)
         return
       }
-      setShortcode("")
-      setTargetUrl("")
+      setSlug("")
+      setUrlDefault("")
       await reload()
     })
   }
@@ -61,10 +62,10 @@ export default function ShortlinksManagement() {
     })
   }
 
-  const copyToClipboard = (shortcode: string) => {
-    const fullUrl = `${window.location.origin}/link/${shortcode}`
+  const copyToClipboard = (slug: string) => {
+    const fullUrl = `${window.location.origin}/link/${slug}`
     navigator.clipboard.writeText(fullUrl)
-    setCopied(parseInt(shortcode))
+    setCopied(parseInt(slug))
     setTimeout(() => setCopied(null), 2000)
   }
 
@@ -81,11 +82,11 @@ export default function ShortlinksManagement() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="shortcode">Shortcode</Label>
+            <Label htmlFor="slug">Slug</Label>
             <Input
-              id="shortcode"
-              value={shortcode}
-              onChange={(e) => setShortcode(e.target.value.toLowerCase())}
+              id="slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value.toLowerCase())}
               placeholder="line-follow"
               className="font-mono text-sm"
               disabled={isPending}
@@ -93,11 +94,11 @@ export default function ShortlinksManagement() {
             <p className="text-xs text-muted-foreground">lowercase, numbers, -, _ のみ</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="target_url">Target URL</Label>
+            <Label htmlFor="url_default">Target URL</Label>
             <Input
-              id="target_url"
-              value={targetUrl}
-              onChange={(e) => setTargetUrl(e.target.value)}
+              id="url_default"
+              value={urlDefault}
+              onChange={(e) => setUrlDefault(e.target.value)}
               placeholder="https://..."
               className="text-sm"
               disabled={isPending}
@@ -127,10 +128,10 @@ export default function ShortlinksManagement() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <code className="text-xs font-mono bg-muted px-2 py-1 rounded text-ireland-green">
-                      /link/{link.shortcode}
+                      /link/{link.slug}
                     </code>
                     <button
-                      onClick={() => copyToClipboard(link.shortcode)}
+                      onClick={() => copyToClipboard(link.slug)}
                       className="text-muted-foreground hover:text-foreground text-xs transition-colors"
                       title="Copy full URL"
                     >
@@ -141,7 +142,7 @@ export default function ShortlinksManagement() {
                       )}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">{link.target_url}</p>
+                  <p className="text-xs text-muted-foreground truncate">{link.url_default}</p>
                   <p className="text-[10px] text-muted-foreground/50 mt-1">
                     {new Date(link.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
                   </p>
