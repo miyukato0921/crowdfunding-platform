@@ -22,6 +22,7 @@ export default function CampaignHeader() {
               width={28}
               height={28}
               className="rounded-full object-cover shrink-0 sm:w-9 sm:h-9"
+              style={{ width: "auto", height: "auto" }}
               unoptimized
             />
           ) : (
