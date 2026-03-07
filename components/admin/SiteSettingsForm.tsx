@@ -133,6 +133,7 @@ export default function SiteSettingsForm({ initial }: Props) {
   const [successQrLabel, setSuccessQrLabel] = useState(initial.success_qr_label ?? "")
   const [successLinkUrl, setSuccessLinkUrl] = useState(initial.success_link_url ?? "")
   const [successLinkLabel, setSuccessLinkLabel] = useState(initial.success_link_label ?? "")
+  const [successRedirectSeconds, setSuccessRedirectSeconds] = useState(initial.success_redirect_seconds ?? "")
 
   const handleSave = () => {
     startTransition(async () => {
@@ -151,6 +152,7 @@ export default function SiteSettingsForm({ initial }: Props) {
         success_qr_label: successQrLabel,
         success_link_url: successLinkUrl,
         success_link_label: successLinkLabel,
+        success_redirect_seconds: successRedirectSeconds,
       }
       // masked・空欄は上書きしない
       if (stripeKey && stripeKey !== MASKED) payload.stripe_secret_key = stripeKey
@@ -504,6 +506,22 @@ export default function SiteSettingsForm({ initial }: Props) {
             onChange={(e) => setSuccessLinkLabel(e.target.value)}
             placeholder="イベント詳細はこちら"
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="success_redirect_seconds">自動リダイレクト（秒）</Label>
+          <Input
+            id="success_redirect_seconds"
+            type="number"
+            min={0}
+            value={successRedirectSeconds}
+            onChange={(e) => setSuccessRedirectSeconds(e.target.value)}
+            placeholder="空欄 = リダイレクトしない"
+            className="font-mono text-sm w-32"
+          />
+          <p className="text-xs text-muted-foreground">
+            完了画面表示後、指定秒数でQRコードのURLに自動遷移します。空欄の場合はリダイレクトしません。
+          </p>
         </div>
 
         {/* プレビュー */}

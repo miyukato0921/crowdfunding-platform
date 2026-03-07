@@ -23,10 +23,11 @@ export default async function NewRewardPage() {
     const description_ko = formData.get("description_ko") as string
     const title_zh = formData.get("title_zh") as string
     const description_zh = formData.get("description_zh") as string
+    const requires_shipping = formData.get("requires_shipping") === "on"
 
     await sql`
-      INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, image_url, delivery_date, sort_order, is_active, title_en, description_en, title_ko, description_ko, title_zh, description_zh)
-      VALUES (${campaign_id}, ${title}, ${description}, ${amount}, ${limit_count}, ${image_url || null}, ${delivery_date || ""}, ${sort_order}, ${is_active}, ${title_en || null}, ${description_en || null}, ${title_ko || null}, ${description_ko || null}, ${title_zh || null}, ${description_zh || null})
+      INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, image_url, delivery_date, sort_order, is_active, title_en, description_en, title_ko, description_ko, title_zh, description_zh, requires_shipping)
+      VALUES (${campaign_id}, ${title}, ${description}, ${amount}, ${limit_count}, ${image_url || null}, ${delivery_date || ""}, ${sort_order}, ${is_active}, ${title_en || null}, ${description_en || null}, ${title_ko || null}, ${description_ko || null}, ${title_zh || null}, ${description_zh || null}, ${requires_shipping})
     `
     redirect("/admin/rewards")
   }

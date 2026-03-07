@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -8,9 +9,26 @@ interface Props {
   qrLabel?: string
   linkUrl?: string
   linkLabel?: string
+  redirectSeconds?: number
 }
 
-export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel }: Props) {
+export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, redirectSeconds }: Props) {
+  const [countdown, setCountdown] = useState(redirectSeconds ?? 0)
+  const [redirected, setRedirected] = useState(false)
+
+  useEffect(() => {
+    if (!redirectSeconds || redirectSeconds <= 0 || !qrUrl || redirected) return
+
+    if (countdown <= 0) {
+      setRedirected(true)
+      window.location.href = qrUrl
+      return
+    }
+
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [countdown, redirectSeconds, qrUrl, redirected])
+
   if (!qrUrl && !linkUrl) return null
 
   return (
@@ -36,6 +54,13 @@ export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel }:
             {qrUrl.length > 40 ? qrUrl.slice(0, 40) + "..." : qrUrl}
             <ExternalLink className="w-3 h-3" />
           </a>
+          {redirectSeconds && redirectSeconds > 0 && !redirected && (
+            <p className="text-xs text-muted-foreground">
+              {countdown > 0
+                ? `${countdown}秒後に自動的に移動します...`
+                : "リダイレクト中..."}
+            </p>
+          )}
         </div>
       )}
 

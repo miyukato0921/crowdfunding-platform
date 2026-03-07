@@ -24,6 +24,8 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
 
   const d = defaultValues as any
 
+  const [requiresShipping, setRequiresShipping] = useState(d?.requires_shipping ?? false)
+
   const [fields, setFields] = useState({
     title: d?.title ?? "",
     description: d?.description ?? "",
@@ -79,6 +81,7 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
     if (!form) return
     const fd = new FormData(form)
     fd.set("image_url", imageUrl)
+    fd.set("requires_shipping", requiresShipping ? "on" : "")
     Object.entries(fields).forEach(([k, v]) => fd.set(k, v))
     startTransition(() => action(fd))
   }
@@ -196,6 +199,20 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
             <Input id="sort_order" name="sort_order" type="number" min={0} defaultValue={defaultValues?.sort_order ?? 0} className="mt-1.5" />
           </div>
         </div>
+        <div className="flex items-center gap-3 pt-1">
+          <input
+            id="requires_shipping"
+            name="requires_shipping"
+            type="checkbox"
+            checked={requiresShipping}
+            onChange={(e) => setRequiresShipping(e.target.checked)}
+            className="w-4 h-4 rounded border border-input accent-ireland-green"
+          />
+          <Label htmlFor="requires_shipping" className="text-sm font-bold cursor-pointer">
+            配送が必要（チェックすると支援完了後に住所入力欄が表示されます）
+          </Label>
+        </div>
+
         <div className="flex items-center gap-3 pt-1">
           <input
             id="is_active"
