@@ -1,0 +1,48 @@
+-- 領収書テンプレート
+CREATE TABLE IF NOT EXISTS receipt_templates (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL DEFAULT 'デフォルト',
+  issuer_name TEXT NOT NULL DEFAULT '在日アイルランド商工会議所',
+  issuer_address TEXT,
+  issuer_tel TEXT,
+  issuer_email TEXT DEFAULT 'greenirelandfes@enwa.info',
+  logo_url TEXT,
+  stamp_url TEXT,
+  prefix TEXT NOT NULL DEFAULT 'GIF',
+  next_number INTEGER NOT NULL DEFAULT 1,
+  default_proviso TEXT NOT NULL DEFAULT 'クラウドファンディング支援金として',
+  footer_note TEXT DEFAULT '※ 本領収書は、クラウドファンディングによる支援金の受領を証するものです。',
+  is_default BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 発行済み領収書
+CREATE TABLE IF NOT EXISTS receipts (
+  id SERIAL PRIMARY KEY,
+  receipt_number TEXT UNIQUE NOT NULL,
+  pledge_id INTEGER REFERENCES pledges(id) ON DELETE SET NULL,
+  template_id INTEGER REFERENCES receipt_templates(id),
+  recipient_name TEXT NOT NULL,
+  amount INTEGER NOT NULL,
+  proviso TEXT NOT NULL DEFAULT 'クラウドファンディング支援金として',
+  issued_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  issuer_name TEXT NOT NULL,
+  issuer_address TEXT,
+  download_token TEXT UNIQUE NOT NULL,
+  status TEXT DEFAULT 'issued',
+  email_sent BOOLEAN DEFAULT FALSE,
+  email_sent_at TIMESTAMPTZ,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_receipts_pledge ON receipts(pledge_id);
+CREATE INDEX IF NOT EXISTS idx_receipts_token ON receipts(download_token);
+CREATE INDEX IF NOT EXISTS idx_receipts_number ON receipts(receipt_number);
+
+-- デフォルトテンプレートを挿入
+INSERT INTO receipt_templates (name, issuer_name, default_proviso)
+VALUES ('デフォルト', '在日アイルランド商工会議所', 'クラウドファンディング支援金として')
+ON CONFLICT DO NOTHING;
