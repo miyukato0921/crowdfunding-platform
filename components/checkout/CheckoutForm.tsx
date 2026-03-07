@@ -29,10 +29,26 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
   const [message, setMessage] = useState("")
   const [isAnonymous, setIsAnonymous] = useState(false)
   const [customAmount, setCustomAmount] = useState(defaultAmount ?? 1000)
+  const [customAmountDisplay, setCustomAmountDisplay] = useState(
+    (defaultAmount ?? 1000).toLocaleString("ja-JP")
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const amount = reward ? reward.amount : customAmount
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 数字以外を除去
+    const raw = e.target.value.replace(/[^0-9]/g, "")
+    if (raw === "") {
+      setCustomAmount(0)
+      setCustomAmountDisplay("")
+      return
+    }
+    const num = parseInt(raw, 10)
+    setCustomAmount(num)
+    setCustomAmountDisplay(num.toLocaleString("ja-JP"))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,7 +100,10 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
               <button
                 key={amt}
                 type="button"
-                onClick={() => setCustomAmount(amt)}
+                onClick={() => {
+                  setCustomAmount(amt)
+                  setCustomAmountDisplay(amt.toLocaleString("ja-JP"))
+                }}
                 className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold border transition-colors ${
                   customAmount === amt
                     ? "bg-ireland-green text-white border-ireland-green"
@@ -100,10 +119,11 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
             <div className="relative flex-1 w-full">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">¥</span>
               <Input
-                type="number"
-                min={500}
-                value={customAmount}
-                onChange={(e) => setCustomAmount(parseInt(e.target.value) || 0)}
+                type="text"
+                inputMode="numeric"
+                value={customAmountDisplay}
+                onChange={handleAmountChange}
+                placeholder="1,000"
                 className="pl-7 text-sm"
               />
             </div>
