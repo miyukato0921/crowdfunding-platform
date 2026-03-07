@@ -72,20 +72,20 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-5">
-      <h2 className="font-bold text-foreground">{t("supporterInfo")}</h2>
+    <form onSubmit={handleSubmit} className="bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-6 space-y-4 sm:space-y-5">
+      <h2 className="font-bold text-foreground text-base sm:text-lg">{t("supporterInfo")}</h2>
 
       {/* Custom amount selector */}
       {isCustom && (
         <div>
-          <Label className="text-sm font-medium text-foreground mb-2 block">{t("supportAmount")}</Label>
-          <div className="flex flex-wrap gap-2 mb-3">
+          <Label className="text-xs sm:text-sm font-medium text-foreground mb-2 block">{t("supportAmount")}</Label>
+          <div className="flex flex-wrap gap-1.5 mb-3">
             {PRESET_AMOUNTS.map((amt) => (
               <button
                 key={amt}
                 type="button"
                 onClick={() => setCustomAmount(amt)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold border transition-colors ${
                   customAmount === amt
                     ? "bg-ireland-green text-white border-ireland-green"
                     : "bg-background text-foreground border-border hover:border-ireland-green"
@@ -95,16 +95,16 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground shrink-0">{t("orEnterAmount")}</span>
-            <div className="relative flex-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            <span className="text-xs sm:text-sm text-muted-foreground">{t("orEnterAmount")}</span>
+            <div className="relative flex-1 w-full">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">¥</span>
               <Input
                 type="number"
                 min={500}
                 value={customAmount}
                 onChange={(e) => setCustomAmount(parseInt(e.target.value) || 0)}
-                className="pl-7"
+                className="pl-7 text-sm"
               />
             </div>
           </div>
@@ -112,15 +112,15 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
       )}
 
       {!isCustom && reward && (
-        <div className="p-4 bg-ireland-green/10 rounded-xl border border-ireland-green/20">
-          <p className="text-sm text-muted-foreground">{t("selectedReturn")}</p>
-          <p className="font-bold text-foreground">{rewardTitle ?? reward.title}</p>
-          <p className="text-2xl font-black text-ireland-green">{formatYen(reward.amount)}</p>
+        <div className="p-3 sm:p-4 bg-ireland-green/10 rounded-lg sm:rounded-xl border border-ireland-green/20">
+          <p className="text-xs sm:text-sm text-muted-foreground">{t("selectedReturn")}</p>
+          <p className="font-bold text-foreground text-sm sm:text-base">{rewardTitle ?? reward.title}</p>
+          <p className="text-xl sm:text-2xl font-black text-ireland-green">{formatYen(reward.amount)}</p>
         </div>
       )}
 
       <div>
-        <Label htmlFor="email" className="text-sm font-medium">
+        <Label htmlFor="email" className="text-xs sm:text-sm font-medium">
           {t("emailAddress")} <span className="text-destructive">*</span>
         </Label>
         <Input
@@ -130,13 +130,13 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
-          className="mt-1"
+          className="mt-1.5 text-sm"
         />
-        <p className="text-xs text-muted-foreground mt-1">{t("emailNote")}</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{t("emailNote")}</p>
       </div>
 
       <div>
-        <Label htmlFor="contactPhone" className="text-sm font-medium">
+        <Label htmlFor="contactPhone" className="text-xs sm:text-sm font-medium">
           {t("contactPhone")} <span className="text-destructive">*</span>
         </Label>
         <Input
@@ -146,12 +146,12 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
           value={contactPhone}
           onChange={(e) => setContactPhone(e.target.value)}
           placeholder={t("contactPhonePlaceholder")}
-          className="mt-1"
+          className="mt-1.5 text-sm"
         />
       </div>
 
       <div>
-        <Label htmlFor="name" className="text-sm font-medium">
+        <Label htmlFor="name" className="text-xs sm:text-sm font-medium">
           {t("yourName")} <span className="text-destructive">*</span>
         </Label>
         <Input
@@ -161,7 +161,7 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t("yourNamePlaceholder")}
-          className="mt-1"
+          className="mt-1.5 text-sm"
           disabled={isAnonymous}
         />
       </div>
@@ -172,40 +172,40 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
           checked={isAnonymous}
           onCheckedChange={(v) => setIsAnonymous(!!v)}
         />
-        <Label htmlFor="anonymous" className="text-sm cursor-pointer">{t("anonymous2")}</Label>
+        <Label htmlFor="anonymous" className="text-xs sm:text-sm cursor-pointer">{t("anonymous2")}</Label>
       </div>
 
       <div>
-        <Label htmlFor="message" className="text-sm font-medium">{t("message")}</Label>
+        <Label htmlFor="message" className="text-xs sm:text-sm font-medium">{t("message")}</Label>
         <Textarea
           id="message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={t("messagePlaceholder")}
-          rows={3}
-          className="mt-1 resize-none"
+          rows={2}
+          className="mt-1.5 resize-none text-sm"
         />
       </div>
 
       {error && (
-        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
+        <div className="p-2.5 sm:p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-xs sm:text-sm text-destructive">
           {error}
         </div>
       )}
 
-      <div className="pt-2">
+      <div className="pt-1 sm:pt-2 space-y-2">
         <Button
           type="submit"
-          className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-black text-lg py-6 rounded-xl"
+          className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-black text-base sm:text-lg py-5 sm:py-6 rounded-lg sm:rounded-xl active:scale-95"
           disabled={loading}
         >
           {loading ? (
-            <><Loader2 className="w-5 h-5 mr-2 animate-spin" />{t("processing")}</>
+            <><Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />{t("processing")}</>
           ) : (
-            <><CreditCard className="w-5 h-5 mr-2" />{t("proceed")}</>
+            <><CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />{t("proceed")}</>
           )}
         </Button>
-        <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-muted-foreground">
+        <div className="flex items-center justify-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
           <Lock className="w-3 h-3" />
           <span>{t("securePayment")}</span>
         </div>

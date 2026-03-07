@@ -66,88 +66,90 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-bold text-foreground">{t("chooseReturn")}</h2>
+    <div className="space-y-3">
+      <h2 className="text-base sm:text-lg font-bold text-foreground">{t("chooseReturn")}</h2>
 
-      {rewards.map((reward) => {
-        const style = getTierStyle(reward.amount, t)
-        const isSoldOut = reward.limit_count !== null && reward.claimed_count >= reward.limit_count
-        const remaining = reward.limit_count !== null ? reward.limit_count - reward.claimed_count : null
-        const localized = getLocalizedReward(reward, lang)
-        const specialNote = getSpecialNote(reward.title, t)
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 auto-rows-max">
+        {rewards.map((reward) => {
+          const style = getTierStyle(reward.amount, t)
+          const isSoldOut = reward.limit_count !== null && reward.claimed_count >= reward.limit_count
+          const remaining = reward.limit_count !== null ? reward.limit_count - reward.claimed_count : null
+          const localized = getLocalizedReward(reward, lang)
+          const specialNote = getSpecialNote(reward.title, t)
 
-        return (
-          <div key={reward.id} className={`rounded-2xl border-2 p-5 transition-shadow hover:shadow-md ${style.bg} ${style.border} ${isSoldOut ? "opacity-60" : ""}`}>
-            {reward.image_url && (
-              <div className="relative h-40 w-full rounded-xl overflow-hidden mb-4">
-                <Image src={reward.image_url} alt={localized.title} fill className="object-cover" />
-              </div>
-            )}
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="flex-1">
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  <Badge className={`text-xs border-0 ${style.badge}`}>{style.label}</Badge>
-                  {isSoldOut && <Badge variant="secondary" className="text-xs">{t("soldOut")}</Badge>}
-                  {!isSoldOut && remaining !== null && remaining <= 10 && (
-                    <Badge className="text-xs bg-red-500 text-white border-0">
-                      {t("remainingSlots", { n: remaining })}
-                    </Badge>
-                  )}
+          return (
+            <div key={reward.id} className={`rounded-xl sm:rounded-2xl border-2 p-3 sm:p-4 transition-all duration-200 ${style.bg} ${style.border} ${isSoldOut ? "opacity-60" : "hover:shadow-md active:scale-95 sm:hover:shadow-lg"}`}>
+              {reward.image_url && (
+                <div className="relative h-32 sm:h-40 w-full rounded-lg overflow-hidden mb-3">
+                  <Image src={reward.image_url} alt={localized.title} fill className="object-cover" />
                 </div>
-                <p className="text-xl font-black text-foreground">{formatYen(reward.amount)}</p>
+              )}
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    <Badge className={`text-[10px] sm:text-xs border-0 ${style.badge}`}>{style.label}</Badge>
+                    {isSoldOut && <Badge variant="secondary" className="text-[10px] sm:text-xs">{t("soldOut")}</Badge>}
+                    {!isSoldOut && remaining !== null && remaining <= 10 && (
+                      <Badge className="text-[10px] sm:text-xs bg-red-500 text-white border-0">
+                        {t("remainingSlots", { n: remaining })}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-lg sm:text-xl font-black text-foreground">{formatYen(reward.amount)}</p>
+                </div>
               </div>
+              <p className="font-bold text-foreground text-xs sm:text-sm mb-1.5 line-clamp-2">{localized.title}</p>
+              <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed mb-3 line-clamp-3">{localized.description}</p>
+              <div className="flex flex-wrap gap-2 mb-3 text-[10px] sm:text-xs text-muted-foreground">
+                {reward.delivery_date && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t("delivery")}{reward.delivery_date}</span>
+                  </div>
+                )}
+                {remaining !== null && !isSoldOut && (
+                  <div className="flex items-center gap-1">
+                    <Users className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t("remainingSlots", { n: remaining })}（{t("capacity", { n: reward.limit_count! })}）</span>
+                  </div>
+                )}
+                {reward.claimed_count > 0 && (
+                  <div className="flex items-center gap-1 text-ireland-green">
+                    <CheckCircle className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t("supporting", { n: reward.claimed_count })}</span>
+                  </div>
+                )}
+              </div>
+              {specialNote && !isSoldOut && (
+                <div className="flex items-start gap-2 mb-3 p-2 bg-amber-50 border border-amber-200 rounded-lg">
+                  <Clock className="w-3 h-3 text-amber-600 mt-0.5 shrink-0" />
+                  <p className="text-[10px] sm:text-xs text-amber-700 font-medium">{specialNote}</p>
+                </div>
+              )}
+              <Button
+                className={`w-full font-bold rounded-lg sm:rounded-xl text-xs sm:text-base py-2 sm:py-2.5 ${style.btn}`}
+                disabled={isSoldOut}
+                onClick={() => handleSupport(reward.id, reward.amount)}
+              >
+                {isSoldOut ? t("soldOut") : t("supportWithThis")}
+                {!isSoldOut && <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />}
+              </Button>
             </div>
-            <p className="font-bold text-foreground text-sm mb-2">{localized.title}</p>
-            <p className="text-sm text-foreground/75 leading-relaxed mb-4">{localized.description}</p>
-            <div className="flex flex-wrap gap-3 mb-4 text-xs text-muted-foreground">
-              {reward.delivery_date && (
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 shrink-0" />
-                  <span>{t("delivery")}{reward.delivery_date}</span>
-                </div>
-              )}
-              {remaining !== null && !isSoldOut && (
-                <div className="flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5 shrink-0" />
-                  <span>{t("remainingSlots", { n: remaining })}（{t("capacity", { n: reward.limit_count! })}）</span>
-                </div>
-              )}
-              {reward.claimed_count > 0 && (
-                <div className="flex items-center gap-1 text-ireland-green">
-                  <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{t("supporting", { n: reward.claimed_count })}</span>
-                </div>
-              )}
-            </div>
-            {specialNote && !isSoldOut && (
-              <div className="flex items-start gap-2 mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <Clock className="w-3.5 h-3.5 text-amber-600 mt-0.5 shrink-0" />
-                <p className="text-xs text-amber-700 font-medium">{specialNote}</p>
-              </div>
-            )}
-            <Button
-              className={`w-full font-bold rounded-xl ${style.btn}`}
-              disabled={isSoldOut}
-              onClick={() => handleSupport(reward.id, reward.amount)}
-            >
-              {isSoldOut ? t("soldOut") : t("supportWithThis")}
-              {!isSoldOut && <ChevronRight className="w-4 h-4 ml-1" />}
-            </Button>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
 
-      <div className="rounded-2xl border-2 border-dashed border-ireland-green/40 p-5 bg-ireland-green/5">
-        <div className="flex items-start gap-2 mb-3">
-          <AlertCircle className="w-4 h-4 text-ireland-green mt-0.5 shrink-0" />
-          <div>
-            <p className="font-bold text-foreground text-sm">{t("freeSupport")}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{t("freeSupportDesc")}</p>
+      <div className="rounded-xl sm:rounded-2xl border-2 border-dashed border-ireland-green/40 p-3 sm:p-4 bg-ireland-green/5 mt-2">
+        <div className="flex items-start gap-2 mb-2.5">
+          <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ireland-green mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <p className="font-bold text-foreground text-xs sm:text-sm">{t("freeSupport")}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{t("freeSupportDesc")}</p>
           </div>
         </div>
         <Button
           variant="outline"
-          className="w-full border-ireland-green text-ireland-green hover:bg-ireland-green hover:text-white font-bold rounded-xl"
+          className="w-full border-ireland-green text-ireland-green hover:bg-ireland-green hover:text-white font-bold rounded-lg sm:rounded-xl text-xs sm:text-base py-2 sm:py-2.5"
           onClick={() => router.push(`/checkout?campaign_id=${campaignId}&custom=true`)}
         >
           {t("cheerSupport")}
