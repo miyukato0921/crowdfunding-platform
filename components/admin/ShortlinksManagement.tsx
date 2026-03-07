@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Copy, Check, Trash2, ExternalLink } from "lucide-react"
+import { Copy, Check, Trash2, ExternalLink, Smartphone, Globe, MessageCircle, Chrome, Monitor } from "lucide-react"
 
 interface Shortlink {
   id: number
@@ -13,24 +13,27 @@ interface Shortlink {
   title: string
   url_default: string
   url_line: string | null
-  url_twitter: string | null
-  url_instagram: string | null
+  url_ios: string | null
+  url_android: string | null
+  url_chrome: string | null
+  url_pc: string | null
   is_active: boolean
+  total_clicks: number
+  click_count: number
+  clicks_24h: number
   created_at: string
 }
 
-interface Props {
-  campaignId: number
-}
-
-export default function ShortlinksManagement({ campaignId }: Props) {
+export default function ShortlinksManagement() {
   const [links, setLinks] = useState<Shortlink[]>([])
   const [slug, setSlug] = useState("")
   const [title, setTitle] = useState("")
   const [urlDefault, setUrlDefault] = useState("")
   const [urlLine, setUrlLine] = useState("")
-  const [urlTwitter, setUrlTwitter] = useState("")
-  const [urlInstagram, setUrlInstagram] = useState("")
+  const [urlPc, setUrlPc] = useState("")
+  const [urlChrome, setUrlChrome] = useState("")
+  const [urlIos, setUrlIos] = useState("")
+  const [urlAndroid, setUrlAndroid] = useState("")
   const [error, setError] = useState("")
   const [copied, setCopied] = useState<number | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -42,21 +45,21 @@ export default function ShortlinksManagement({ campaignId }: Props) {
 
   const handleCreate = () => {
     setError("")
-    if (!slug.trim()) { setError("slugを入力してください"); return }
-    if (!urlDefault.trim()) { setError("Default URLを入力してください"); return }
-    if (!/^[a-z0-9\-_]+$/.test(slug)) { setError("slug: lowercase, numbers, -, _ only"); return }
+    if (!urlDefault.trim()) { setError("デフォルトURLは必須です"); return }
 
     startTransition(async () => {
       const res = await fetch("/api/admin/shortlinks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          slug,
-          title,
+          slug: slug.trim() || undefined,
+          title: title.trim(),
           url_default: urlDefault,
-          url_line: urlLine || null,
-          url_twitter: urlTwitter || null,
-          url_instagram: urlInstagram || null,
+          url_line: urlLine.trim() || null,
+          url_pc: urlPc.trim() || null,
+          url_chrome: urlChrome.trim() || null,
+          url_ios: urlIos.trim() || null,
+          url_android: urlAndroid.trim() || null,
         }),
       })
       if (!res.ok) {
@@ -68,8 +71,10 @@ export default function ShortlinksManagement({ campaignId }: Props) {
       setTitle("")
       setUrlDefault("")
       setUrlLine("")
-      setUrlTwitter("")
-      setUrlInstagram("")
+      setUrlPc("")
+      setUrlChrome("")
+      setUrlIos("")
+      setUrlAndroid("")
       await reload()
     })
   }
@@ -83,7 +88,7 @@ export default function ShortlinksManagement({ campaignId }: Props) {
   }
 
   const copyToClipboard = (slug: string) => {
-    const fullUrl = `${window.location.origin}/link/${slug}`
+    const fullUrl = `${window.location.origin}/go/${slug}`
     navigator.clipboard.writeText(fullUrl)
     setCopied(links.find(l => l.slug === slug)?.id || null)
     setTimeout(() => setCopied(null), 2000)
@@ -95,16 +100,16 @@ export default function ShortlinksManagement({ campaignId }: Props) {
         <h3 className="font-bold text-lg mb-3">新しいリンクを作成</h3>
         <div className="space-y-3 p-4 border border-border rounded-lg bg-card">
           <div>
-            <Label htmlFor="slug" className="text-sm font-bold">Slug</Label>
+            <Label htmlFor="slug" className="text-sm font-bold">Slug（オプション）</Label>
             <Input
               id="slug"
               value={slug}
               onChange={(e) => setSlug(e.target.value.toLowerCase())}
-              placeholder="line-follow"
+              placeholder="自動生成される場合はここは空にしておきます"
               className="font-mono text-sm mt-1"
               disabled={isPending}
             />
-            <p className="text-xs text-muted-foreground mt-1">lowercase, numbers, -, _ のみ</p>
+            <p className="text-xs text-muted-foreground mt-1">指定しない場合は自動生成されます</p>
           </div>
 
           <div>
@@ -120,7 +125,7 @@ export default function ShortlinksManagement({ campaignId }: Props) {
           </div>
 
           <div>
-            <Label htmlFor="url_default" className="text-sm font-bold">Default URL</Label>
+            <Label htmlFor="url_default" className="text-sm font-bold">Default URL（必須）</Label>
             <Input
               id="url_default"
               value={urlDefault}
@@ -132,43 +137,62 @@ export default function ShortlinksManagement({ campaignId }: Props) {
             <p className="text-xs text-muted-foreground mt-1">すべてのアクセスのデフォルトURL</p>
           </div>
 
-          <div>
-            <Label htmlFor="url_line" className="text-sm font-bold">LINE URL（オプション）</Label>
-            <Input
-              id="url_line"
-              value={urlLine}
-              onChange={(e) => setUrlLine(e.target.value)}
-              placeholder="https://..."
-              className="text-sm mt-1"
-              disabled={isPending}
-            />
-            <p className="text-xs text-muted-foreground mt-1">LINEからのアクセス時のURL</p>
-          </div>
-
-          <div>
-            <Label htmlFor="url_twitter" className="text-sm font-bold">Twitter/X URL（オプション）</Label>
-            <Input
-              id="url_twitter"
-              value={urlTwitter}
-              onChange={(e) => setUrlTwitter(e.target.value)}
-              placeholder="https://..."
-              className="text-sm mt-1"
-              disabled={isPending}
-            />
-            <p className="text-xs text-muted-foreground mt-1">TwitterからのアクセスまたはX（旧Twitter）からのURL</p>
-          </div>
-
-          <div>
-            <Label htmlFor="url_instagram" className="text-sm font-bold">Instagram URL（オプション）</Label>
-            <Input
-              id="url_instagram"
-              value={urlInstagram}
-              onChange={(e) => setUrlInstagram(e.target.value)}
-              placeholder="https://..."
-              className="text-sm mt-1"
-              disabled={isPending}
-            />
-            <p className="text-xs text-muted-foreground mt-1">Instagramからのアクセス時のURL</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="url_pc" className="text-sm font-bold">PC URL</Label>
+              <Input
+                id="url_pc"
+                value={urlPc}
+                onChange={(e) => setUrlPc(e.target.value)}
+                placeholder="https://..."
+                className="text-sm mt-1"
+                disabled={isPending}
+              />
+            </div>
+            <div>
+              <Label htmlFor="url_line" className="text-sm font-bold">LINE URL</Label>
+              <Input
+                id="url_line"
+                value={urlLine}
+                onChange={(e) => setUrlLine(e.target.value)}
+                placeholder="https://..."
+                className="text-sm mt-1"
+                disabled={isPending}
+              />
+            </div>
+            <div>
+              <Label htmlFor="url_chrome" className="text-sm font-bold">Chrome URL</Label>
+              <Input
+                id="url_chrome"
+                value={urlChrome}
+                onChange={(e) => setUrlChrome(e.target.value)}
+                placeholder="https://..."
+                className="text-sm mt-1"
+                disabled={isPending}
+              />
+            </div>
+            <div>
+              <Label htmlFor="url_ios" className="text-sm font-bold">iOS URL</Label>
+              <Input
+                id="url_ios"
+                value={urlIos}
+                onChange={(e) => setUrlIos(e.target.value)}
+                placeholder="https://..."
+                className="text-sm mt-1"
+                disabled={isPending}
+              />
+            </div>
+            <div className="col-span-2">
+              <Label htmlFor="url_android" className="text-sm font-bold">Android URL</Label>
+              <Input
+                id="url_android"
+                value={urlAndroid}
+                onChange={(e) => setUrlAndroid(e.target.value)}
+                placeholder="https://..."
+                className="text-sm mt-1"
+                disabled={isPending}
+              />
+            </div>
           </div>
 
           {error && (
@@ -208,7 +232,7 @@ export default function ShortlinksManagement({ campaignId }: Props) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
                       <code className="text-xs font-mono bg-muted px-2 py-1 rounded text-ireland-green truncate">
-                        /link/{link.slug}
+                        /go/{link.slug}
                       </code>
                       <button
                         onClick={() => copyToClipboard(link.slug)}
@@ -222,7 +246,7 @@ export default function ShortlinksManagement({ campaignId }: Props) {
                         )}
                       </button>
                       <a
-                        href={`/link/${link.slug}`}
+                        href={`/go/${link.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
@@ -233,16 +257,20 @@ export default function ShortlinksManagement({ campaignId }: Props) {
                     </div>
                     {link.title && <p className="text-xs text-muted-foreground mb-1">{link.title}</p>}
                     <p className="text-xs text-muted-foreground truncate">{link.url_default}</p>
-                    {(link.url_line || link.url_twitter || link.url_instagram) && (
+                    {(link.url_line || link.url_pc || link.url_chrome || link.url_ios || link.url_android) && (
                       <div className="flex flex-wrap gap-1 mt-1.5">
-                        {link.url_line && <Badge className="text-[10px] bg-green-100 text-green-700 border-0">LINE</Badge>}
-                        {link.url_twitter && <Badge className="text-[10px] bg-blue-100 text-blue-700 border-0">Twitter/X</Badge>}
-                        {link.url_instagram && <Badge className="text-[10px] bg-pink-100 text-pink-700 border-0">Instagram</Badge>}
+                        {link.url_pc && <Badge className="text-[10px] bg-slate-100 text-slate-700 border-0"><Monitor className="w-2.5 h-2.5 mr-0.5" />PC</Badge>}
+                        {link.url_line && <Badge className="text-[10px] bg-green-100 text-green-700 border-0"><MessageCircle className="w-2.5 h-2.5 mr-0.5" />LINE</Badge>}
+                        {link.url_chrome && <Badge className="text-[10px] bg-yellow-100 text-yellow-700 border-0"><Chrome className="w-2.5 h-2.5 mr-0.5" />Chrome</Badge>}
+                        {link.url_ios && <Badge className="text-[10px] bg-gray-100 text-gray-700 border-0"><Smartphone className="w-2.5 h-2.5 mr-0.5" />iOS</Badge>}
+                        {link.url_android && <Badge className="text-[10px] bg-blue-100 text-blue-700 border-0"><Smartphone className="w-2.5 h-2.5 mr-0.5" />Android</Badge>}
                       </div>
                     )}
-                    <p className="text-[10px] text-muted-foreground/50 mt-1.5">
-                      {new Date(link.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
-                    </p>
+                    <div className="flex gap-3 mt-1.5 text-[10px] text-muted-foreground/50">
+                      <span>Total: {link.total_clicks}</span>
+                      <span>24h: {link.clicks_24h}</span>
+                      <span>{new Date(link.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}</span>
+                    </div>
                   </div>
                   <button
                     onClick={() => handleDelete(link.id)}

@@ -1,46 +1,45 @@
 import sql from "@/lib/db"
+import { getAdminSession } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
 
-export const POST = async (req: NextRequest) => {
-  try {
-    const { slug, title, url_default, url_line, url_twitter, url_instagram } = await req.json()
-    
-    if (!slug || !url_default) {
-      return NextResponse.json({ error: "slug and url_default required" }, { status: 400 })
-    }
-    
-    if (!/^[a-z0-9\-_]+$/.test(slug)) {
-      return NextResponse.json({ error: "slug: lowercase letters, numbers, -, _ only" }, { status: 400 })
-    }
-    
-    // Check if slug exists
-    const existing = await sql`SELECT id FROM shortlinks WHERE slug = ${slug} LIMIT 1`
-    if (existing.length > 0) {
-      return NextResponse.json({ error: "slug already exists" }, { status: 409 })
-    }
-    
-    await sql`
-      INSERT INTO shortlinks (slug, title, url_default, url_line, url_twitter, url_instagram, is_active)
-      VALUES (${slug}, ${title || ""}, ${url_default}, ${url_line || null}, ${url_twitter || null}, ${url_instagram || null}, true)
-    `
-    
-    return NextResponse.json({ success: true })
-  } catch (err: any) {
-    console.error("[v0] shortlinks POST error:", err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
-  }
+export async function GET() {
+  const admin = await getAdminSession()
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const links = await sql`
+    SELECT s.*,
+      (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id) as click_count,
+      (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id AND clicked_at > NOW() - INTERVAL '24 hours') as clicks_24h
+    FROM shortlinks s ORDER BY s.created_at DESC
+  `
+  return NextResponse.json(links)
 }
 
-export const GET = async (req: NextRequest) => {
-  try {
-    const links = await sql`
-      SELECT id, slug, title, url_default, url_line, url_twitter, url_instagram, is_active, created_at
-      FROM shortlinks
-      ORDER BY created_at DESC
-    `
-    return NextResponse.json(links)
-  } catch (err: any) {
-    console.error("[v0] shortlinks GET error:", err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+export async function POST(req: NextRequest) {
+  const admin = await getAdminSession()
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const body = await req.json()
+  let slug = body.slug?.trim().toLowerCase()
+
+  if (!slug) {
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+    for (let i = 0; i < 10; i++) {
+      slug = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("")
+      const dup = await sql`SELECT id FROM shortlinks WHERE slug = ${slug}`
+      if (dup.length === 0) break
+    }
   }
+
+  if (!body.url_default) return NextResponse.json({ error: "デフォルトURLは必須です" }, { status: 400 })
+
+  const dup = await sql`SELECT id FROM shortlinks WHERE slug = ${slug}`
+  if (dup.length > 0) return NextResponse.json({ error: "このスラグは既に使用されています" }, { status: 409 })
+
+  const result = await sql`
+    INSERT INTO shortlinks (slug, title, url_default, url_line, url_ios, url_android, url_chrome, url_pc)
+    VALUES (${slug}, ${body.title || ""}, ${body.url_default}, ${body.url_line || null}, ${body.url_ios || null}, ${body.url_android || null}, ${body.url_chrome || null}, ${body.url_pc || null})
+    RETURNING *
+  `
+  return NextResponse.json(result[0])
 }
