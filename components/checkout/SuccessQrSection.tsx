@@ -10,14 +10,22 @@ interface Props {
   linkUrl?: string
   linkLabel?: string
   redirectSeconds?: number
+  paused?: boolean
 }
 
-export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, redirectSeconds }: Props) {
+export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, redirectSeconds, paused }: Props) {
   const [countdown, setCountdown] = useState(redirectSeconds ?? 0)
   const [redirected, setRedirected] = useState(false)
 
+  // paused が解除されたらカウントダウンをリセットして開始
   useEffect(() => {
-    if (!redirectSeconds || redirectSeconds <= 0 || !qrUrl || redirected) return
+    if (!paused && redirectSeconds && redirectSeconds > 0 && !redirected) {
+      setCountdown(redirectSeconds)
+    }
+  }, [paused, redirectSeconds, redirected])
+
+  useEffect(() => {
+    if (!redirectSeconds || redirectSeconds <= 0 || !qrUrl || redirected || paused) return
 
     if (countdown <= 0) {
       setRedirected(true)
@@ -27,7 +35,7 @@ export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, r
 
     const timer = setTimeout(() => setCountdown((c) => c - 1), 1000)
     return () => clearTimeout(timer)
-  }, [countdown, redirectSeconds, qrUrl, redirected])
+  }, [countdown, redirectSeconds, qrUrl, redirected, paused])
 
   if (!qrUrl && !linkUrl) return null
 
@@ -56,9 +64,11 @@ export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, r
           </a>
           {redirectSeconds && redirectSeconds > 0 && !redirected && (
             <p className="text-xs text-muted-foreground">
-              {countdown > 0
-                ? `${countdown}秒後に自動的に移動します...`
-                : "リダイレクト中..."}
+              {paused
+                ? "配送先の入力完了後にリダイレクトします"
+                : countdown > 0
+                  ? `${countdown}秒後に自動的に移動します...`
+                  : "リダイレクト中..."}
             </p>
           )}
         </div>
