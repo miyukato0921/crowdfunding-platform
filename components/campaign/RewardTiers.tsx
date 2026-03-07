@@ -69,7 +69,7 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
     <div className="space-y-3">
       <h2 className="text-base sm:text-lg font-bold text-foreground">{t("chooseReturn")}</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 auto-rows-max">
+      <div className="grid grid-cols-1 gap-3">
         {rewards.map((reward) => {
           const style = getTierStyle(reward.amount, t)
           const isSoldOut = reward.limit_count !== null && reward.claimed_count >= reward.limit_count
