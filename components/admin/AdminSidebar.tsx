@@ -68,11 +68,19 @@ export default function AdminSidebar({ admin }: Props) {
           <div>
             <p className="font-black text-sidebar-foreground text-sm">Green Ireland</p>
             <p className="text-sidebar-foreground/50 text-xs">管理画面</p>
-            {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA && (
-              <p className="text-sidebar-foreground/25 text-[10px] font-mono leading-none mt-0.5">
-                {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.slice(0, 7)}
-              </p>
-            )}
+            <p className="text-sidebar-foreground/40 text-[11px] font-mono leading-tight mt-1">
+              {(() => {
+                const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME
+                const sha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
+                const parts: string[] = []
+                if (buildTime) {
+                  const d = new Date(buildTime)
+                  parts.push(d.toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Tokyo" }))
+                }
+                if (sha) parts.push(`#${sha.slice(0, 7)}`)
+                return parts.length > 0 ? parts.join(" ") : "dev"
+              })()}
+            </p>
           </div>
         </div>
       </div>

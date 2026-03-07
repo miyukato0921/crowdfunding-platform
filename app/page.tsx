@@ -158,12 +158,20 @@ export default async function Page() {
               システム提供・決済代行
             </Link>
           </div>
-          <p className="text-[10px] text-muted-foreground/50 font-mono">
-            {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
-              ? `v${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ?? "main"}`
-              : process.env.VERCEL_GIT_COMMIT_SHA
-                ? `v${process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)} · ${process.env.VERCEL_GIT_COMMIT_REF ?? "main"}`
-                : "dev"}
+          <p className="text-xs text-muted-foreground/60 font-mono">
+            {(() => {
+              const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME
+              const sha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA
+              const branch = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF ?? process.env.VERCEL_GIT_COMMIT_REF
+              const parts: string[] = []
+              if (buildTime) {
+                const d = new Date(buildTime)
+                parts.push(`Build: ${d.toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Tokyo" })}`)
+              }
+              if (sha) parts.push(`#${sha.slice(0, 7)}`)
+              if (branch) parts.push(branch)
+              return parts.length > 0 ? parts.join(" · ") : "dev"
+            })()}
           </p>
         </div>
       </footer>
