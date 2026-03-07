@@ -8,7 +8,10 @@ export async function GET() {
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const receipts = await sql`
-    SELECT * FROM receipts ORDER BY issued_date DESC, created_at DESC
+    SELECT r.*, p.supporter_email, p.supporter_name as pledge_supporter_name
+    FROM receipts r
+    LEFT JOIN pledges p ON p.id = r.pledge_id
+    ORDER BY r.created_at DESC
   `
   return NextResponse.json(receipts)
 }
@@ -18,57 +21,35 @@ export async function POST(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const body = await req.json()
-  const {
-    supporter_name,
-    amount,
-    proviso,
-    issued_date,
-    issuer_name,
-    issuer_address,
-    notes,
-  } = body
+  const { pledge_id, supporter_name, amount, proviso, issued_date, notes } = body
 
   if (!supporter_name || !amount) {
-    return NextResponse.json(
-      { error: "supporter_name and amount are required" },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: "宛名と金額は必須です" }, { status: 400 })
   }
 
-  // 領収書番号生成
-  const today = new Date().toISOString().split("T")[0].replace(/-/g, "")
-  const countToday = await sql`
-    SELECT COUNT(*) as count FROM receipts
-    WHERE receipt_number LIKE ${today + "%"}
-  `
-  const number = countToday[0]?.count ?? 0
-  const receipt_number = `GIF-${today}-${String(number + 1).padStart(4, "0")}`
-  const download_token = crypto.randomBytes(16).toString("hex")
+  // テンプレート取得
+  const templates = await sql`SELECT * FROM receipt_templates WHERE is_default = true LIMIT 1`
+  const tpl = templates[0] as any
+  if (!tpl) return NextResponse.json({ error: "テンプレートが未設定です" }, { status: 400 })
+
+  // 連番生成
+  const receiptNumber = `${tpl.prefix}-${String(tpl.next_number).padStart(6, "0")}`
+  const downloadToken = crypto.randomBytes(32).toString("hex")
 
   const result = await sql`
-    INSERT INTO receipts (
-      receipt_number,
-      supporter_name,
-      amount,
-      proviso,
-      issued_date,
-      issuer_name,
-      issuer_address,
-      download_token,
-      notes
-    ) VALUES (
-      ${receipt_number},
-      ${supporter_name},
-      ${amount},
-      ${proviso || "クラウドファンディング支援金として"},
-      ${issued_date || new Date().toISOString().split("T")[0]},
-      ${issuer_name},
-      ${issuer_address || null},
-      ${download_token},
-      ${notes || null}
-    )
-    RETURNING *
+    INSERT INTO receipts (receipt_number, pledge_id, template_id, supporter_name, amount, proviso, issued_date, issuer_name, issuer_address, download_token, notes)
+    VALUES (
+      ${receiptNumber}, ${pledge_id || null}, ${tpl.id},
+      ${supporter_name}, ${Number(amount)},
+      ${proviso || tpl.default_proviso},
+      ${issued_date || new Date().toISOString().slice(0, 10)},
+      ${tpl.issuer_name}, ${tpl.issuer_address || null},
+      ${downloadToken}, ${notes || null}
+    ) RETURNING *
   `
+
+  // 連番+1
+  await sql`UPDATE receipt_templates SET next_number = next_number + 1, updated_at = NOW() WHERE id = ${tpl.id}`
 
   return NextResponse.json(result[0])
 }

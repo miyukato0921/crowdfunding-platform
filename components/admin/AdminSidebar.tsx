@@ -20,6 +20,7 @@ import {
   Mail,
   Scale,
   Link as LinkIcon,
+  Receipt,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -38,6 +39,7 @@ const navItems = [
   { href: "/admin/shop-orders", label: "ショップ注文管理", icon: Store },
   { href: "/admin/users", label: "管理者ユーザー", icon: Users },
   { href: "/admin/email-templates", label: "メール配信設定", icon: Mail },
+  { href: "/admin/receipts", label: "領収書管理", icon: Receipt },
   { href: "/admin/shortlinks", label: "リンクショートカット", icon: LinkIcon },
   { href: "/admin/legal", label: "法的ページ管理", icon: Scale },
   { href: "/admin/settings", label: "共通設定", icon: Settings, superAdminOnly: true },

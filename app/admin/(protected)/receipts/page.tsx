@@ -6,13 +6,16 @@ export const dynamic = "force-dynamic"
 
 export default async function ReceiptsPage() {
   const receipts = await sql`
-    SELECT * FROM receipts
-    ORDER BY issued_date DESC, created_at DESC
-    LIMIT 100
+    SELECT r.*, p.supporter_email
+    FROM receipts r LEFT JOIN pledges p ON p.id = r.pledge_id
+    ORDER BY r.created_at DESC
   `
-  const templates = await sql`
-    SELECT * FROM receipt_templates
-    ORDER BY is_default DESC, created_at DESC
+  const templates = await sql`SELECT * FROM receipt_templates WHERE is_default = true LIMIT 1`
+  const pledges = await sql`
+    SELECT p.id, p.supporter_name, p.supporter_email, p.amount, p.payment_status, p.created_at,
+      (SELECT receipt_number FROM receipts WHERE pledge_id = p.id LIMIT 1) as existing_receipt
+    FROM pledges p WHERE p.payment_status = 'completed'
+    ORDER BY p.created_at DESC
   `
 
   return (
@@ -24,9 +27,13 @@ export default async function ReceiptsPage() {
           </div>
           <h1 className="text-2xl font-black text-foreground">領収書管理</h1>
         </div>
-        <p className="text-sm text-muted-foreground">領収書テンプレートの設定と発行状況の管理。</p>
+        <p className="text-sm text-muted-foreground">領収書の発行・編集・メール送信・CSV出力を管理します。</p>
       </div>
-      <ReceiptManagement initialReceipts={receipts as any} initialTemplates={templates as any} />
+      <ReceiptManagement
+        initialReceipts={receipts as any}
+        template={templates[0] as any ?? null}
+        pledges={pledges as any}
+      />
     </div>
   )
 }

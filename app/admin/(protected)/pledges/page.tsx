@@ -9,7 +9,9 @@ export default async function PledgesPage() {
       p.*,
       rt.title      AS reward_title,
       rt.requires_shipping,
-      c.title       AS campaign_title
+      c.title       AS campaign_title,
+      (SELECT receipt_number FROM receipts WHERE pledge_id = p.id LIMIT 1) as receipt_number,
+      (SELECT download_token FROM receipts WHERE pledge_id = p.id LIMIT 1) as receipt_download_token
     FROM pledges p
     LEFT JOIN reward_tiers rt ON rt.id = p.reward_tier_id
     LEFT JOIN campaigns c    ON c.id  = p.campaign_id

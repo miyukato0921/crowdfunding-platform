@@ -1,4 +1,4 @@
--- pledge_id カラム追加
+-- pledge_id, template_id, downloaded_at カラム追加
 ALTER TABLE receipts ADD COLUMN IF NOT EXISTS pledge_id INTEGER;
 ALTER TABLE receipts ADD COLUMN IF NOT EXISTS template_id INTEGER;
 ALTER TABLE receipts ADD COLUMN IF NOT EXISTS downloaded_at TIMESTAMPTZ;
