@@ -1,16 +1,43 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { CheckCircle, Heart, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/components/LanguageProvider"
+import SuccessQrSection from "@/components/checkout/SuccessQrSection"
 
 interface Props {
   campaignTitle: string
+  qrUrl?: string
+  qrLabel?: string
+  linkUrl?: string
+  linkLabel?: string
+  redirectSeconds?: number
+  needsShipping?: boolean
 }
 
-export default function SuccessPageClient({ campaignTitle }: Props) {
+export default function SuccessPageClient({
+  campaignTitle,
+  qrUrl,
+  qrLabel,
+  linkUrl,
+  linkLabel,
+  redirectSeconds,
+  needsShipping,
+}: Props) {
   const { t } = useLanguage()
+  const [shippingComplete, setShippingComplete] = useState(false)
+
+  useEffect(() => {
+    const handler = () => setShippingComplete(true)
+    window.addEventListener("shipping-complete", handler)
+    return () => window.removeEventListener("shipping-complete", handler)
+  }, [])
+
+  // 配送が必要かつまだ完了していない場合はリダイレクトを保留
+  const isPaused = needsShipping && !shippingComplete
+
   return (
     <>
       <div className="w-20 h-20 bg-ireland-green/15 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -28,6 +55,16 @@ export default function SuccessPageClient({ campaignTitle }: Props) {
         </div>
         <p className="text-sm text-muted-foreground">{t("successShareDesc")}</p>
       </div>
+
+      <SuccessQrSection
+        qrUrl={qrUrl}
+        qrLabel={qrLabel}
+        linkUrl={linkUrl}
+        linkLabel={linkLabel}
+        redirectSeconds={redirectSeconds}
+        paused={isPaused}
+      />
+
       <Button
         className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-bold rounded-xl"
         asChild

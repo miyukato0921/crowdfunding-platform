@@ -10,9 +10,10 @@ import { useLanguage } from "@/components/LanguageProvider"
 
 interface Props {
   orderId: number
+  onComplete?: () => void
 }
 
-export default function ShopSuccessShippingForm({ orderId }: Props) {
+export default function ShopSuccessShippingForm({ orderId, onComplete }: Props) {
   const { t } = useLanguage()
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -56,6 +57,7 @@ export default function ShopSuccessShippingForm({ orderId }: Props) {
       })
       if (!res.ok) throw new Error("error")
       setSubmitted(true)
+      onComplete?.()
     } catch {
       setError("送信に失敗しました。もう一度お試しください。")
     } finally {

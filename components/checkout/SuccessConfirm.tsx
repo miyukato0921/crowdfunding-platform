@@ -2,7 +2,7 @@
 import { getStripe } from "@/lib/stripe"
 import sql from "@/lib/db"
 import { sendTemplateEmail } from "@/lib/email"
-import ShippingForm from "./ShippingForm"
+import ShippingFormWithNotify from "./ShippingFormWithNotify"
 
 interface Props {
   sessionId: string
@@ -95,7 +95,7 @@ export default async function SuccessConfirm({ sessionId }: Props) {
 
     return (
       <div className="mb-8">
-        <ShippingForm pledgeId={reward.pledge_id} rewardTitle={reward.title} />
+        <ShippingFormWithNotify pledgeId={reward.pledge_id} rewardTitle={reward.title} />
       </div>
     )
   } catch (err) {

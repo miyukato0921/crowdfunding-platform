@@ -11,9 +11,10 @@ import { useLanguage } from "@/components/LanguageProvider"
 interface Props {
   pledgeId: number
   rewardTitle: string
+  onComplete?: () => void
 }
 
-export default function ShippingForm({ pledgeId, rewardTitle }: Props) {
+export default function ShippingForm({ pledgeId, rewardTitle, onComplete }: Props) {
   const { t } = useLanguage()
   const [name, setName] = useState("")
   const [postal, setPostal] = useState("")
@@ -57,6 +58,7 @@ export default function ShippingForm({ pledgeId, rewardTitle }: Props) {
       })
       if (!res.ok) throw new Error((await res.json()).error ?? "error")
       setSaved(true)
+      onComplete?.()
     } catch (err: any) {
       setError(err.message)
     } finally {
