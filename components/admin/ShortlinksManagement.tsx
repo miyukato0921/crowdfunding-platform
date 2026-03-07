@@ -306,27 +306,28 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
                         ) : (
                           <Copy className="w-3.5 h-3.5" />
                         )}
-                  <button
-                    onClick={() => openStats(link)}
-                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
-                    title="統計"
-                  >
-                    <BarChart3 className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => openEdit(link)}
-                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
-                    title="編集"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleToggle(link)}
-                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
-                    title={link.is_active ? "無効化" : "有効化"}
-                  >
-                    {link.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                  </button>
+                      </button>
+                      <button
+                        onClick={() => openStats(link)}
+                        className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                        title="統計"
+                      >
+                        <BarChart3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => openEdit(link)}
+                        className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                        title="編集"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleToggle(link)}
+                        className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                        title={link.is_active ? "無効化" : "有効化"}
+                      >
+                        {link.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      </button>
                       <a
                         href={`/go/${link.slug}`}
                         target="_blank"
