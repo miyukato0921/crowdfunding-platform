@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Copy, Check, Trash2, ExternalLink, Smartphone, Globe, MessageCircle, Chrome, Monitor } from "lucide-react"
+import { Copy, Check, Trash2, ExternalLink, Smartphone, Globe, MessageCircle, Chrome, Monitor, Pencil, Eye, EyeOff, BarChart3 } from "lucide-react"
 
 interface Shortlink {
   id: number
@@ -18,14 +18,17 @@ interface Shortlink {
   url_chrome: string | null
   url_pc: string | null
   is_active: boolean
-  total_clicks: number
   click_count: number
   clicks_24h: number
   created_at: string
 }
 
-export default function ShortlinksManagement() {
-  const [links, setLinks] = useState<Shortlink[]>([])
+interface Props {
+  initialLinks: Shortlink[]
+}
+
+export default function ShortlinksManagement({ initialLinks }: Props) {
+  const [links, setLinks] = useState<Shortlink[]>(initialLinks)
   const [slug, setSlug] = useState("")
   const [title, setTitle] = useState("")
   const [urlDefault, setUrlDefault] = useState("")
@@ -37,10 +40,38 @@ export default function ShortlinksManagement() {
   const [error, setError] = useState("")
   const [copied, setCopied] = useState<number | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [editId, setEditId] = useState<number | null>(null)
+  const [statsId, setStatsId] = useState<number | null>(null)
+  const [statsData, setStatsData] = useState<any>(null)
 
   const reload = async () => {
     const res = await fetch("/api/admin/shortlinks")
     if (res.ok) setLinks(await res.json())
+  }
+
+  const resetForm = () => {
+    setEditId(null)
+    setSlug("")
+    setTitle("")
+    setUrlDefault("")
+    setUrlLine("")
+    setUrlPc("")
+    setUrlChrome("")
+    setUrlIos("")
+    setUrlAndroid("")
+    setError("")
+  }
+
+  const openEdit = (link: Shortlink) => {
+    setEditId(link.id)
+    setSlug(link.slug)
+    setTitle(link.title)
+    setUrlDefault(link.url_default)
+    setUrlLine(link.url_line ?? "")
+    setUrlPc(link.url_pc ?? "")
+    setUrlChrome(link.url_chrome ?? "")
+    setUrlIos(link.url_ios ?? "")
+    setUrlAndroid(link.url_android ?? "")
   }
 
   const handleCreate = () => {
@@ -67,14 +98,25 @@ export default function ShortlinksManagement() {
         setError(data.error)
         return
       }
-      setSlug("")
-      setTitle("")
-      setUrlDefault("")
-      setUrlLine("")
-      setUrlPc("")
-      setUrlChrome("")
-      setUrlIos("")
-      setUrlAndroid("")
+      resetForm()
+      await reload()
+    })
+  }
+
+  const handleUpdate = () => {
+    if (!editId || !urlDefault.trim()) return
+    startTransition(async () => {
+      await fetch(`/api/admin/shortlinks/${editId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title, url_default: urlDefault,
+          url_line: urlLine || null, url_pc: urlPc || null,
+          url_chrome: urlChrome || null, url_ios: urlIos || null,
+          url_android: urlAndroid || null, is_active: true,
+        }),
+      })
+      resetForm()
       await reload()
     })
   }
@@ -85,6 +127,23 @@ export default function ShortlinksManagement() {
       await fetch(`/api/admin/shortlinks/${id}`, { method: "DELETE" })
       await reload()
     })
+  }
+
+  const handleToggle = (link: Shortlink) => {
+    startTransition(async () => {
+      await fetch(`/api/admin/shortlinks/${link.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...link, is_active: !link.is_active }),
+      })
+      await reload()
+    })
+  }
+
+  const openStats = async (link: Shortlink) => {
+    setStatsId(link.id)
+    const res = await fetch(`/api/admin/shortlinks/${link.id}`)
+    if (res.ok) setStatsData(await res.json())
   }
 
   const copyToClipboard = (slug: string) => {
@@ -202,12 +261,15 @@ export default function ShortlinksManagement() {
           )}
 
           <Button
-            onClick={handleCreate}
+            onClick={editId ? handleUpdate : handleCreate}
             disabled={isPending}
             className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-bold"
           >
-            リンクを作成
+            {isPending ? "処理中..." : editId ? "更新する" : "リンク作成"}
           </Button>
+          {editId && (
+            <Button variant="outline" onClick={resetForm} className="w-full">キャンセル</Button>
+          )}
         </div>
       </div>
 
@@ -244,7 +306,27 @@ export default function ShortlinksManagement() {
                         ) : (
                           <Copy className="w-3.5 h-3.5" />
                         )}
-                      </button>
+                  <button
+                    onClick={() => openStats(link)}
+                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                    title="統計"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => openEdit(link)}
+                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                    title="編集"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleToggle(link)}
+                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                    title={link.is_active ? "無効化" : "有効化"}
+                  >
+                    {link.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                  </button>
                       <a
                         href={`/go/${link.slug}`}
                         target="_blank"
@@ -285,6 +367,26 @@ export default function ShortlinksManagement() {
           )}
         </div>
       </div>
-    </div>
-  )
-}
+
+      {statsId && statsData && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-lg">クリック統計</h3>
+            <button onClick={() => { setStatsId(null); setStatsData(null) }} className="text-muted-foreground hover:text-foreground text-sm">閉じる</button>
+          </div>
+          <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+            <div className="text-center">
+              <p className="text-4xl font-black text-ireland-green">{statsData.link?.click_count ?? 0}</p>
+              <p className="text-sm text-muted-foreground">総クリック数</p>
+            </div>
+            <div className="space-y-2">
+              {statsData.stats?.map((s: any) => (
+                <div key={s.detected_platform} className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2">
+                  <span className="text-sm font-medium">{s.detected_platform}</span>
+                  <span className="font-bold text-sm">{s.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}

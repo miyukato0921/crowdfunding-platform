@@ -15,6 +15,7 @@ interface Props {
   linkLabel?: string
   redirectSeconds?: number
   needsShipping?: boolean
+  message?: string
 }
 
 export default function SuccessPageClient({
@@ -25,6 +26,7 @@ export default function SuccessPageClient({
   linkLabel,
   redirectSeconds,
   needsShipping,
+  message,
 }: Props) {
   const { t } = useLanguage()
   const [shippingComplete, setShippingComplete] = useState(false)
@@ -63,6 +65,7 @@ export default function SuccessPageClient({
         linkLabel={linkLabel}
         redirectSeconds={redirectSeconds}
         paused={isPaused}
+        message={message}
       />
 
       <Button

@@ -96,7 +96,7 @@ export default async function ShopSuccessPage({
   // QRコード・リンク設定を取得
   let qrSettings: Record<string, string> = {}
   try {
-    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('success_qr_url', 'success_qr_label', 'success_link_url', 'success_link_label', 'success_redirect_seconds')`
+    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('success_qr_url', 'success_qr_label', 'success_link_url', 'success_link_label', 'success_redirect_seconds', 'success_message')`
     for (const r of rows) qrSettings[r.key] = r.value
   } catch {}
 
@@ -110,6 +110,7 @@ export default async function ShopSuccessPage({
           linkUrl={qrSettings.success_link_url}
           linkLabel={qrSettings.success_link_label}
           redirectSeconds={qrSettings.success_redirect_seconds ? parseInt(qrSettings.success_redirect_seconds) : undefined}
+          message={qrSettings.success_message}
         />
       </div>
     </>

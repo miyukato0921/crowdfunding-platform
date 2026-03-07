@@ -134,6 +134,7 @@ export default function SiteSettingsForm({ initial }: Props) {
   const [successLinkUrl, setSuccessLinkUrl] = useState(initial.success_link_url ?? "")
   const [successLinkLabel, setSuccessLinkLabel] = useState(initial.success_link_label ?? "")
   const [successRedirectSeconds, setSuccessRedirectSeconds] = useState(initial.success_redirect_seconds ?? "")
+  const [successMessage, setSuccessMessage] = useState(initial.success_message ?? "")
 
   const handleSave = () => {
     startTransition(async () => {
@@ -153,6 +154,7 @@ export default function SiteSettingsForm({ initial }: Props) {
         success_link_url: successLinkUrl,
         success_link_label: successLinkLabel,
         success_redirect_seconds: successRedirectSeconds,
+        success_message: successMessage,
       }
       // masked・空欄は上書きしない
       if (stripeKey && stripeKey !== MASKED) payload.stripe_secret_key = stripeKey
@@ -509,19 +511,30 @@ export default function SiteSettingsForm({ initial }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="success_redirect_seconds">自動リダイレクト（秒）</Label>
+          <Label htmlFor="success_redirect_seconds">自動リダイレクト秒数（オプション）</Label>
           <Input
             id="success_redirect_seconds"
             type="number"
             min={0}
             value={successRedirectSeconds}
             onChange={(e) => setSuccessRedirectSeconds(e.target.value)}
-            placeholder="空欄 = リダイレクトしない"
-            className="font-mono text-sm w-32"
+            placeholder="10"
+            className="font-mono text-sm"
           />
-          <p className="text-xs text-muted-foreground">
-            完了画面表示後、指定秒数でQRコードのURLに自動遷移します。空欄の場合はリダイレクトしません。
-          </p>
+          <p className="text-xs text-muted-foreground">秒数を指定すると、完了画面から自動的にホームにリダイレクト。0 = リダイレクトなし。</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="success_message">任意メッセージ</Label>
+          <Textarea
+            id="success_message"
+            value={successMessage}
+            onChange={(e) => setSuccessMessage(e.target.value)}
+            placeholder="ご支援ありがとうございます。イベント当日のご来場をお待ちしております！"
+            rows={3}
+            className="resize-none"
+          />
+          <p className="text-xs text-muted-foreground">完了画面のQRコード上に表示。空欄で非表示。</p>
         </div>
 
         {/* プレビュー */}

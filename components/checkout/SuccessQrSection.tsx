@@ -11,9 +11,10 @@ interface Props {
   linkLabel?: string
   redirectSeconds?: number
   paused?: boolean
+  message?: string
 }
 
-export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, redirectSeconds, paused }: Props) {
+export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, redirectSeconds, paused, message }: Props) {
   const [countdown, setCountdown] = useState(redirectSeconds ?? 0)
   const [redirected, setRedirected] = useState(false)
 
@@ -50,6 +51,9 @@ export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, r
             width={180}
             height={180}
           />
+          {message && (
+            <p className="text-xs font-medium text-muted-foreground italic">{message}</p>
+          )}
           {qrLabel && (
             <p className="font-bold text-sm text-foreground">{qrLabel}</p>
           )}
