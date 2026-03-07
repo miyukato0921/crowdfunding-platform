@@ -12,27 +12,27 @@ export default function CampaignHeader() {
   const title = siteTitle || "Green Ireland Festival"
 
   return (
-    <header className="bg-ireland-dark text-white py-2 px-4 sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 min-w-0">
+    <header className="bg-ireland-dark text-white py-2 px-3 sm:px-4 sticky top-0 z-40">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           {logoUrl ? (
             <Image
               src={logoUrl}
               alt={title}
-              width={40}
-              height={40}
-              className="rounded-full object-cover shrink-0"
+              width={36}
+              height={36}
+              className="rounded-full object-cover shrink-0 w-7 h-7 sm:w-9 sm:h-9"
               unoptimized
             />
           ) : (
-            <div className="w-10 h-10 bg-ireland-gold rounded-full flex items-center justify-center shrink-0">
-              <Leaf className="w-4.5 h-4.5 text-ireland-dark" />
+            <div className="w-7 h-7 sm:w-9 sm:h-9 bg-ireland-gold rounded-full flex items-center justify-center shrink-0">
+              <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ireland-dark" />
             </div>
           )}
-          <span className="font-bold text-base sm:text-lg tracking-tight truncate">{title}</span>
+          <span className="font-bold text-xs sm:text-base tracking-tight truncate">{title}</span>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <span className="text-white/60 text-xs sm:text-sm hidden sm:block">{t("crowdfunding")}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-white/60 text-sm hidden sm:block">{t("crowdfunding")}</span>
           <LanguageSwitcher />
         </div>
       </div>
