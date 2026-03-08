@@ -1,25 +1,19 @@
-import { cookies } from 'next/headers'
-import sql from './db'
+import "server-only"
+import { cookies } from "next/headers"
+import sql from "./db"
+import { AdminUser } from "./db"
 
-export async function getSession() {
+export async function getAdminSession(): Promise<AdminUser | null> {
   const cookieStore = await cookies()
-  const sessionId = cookieStore.get('session_id')?.value
-  if (!sessionId) return null
+  const token = cookieStore.get("admin_session")?.value
+  if (!token) return null
 
-  const sessions = await sql`
-    SELECT s.*, u.username
+  const result = await sql`
+    SELECT au.id, au.email, au.name, au.role, au.created_at
     FROM admin_sessions s
-    JOIN admin_users u ON u.id = s.user_id
-    WHERE s.id = ${sessionId}
-      AND s.expires_at > NOW()
+    JOIN admin_users au ON au.id = s.admin_user_id
+    WHERE s.token = ${token} AND s.expires_at > NOW()
+    LIMIT 1
   `
-  return sessions[0] ?? null
-}
-
-export async function requireAuth() {
-  const session = await getSession()
-  if (!session) {
-    return null
-  }
-  return session
+  return (result[0] as AdminUser) ?? null
 }

@@ -1,46 +1,67 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { LanguageProvider } from '@/components/LanguageProvider'
+import { SiteSettingsProvider } from '@/components/SiteSettingsProvider'
+import sql from '@/lib/db'
 import './globals.css'
 
 const notoSansJP = Noto_Sans_JP({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  display: "swap",
 })
 
-export const metadata: Metadata = {
-  title: 'LINE配信管理システム',
-  description: 'チケット申込者へのLINEメッセージ配信管理',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+export const dynamic = "force-dynamic"
+
+export async function generateMetadata(): Promise<Metadata> {
+  let siteTitle = "Green Ireland Festival"
+  try {
+    const rows = await sql`SELECT value FROM site_settings WHERE key = 'site_title' LIMIT 1`
+    if (rows[0]?.value) siteTitle = rows[0].value
+  } catch {}
+
+  return {
+    title: `${siteTitle} - クラウドファンディング`,
+    description: `${siteTitle}のクラウドファンディングプロジェクト`,
+    keywords: [siteTitle, 'クラウドファンディング'],
+    openGraph: {
+      title: siteTitle,
+      description: `${siteTitle}のクラウドファンディング`,
+      type: 'website',
+    },
+  }
 }
 
-export default function RootLayout({
+async function getSiteSettings() {
+  try {
+    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('logo_url', 'site_title')`
+    const map: Record<string, string> = {}
+    for (const r of rows) map[r.key] = r.value
+    return map
+  } catch {
+    return {}
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const settings = await getSiteSettings()
+
   return (
     <html lang="ja">
-      <body className={`${notoSansJP.className} font-sans antialiased`}>
-        {children}
+      <body className={`${notoSansJP.className} font-sans antialiased bg-background text-foreground`}>
+        <SiteSettingsProvider
+          logoUrl={settings.logo_url ?? ""}
+          siteTitle={settings.site_title ?? "Green Ireland Festival"}
+        >
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </SiteSettingsProvider>
         <Analytics />
       </body>
     </html>
