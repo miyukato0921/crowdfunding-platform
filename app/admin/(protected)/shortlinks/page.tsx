@@ -5,16 +5,25 @@ import { Link2 } from "lucide-react"
 export const dynamic = "force-dynamic"
 
 export default async function ShortlinksPage() {
-  const links = await sql`
-    SELECT s.*,
-      (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id) as click_count,
-      (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id AND clicked_at > NOW() - INTERVAL '24 hours') as clicks_24h,
-      (SELECT jsonb_object_agg(detected_platform, count) FROM (
-        SELECT detected_platform, COUNT(*)::int as count FROM shortlink_clicks 
-        WHERE shortlink_id = s.id GROUP BY detected_platform
-      ) t) as stats
-    FROM shortlinks s ORDER BY s.created_at DESC
-  `
+  let links: any[] = []
+  let error: string | null = null
+
+  try {
+    links = await sql`
+      SELECT s.*,
+        (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id) as click_count,
+        (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id AND clicked_at > NOW() - INTERVAL '24 hours') as clicks_24h,
+        (SELECT jsonb_object_agg(detected_platform, count) FROM (
+          SELECT detected_platform, COUNT(*)::int as count FROM shortlink_clicks 
+          WHERE shortlink_id = s.id GROUP BY detected_platform
+        ) t) as stats
+      FROM shortlinks s ORDER BY s.created_at DESC
+    `
+  } catch (err) {
+    console.error("[v0] Shortlinks query error:", err)
+    error = "データベースへの接続に失敗しました"
+  }
+
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="mb-8">
@@ -26,6 +35,13 @@ export default async function ShortlinksPage() {
         </div>
         <p className="text-sm text-muted-foreground">短縮URLを発行し、端末ごとに異なるURLへ振り分け。クリック数も自動計測。</p>
       </div>
+      
+      {error && (
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-4 text-destructive text-sm">
+          {error}
+        </div>
+      )}
+      
       <ShortlinksManagement initialLinks={links as any} />
     </div>
   )

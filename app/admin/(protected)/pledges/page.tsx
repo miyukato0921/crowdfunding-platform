@@ -6,28 +6,38 @@ import PledgesExportButton from "@/components/admin/PledgesExportButton"
 export const dynamic = "force-dynamic"
 
 export default async function PledgesPage() {
-  const pledges = await sql`
-    SELECT
-      p.*,
-      rt.title      AS reward_title,
-      rt.requires_shipping,
-      c.title       AS campaign_title
-    FROM pledges p
-    LEFT JOIN reward_tiers rt ON rt.id = p.reward_tier_id
-    LEFT JOIN campaigns c    ON c.id  = p.campaign_id
-    ORDER BY p.created_at DESC
-    LIMIT 200
-  `
+  let pledges: any[] = []
+  let stats: any = {}
+  let error: string | null = null
 
-  const statsRows = await sql`
-    SELECT
-      COALESCE(SUM(amount)  FILTER (WHERE payment_status = 'completed'), 0)       AS total_completed,
-      COUNT(*)              FILTER (WHERE payment_status = 'completed')            AS count_completed,
-      COUNT(*)              FILTER (WHERE payment_status = 'pending')              AS count_pending,
-      COUNT(*)              FILTER (WHERE shipping_status = 'waiting')             AS count_shipping
-    FROM pledges
-  `
-  const stats = statsRows[0] as any
+  try {
+    const pledgesData = await sql`
+      SELECT
+        p.*,
+        rt.title      AS reward_title,
+        rt.requires_shipping,
+        c.title       AS campaign_title
+      FROM pledges p
+      LEFT JOIN reward_tiers rt ON rt.id = p.reward_tier_id
+      LEFT JOIN campaigns c    ON c.id  = p.campaign_id
+      ORDER BY p.created_at DESC
+      LIMIT 200
+    `
+    pledges = pledgesData
+
+    const statsRows = await sql`
+      SELECT
+        COALESCE(SUM(amount)  FILTER (WHERE payment_status = 'completed'), 0)       AS total_completed,
+        COUNT(*)              FILTER (WHERE payment_status = 'completed')            AS count_completed,
+        COUNT(*)              FILTER (WHERE payment_status = 'pending')              AS count_pending,
+        COUNT(*)              FILTER (WHERE shipping_status = 'waiting')             AS count_shipping
+      FROM pledges
+    `
+    stats = statsRows[0] || {}
+  } catch (err) {
+    console.error("[v0] Pledges query error:", err)
+    error = "データベースへの接続に失敗しました"
+  }
 
   return (
     <div className="p-6 lg:p-8">
@@ -43,6 +53,12 @@ export default async function PledgesPage() {
         </div>
         <PledgesExportButton />
       </div>
+
+      {error && (
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-4 text-destructive text-sm">
+          {error}
+        </div>
+      )}
 
       <PledgesManagement pledges={pledges as any} stats={stats} />
     </div>
