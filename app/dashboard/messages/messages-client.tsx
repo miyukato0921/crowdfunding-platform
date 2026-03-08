@@ -75,7 +75,10 @@ const AUTO_TAGS = [
 export default function MessagesClient({ campaigns: initialCampaigns }: { campaigns: Campaign[] }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns)
   const [products, setProducts] = useState<Product[]>([])
-  const [tab, setTab] = useState<'draft' | 'sent'>('draft')
+  // 初期タブを決定：送信済みがあればそちらを表示、なければ下書き
+  const [tab, setTab] = useState<'draft' | 'sent'>(
+    initialCampaigns.some((c) => c.status === 'sent') ? 'sent' : 'draft'
+  )
   const [editingId, setEditingId] = useState<number | null>(null) // null = new
   const [showForm, setShowForm] = useState(false)
   const [tagTabVenue, setTagTabVenue] = useState('')
