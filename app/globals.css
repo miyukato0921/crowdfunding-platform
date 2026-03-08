@@ -4,47 +4,39 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Green Ireland Festival Theme */
-  --background: oklch(0.99 0.004 140);
-  --foreground: oklch(0.15 0.02 150);
+  --background: oklch(0.972 0.003 247.858);
+  --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 150);
+  --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 150);
-  /* Irish Green as primary */
-  --primary: oklch(0.42 0.15 152);
-  --primary-foreground: oklch(1 0 0);
-  /* Gold accent */
-  --secondary: oklch(0.82 0.14 85);
-  --secondary-foreground: oklch(0.15 0.02 150);
-  --muted: oklch(0.96 0.008 140);
-  --muted-foreground: oklch(0.48 0.04 150);
-  --accent: oklch(0.82 0.14 85);
-  --accent-foreground: oklch(0.15 0.02 150);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.279 0.077 239.578);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.929 0.013 247.858);
+  --secondary-foreground: oklch(0.279 0.077 239.578);
+  --muted: oklch(0.951 0.008 247.858);
+  --muted-foreground: oklch(0.554 0.025 247.858);
+  --accent: oklch(0.696 0.193 149.579);
+  --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.88 0.02 140);
-  --input: oklch(0.92 0.01 140);
-  --ring: oklch(0.42 0.15 152);
-  --chart-1: oklch(0.42 0.15 152);
-  --chart-2: oklch(0.82 0.14 85);
-  --chart-3: oklch(0.55 0.12 152);
-  --chart-4: oklch(0.7 0.1 85);
-  --chart-5: oklch(0.3 0.1 152);
-  --radius: 0.75rem;
-  /* festival green tones */
-  --ireland-green: oklch(0.42 0.15 152);
-  --ireland-gold: oklch(0.82 0.14 85);
-  --ireland-dark: oklch(0.2 0.05 152);
-  --ireland-light: oklch(0.96 0.02 140);
-  --sidebar: oklch(0.18 0.05 152);
-  --sidebar-foreground: oklch(0.95 0.01 140);
-  --sidebar-primary: oklch(0.82 0.14 85);
-  --sidebar-primary-foreground: oklch(0.15 0.02 150);
-  --sidebar-accent: oklch(0.28 0.07 152);
-  --sidebar-accent-foreground: oklch(0.95 0.01 140);
-  --sidebar-border: oklch(0.28 0.07 152);
-  --sidebar-ring: oklch(0.82 0.14 85);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.893 0.013 247.858);
+  --input: oklch(0.893 0.013 247.858);
+  --ring: oklch(0.279 0.077 239.578);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.696 0.193 149.579);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.279 0.077 239.578);
+  --sidebar-foreground: oklch(0.929 0.013 247.858);
+  --sidebar-primary: oklch(0.696 0.193 149.579);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.22 0.055 239.578);
+  --sidebar-accent-foreground: oklch(0.929 0.013 247.858);
+  --sidebar-border: oklch(0.22 0.055 239.578);
+  --sidebar-ring: oklch(0.554 0.025 247.858);
 }
 
 .dark {
@@ -83,12 +75,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Noto Sans JP', 'Geist', sans-serif;
+  --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
-  --color-ireland-green: var(--ireland-green);
-  --color-ireland-gold: var(--ireland-gold);
-  --color-ireland-dark: var(--ireland-dark);
-  --color-ireland-light: var(--ireland-light);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
