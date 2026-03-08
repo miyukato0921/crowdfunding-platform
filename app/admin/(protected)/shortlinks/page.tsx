@@ -8,7 +8,11 @@ export default async function ShortlinksPage() {
   const links = await sql`
     SELECT s.*,
       (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id) as click_count,
-      (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id AND clicked_at > NOW() - INTERVAL '24 hours') as clicks_24h
+      (SELECT COUNT(*)::int FROM shortlink_clicks WHERE shortlink_id = s.id AND clicked_at > NOW() - INTERVAL '24 hours') as clicks_24h,
+      (SELECT jsonb_object_agg(detected_platform, count) FROM (
+        SELECT detected_platform, COUNT(*)::int as count FROM shortlink_clicks 
+        WHERE shortlink_id = s.id GROUP BY detected_platform
+      ) t) as stats
     FROM shortlinks s ORDER BY s.created_at DESC
   `
   return (

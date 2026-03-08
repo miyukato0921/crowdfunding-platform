@@ -20,6 +20,7 @@ interface Shortlink {
   is_active: boolean
   click_count: number
   clicks_24h: number
+  stats?: Record<string, number>
   created_at: string
 }
 
