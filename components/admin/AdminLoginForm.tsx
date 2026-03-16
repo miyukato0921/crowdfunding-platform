@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 
 export default function AdminLoginForm() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -24,7 +24,7 @@ export default function AdminLoginForm() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? "ログインに失敗しました。")
@@ -40,16 +40,16 @@ export default function AdminLoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="email" className="text-sm font-medium">メールアドレス</Label>
+        <Label htmlFor="username" className="text-sm font-medium">ユーザー名</Label>
         <Input
-          id="email"
-          type="email"
+          id="username"
+          type="text"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="admin@greenireland.jp"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="admin"
           className="mt-1"
-          autoComplete="email"
+          autoComplete="username"
         />
       </div>
 
