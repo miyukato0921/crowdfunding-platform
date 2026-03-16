@@ -10,7 +10,7 @@ const nextConfig = {
     NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
   },
   turbopack: {
-    root: '/vercel/share',
+    root: '/vercel/share/v0-next-shadcn',
   },
 }
 
