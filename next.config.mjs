@@ -9,9 +9,6 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
   },
-  turbopack: {
-    root: '/vercel/share/v0-project',
-  },
 }
 
 export default nextConfig
