@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const users = await sql`
-      SELECT id, username, password_hash FROM admin_users WHERE username = ${username} LIMIT 1
+      SELECT id, email, password_hash FROM admin_users WHERE email = ${username} LIMIT 1
     `
     const user = users[0]
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
 
     await sql`
-      INSERT INTO admin_sessions (user_id, token, expires_at)
+      INSERT INTO admin_sessions (admin_user_id, token, expires_at)
       VALUES (${user.id}, ${token}, ${expiresAt.toISOString()})
     `
 
