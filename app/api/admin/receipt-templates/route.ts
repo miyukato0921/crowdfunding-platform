@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       ${body.prefix || "GIF"},
       ${body.default_proviso || "クラウドファンディング支援金として"},
       ${body.footer_note || null},
-      false
+      ${body.is_default ?? true}
     )
     RETURNING *
   `

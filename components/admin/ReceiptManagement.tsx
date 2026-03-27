@@ -4,7 +4,15 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Search, Mail, RotateCcw, ExternalLink, Trash2 } from "lucide-react"
+import { Search, Mail, RotateCcw, ExternalLink, Trash2, Pencil } from "lucide-react"
 
 interface Receipt {
   id: number
@@ -50,6 +58,11 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
   const [search, setSearch] = useState("")
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [bulkEmailSending, setBulkEmailSending] = useState(false)
+
+  // Edit dialog
+  const [editTarget, setEditTarget] = useState<Receipt | null>(null)
+  const [editName, setEditName] = useState("")
+  const [editSaving, setEditSaving] = useState(false)
 
   // Reissue dialog
   const [reissueTarget, setReissueTarget] = useState<Receipt | null>(null)
@@ -131,6 +144,33 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
       alert(err instanceof Error ? err.message : "再発行に失敗しました")
     } finally {
       setReissuing(false)
+    }
+  }
+
+  // Edit supporter name
+  const openEdit = (receipt: Receipt) => {
+    setEditTarget(receipt)
+    setEditName(receipt.supporter_name)
+  }
+
+  const handleEditSave = async () => {
+    if (!editTarget || !editName.trim()) return
+    setEditSaving(true)
+    try {
+      const res = await fetch(`/api/admin/receipts/${editTarget.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ supporter_name: editName.trim() }),
+      })
+      if (!res.ok) throw new Error()
+      setReceipts((prev) =>
+        prev.map((r) => (r.id === editTarget.id ? { ...r, supporter_name: editName.trim() } : r))
+      )
+      setEditTarget(null)
+    } catch {
+      alert("保存に失敗しました")
+    } finally {
+      setEditSaving(false)
     }
   }
 
@@ -267,6 +307,15 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
                       <Button
                         size="icon"
                         variant="ghost"
+                        className="w-7 h-7 rounded-lg"
+                        onClick={() => openEdit(receipt)}
+                        title="宛名編集"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
                         className="w-7 h-7 rounded-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         onClick={() => window.open(`/api/receipts/${receipt.download_token}`, "_blank")}
                         title="領収書を表示"
@@ -302,6 +351,41 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
           )}
         </div>
       </div>
+
+      {/* Edit dialog */}
+      <Dialog open={!!editTarget} onOpenChange={(v) => !v && setEditTarget(null)}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle>宛名を編集</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <Label className="text-sm font-medium">領収書番号</Label>
+              <p className="text-sm text-muted-foreground font-mono">{editTarget?.receipt_number}</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_name" className="text-sm font-medium">宛名</Label>
+              <Input
+                id="edit_name"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="宛名を入力"
+                className="rounded-xl"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditTarget(null)} className="rounded-xl">キャンセル</Button>
+            <Button
+              onClick={handleEditSave}
+              disabled={editSaving || !editName.trim()}
+              className="rounded-xl bg-ireland-green hover:bg-ireland-green/90 text-white"
+            >
+              {editSaving ? "保存中..." : "保存する"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Reissue dialog */}
       <AlertDialog open={!!reissueTarget} onOpenChange={(v) => !v && setReissueTarget(null)}>
