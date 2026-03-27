@@ -203,40 +203,39 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       })
 
       // Save receipt template settings
-      if (receiptTemplate?.id) {
-        await fetch(`/api/admin/receipt-templates/${receiptTemplate.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            issuer_name: rcptIssuerName,
-            issuer_address: rcptIssuerAddress,
-            issuer_tel: rcptIssuerTel,
-            issuer_email: rcptIssuerEmail,
-            logo_url: rcptLogoUrl,
-            stamp_url: rcptStampUrl,
-            prefix: rcptPrefix,
-            default_proviso: rcptProviso,
-            footer_note: rcptFooterNote,
-          }),
-        })
-      } else {
-        // Create default template if none exists
-        await fetch("/api/admin/receipt-templates", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: "デフォルト",
-            issuer_name: rcptIssuerName,
-            issuer_address: rcptIssuerAddress,
-            issuer_tel: rcptIssuerTel,
-            issuer_email: rcptIssuerEmail,
-            logo_url: rcptLogoUrl,
-            stamp_url: rcptStampUrl,
-            prefix: rcptPrefix,
-            default_proviso: rcptProviso,
-            footer_note: rcptFooterNote,
-          }),
-        })
+      // First check if any template exists
+      const rcptPayload = {
+        name: "デフォルト",
+        issuer_name: rcptIssuerName,
+        issuer_address: rcptIssuerAddress,
+        issuer_tel: rcptIssuerTel,
+        issuer_email: rcptIssuerEmail,
+        logo_url: rcptLogoUrl,
+        stamp_url: rcptStampUrl,
+        prefix: rcptPrefix,
+        default_proviso: rcptProviso,
+        footer_note: rcptFooterNote,
+      }
+      try {
+        const tplRes = await fetch("/api/admin/receipt-templates")
+        const templates = await tplRes.json()
+        const existingTpl = Array.isArray(templates) && templates.length > 0 ? templates[0] : null
+
+        if (existingTpl?.id) {
+          await fetch(`/api/admin/receipt-templates/${existingTpl.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(rcptPayload),
+          })
+        } else {
+          await fetch("/api/admin/receipt-templates", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(rcptPayload),
+          })
+        }
+      } catch (e) {
+        console.error("Receipt template save error:", e)
       }
 
       setSaved(true)
