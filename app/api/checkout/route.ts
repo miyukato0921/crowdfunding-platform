@@ -50,9 +50,7 @@ export async function POST(req: NextRequest) {
     }
 
     const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
-    console.log("[v0] Checkout: Getting Stripe client...")
     const stripeClient = await getStripe()
-    console.log("[v0] Checkout: Stripe client obtained successfully")
 
     const session = await stripeClient.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -109,8 +107,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (err: any) {
-    console.error("[v0] Checkout error:", err?.message || err)
-    console.error("[v0] Full error:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2))
+    console.error("[checkout]", err?.message || err)
     return NextResponse.json({ error: err?.message || "決済の作成に失敗しました。" }, { status: 500 })
   }
 }
