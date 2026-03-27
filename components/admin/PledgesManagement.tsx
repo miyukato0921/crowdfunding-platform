@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Pencil, Trash2, Truck, MapPin, Package, Search, Mail } from "lucide-react"
+import { Pencil, Trash2, Truck, MapPin, Package, Search, Mail, Receipt } from "lucide-react"
 import { formatYen } from "@/lib/utils"
 
 const paymentStatusConfig: Record<string, { label: string; className: string }> = {
@@ -98,6 +98,11 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
   const [bulkSubject, setBulkSubject] = useState("")
   const [bulkBody, setBulkBody] = useState("")
   const [bulkSending, setBulkSending] = useState(false)
+
+  // 領収書発行
+  const [receiptDialogOpen, setReceiptDialogOpen] = useState(false)
+  const [receiptSendEmail, setReceiptSendEmail] = useState(true)
+  const [receiptIssuing, setReceiptIssuing] = useState(false)
 
   const filtered = pledges.filter(p => {
     const q = search.toLowerCase()
@@ -246,6 +251,33 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
     }
   }
 
+  // 一括領収書発行
+  const handleBulkReceipt = async () => {
+    setReceiptIssuing(true)
+    try {
+      const res = await fetch("/api/admin/receipts/bulk-create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pledge_ids: Array.from(selectedIds),
+          send_email: receiptSendEmail,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "発行に失敗しました")
+      const msgs = [`領収書発行完了: ${data.created}件作成`]
+      if (receiptSendEmail && data.emailed > 0) msgs.push(`${data.emailed}件メール送信`)
+      if (data.skipped > 0) msgs.push(`${data.skipped}件スキップ（発行済みまたは未完了）`)
+      alert(msgs.join("、"))
+      setReceiptDialogOpen(false)
+      setSelectedIds(new Set())
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "領収書の発行に失敗しました")
+    } finally {
+      setReceiptIssuing(false)
+    }
+  }
+
   return (
     <>
       {/* Stats */}
@@ -284,6 +316,15 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
         <div className="flex items-center gap-3 mb-4 bg-ireland-green/10 border border-ireland-green/20 rounded-xl px-4 py-3">
           <span className="text-sm font-bold text-foreground">{selectedIds.size}件選択中</span>
           <div className="flex-1" />
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-amber-600 text-amber-600 hover:bg-amber-50 rounded-lg"
+            onClick={() => setReceiptDialogOpen(true)}
+          >
+            <Receipt className="w-3.5 h-3.5 mr-1.5" />
+            領収書発行
+          </Button>
           <Button
             size="sm"
             variant="outline"
@@ -570,6 +611,43 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 領収書発行確認ダイアログ */}
+      <AlertDialog open={receiptDialogOpen} onOpenChange={setReceiptDialogOpen}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>領収書を発行しますか？</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>選択した {selectedIds.size} 件の支援者に領収書を発行します。</p>
+                <p className="text-xs text-muted-foreground">※ 決済完了済みの支援のみ対象となります。既に領収書が発行済みの支援はスキップされます。</p>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={receiptSendEmail}
+                    onCheckedChange={(v) => setReceiptSendEmail(!!v)}
+                  />
+                  <span className="text-sm font-medium text-foreground">同時にメールで領収書リンクを通知する</span>
+                </label>
+                {receiptSendEmail && (
+                  <p className="text-xs text-muted-foreground pl-6">
+                    メール文面は「メール配信設定 → テンプレート管理」の「領収書送付通知」から変更できます。
+                  </p>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl" disabled={receiptIssuing}>キャンセル</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); handleBulkReceipt() }}
+              disabled={receiptIssuing}
+              className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              {receiptIssuing ? "発行中..." : "発行する"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

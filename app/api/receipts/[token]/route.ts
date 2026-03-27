@@ -8,7 +8,7 @@ export async function GET(
   const { token } = await params
 
   const rows = await sql`
-    SELECT r.*, rt.logo_url, rt.stamp_url, rt.footer_note
+    SELECT r.*, rt.logo_url, rt.stamp_url, rt.footer_note, rt.issuer_tel, rt.issuer_email
     FROM receipts r
     LEFT JOIN receipt_templates rt ON rt.id = r.template_id
     WHERE r.download_token = ${token}
@@ -52,6 +52,7 @@ export async function GET(
     .issuer .addr { font-size: 13px; color: #666; margin-top: 4px; }
     .stamp { text-align: right; margin-top: 16px; }
     .stamp img { width: 80px; height: 80px; opacity: 0.8; }
+    .reissue-mark { display: inline-block; color: #dc2626; border: 2px solid #dc2626; padding: 4px 16px; font-size: 14px; font-weight: bold; letter-spacing: 4px; margin-top: 8px; }
     .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 11px; color: #999; text-align: center; }
     @media print { .print-btn { display: none; } body { padding: 20px; } }
   </style>
@@ -61,6 +62,7 @@ export async function GET(
   <div class="header">
     ${r.logo_url ? `<img src="${r.logo_url}" alt="" style="height:50px;margin-bottom:16px"><br>` : ""}
     <h1>領　収　書</h1>
+    ${r.reissued ? '<div class="reissue-mark">再 発 行</div>' : ""}
   </div>
   <div class="number">No. ${r.receipt_number}　　発行日: ${issuedDate}</div>
   <div class="recipient">${r.supporter_name || r.recipient_name}　様</div>
@@ -76,6 +78,8 @@ export async function GET(
   <div class="issuer">
     <div class="name">${r.issuer_name}</div>
     ${r.issuer_address ? `<div class="addr">${r.issuer_address}</div>` : ""}
+    ${r.issuer_tel ? `<div class="addr">TEL: ${r.issuer_tel}</div>` : ""}
+    ${r.issuer_email ? `<div class="addr">Email: ${r.issuer_email}</div>` : ""}
   </div>
   ${r.stamp_url ? `<div class="stamp"><img src="${r.stamp_url}" alt="印影"></div>` : ""}
   ${r.footer_note ? `<div class="footer">${r.footer_note}</div>` : ""}

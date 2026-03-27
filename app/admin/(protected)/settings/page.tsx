@@ -14,6 +14,13 @@ export default async function SiteSettingsPage() {
   const settings: Record<string, string> = {}
   for (const row of rows) settings[row.key] = row.value
 
+  // Fetch default receipt template
+  let receiptTemplate: any = null
+  try {
+    const tplRows = await sql`SELECT * FROM receipt_templates WHERE is_default = true LIMIT 1`
+    receiptTemplate = tplRows[0] || null
+  } catch { /* table may not exist yet */ }
+
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="mb-8">
@@ -25,7 +32,7 @@ export default async function SiteSettingsPage() {
         </div>
         <p className="text-sm text-muted-foreground mt-1">ロゴ・タイトルなどのサイト全体の設定を管理します。</p>
       </div>
-      <SiteSettingsForm initial={settings} />
+      <SiteSettingsForm initial={settings} receiptTemplate={receiptTemplate} />
     </div>
   )
 }

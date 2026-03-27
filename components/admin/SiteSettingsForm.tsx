@@ -1,16 +1,34 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import ImageUploader from "@/components/admin/ImageUploader"
-import { Check, Save, CreditCard, Mail, Globe, Eye, EyeOff, FlaskConical, Zap, QrCode } from "lucide-react"
+import { Check, Save, CreditCard, Mail, Globe, Eye, EyeOff, FlaskConical, Zap, QrCode, Receipt, Stamp } from "lucide-react"
 import Image from "next/image"
+import { processStampImage } from "@/lib/stamp-processor"
+
+interface ReceiptTemplate {
+  id: number
+  name: string
+  issuer_name: string | null
+  issuer_address: string | null
+  issuer_tel: string | null
+  issuer_email: string | null
+  logo_url: string | null
+  stamp_url: string | null
+  prefix: string
+  next_number: number
+  default_proviso: string | null
+  footer_note: string | null
+  is_default: boolean
+}
 
 interface Props {
   initial: Record<string, string>
+  receiptTemplate?: ReceiptTemplate | null
 }
 
 const MASKED = "••••••••••••••••"
@@ -73,9 +91,22 @@ function SecretField({
   )
 }
 
-export default function SiteSettingsForm({ initial }: Props) {
+export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
   const [isPending, startTransition] = useTransition()
   const [saved, setSaved] = useState(false)
+
+  // 領収書設定
+  const [rcptIssuerName, setRcptIssuerName] = useState(receiptTemplate?.issuer_name ?? "")
+  const [rcptIssuerAddress, setRcptIssuerAddress] = useState(receiptTemplate?.issuer_address ?? "")
+  const [rcptIssuerTel, setRcptIssuerTel] = useState(receiptTemplate?.issuer_tel ?? "")
+  const [rcptIssuerEmail, setRcptIssuerEmail] = useState(receiptTemplate?.issuer_email ?? "")
+  const [rcptLogoUrl, setRcptLogoUrl] = useState(receiptTemplate?.logo_url ?? "")
+  const [rcptStampUrl, setRcptStampUrl] = useState(receiptTemplate?.stamp_url ?? "")
+  const [rcptPrefix, setRcptPrefix] = useState(receiptTemplate?.prefix ?? "GIF")
+  const [rcptProviso, setRcptProviso] = useState(receiptTemplate?.default_proviso ?? "クラウドファンディング支援金として")
+  const [rcptFooterNote, setRcptFooterNote] = useState(receiptTemplate?.footer_note ?? "")
+  const [stampUploading, setStampUploading] = useState(false)
+  const stampInputRef = useRef<HTMLInputElement>(null)
 
   // サイト情報
   const [title, setTitle] = useState(initial.site_title ?? "")
@@ -170,6 +201,44 @@ export default function SiteSettingsForm({ initial }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
+
+      // Save receipt template settings
+      if (receiptTemplate?.id) {
+        await fetch(`/api/admin/receipt-templates/${receiptTemplate.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            issuer_name: rcptIssuerName,
+            issuer_address: rcptIssuerAddress,
+            issuer_tel: rcptIssuerTel,
+            issuer_email: rcptIssuerEmail,
+            logo_url: rcptLogoUrl,
+            stamp_url: rcptStampUrl,
+            prefix: rcptPrefix,
+            default_proviso: rcptProviso,
+            footer_note: rcptFooterNote,
+          }),
+        })
+      } else {
+        // Create default template if none exists
+        await fetch("/api/admin/receipt-templates", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: "デフォルト",
+            issuer_name: rcptIssuerName,
+            issuer_address: rcptIssuerAddress,
+            issuer_tel: rcptIssuerTel,
+            issuer_email: rcptIssuerEmail,
+            logo_url: rcptLogoUrl,
+            stamp_url: rcptStampUrl,
+            prefix: rcptPrefix,
+            default_proviso: rcptProviso,
+            footer_note: rcptFooterNote,
+          }),
+        })
+      }
+
       setSaved(true)
       if (stripeKey && stripeKey !== MASKED) { setStripeKey(MASKED); setStripeKeyEditing(false) }
       if (stripeWebhook && stripeWebhook !== MASKED) { setStripeWebhook(MASKED); setStripeWebhookEditing(false) }
@@ -567,6 +636,173 @@ export default function SiteSettingsForm({ initial }: Props) {
             {successQrLabel && <p className="text-xs text-foreground font-bold">{successQrLabel}</p>}
           </div>
         )}
+      </div>
+
+      {/* 領収書設定 */}
+      <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Receipt className="w-4 h-4 text-ireland-green" />
+          <h2 className="font-bold text-foreground">領収書設定</h2>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          領収書に表示される差出人情報・印鑑画像などを設定します。
+        </p>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="rcpt_issuer_name">差出人名（発行者名）</Label>
+            <Input
+              id="rcpt_issuer_name"
+              value={rcptIssuerName}
+              onChange={(e) => setRcptIssuerName(e.target.value)}
+              placeholder="在日アイルランド商工会議所"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="rcpt_issuer_email">メールアドレス</Label>
+            <Input
+              id="rcpt_issuer_email"
+              type="email"
+              value={rcptIssuerEmail}
+              onChange={(e) => setRcptIssuerEmail(e.target.value)}
+              placeholder="info@example.com"
+              className="font-mono text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="rcpt_issuer_address">住所</Label>
+          <Input
+            id="rcpt_issuer_address"
+            value={rcptIssuerAddress}
+            onChange={(e) => setRcptIssuerAddress(e.target.value)}
+            placeholder="東京都渋谷区..."
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="rcpt_issuer_tel">電話番号</Label>
+            <Input
+              id="rcpt_issuer_tel"
+              value={rcptIssuerTel}
+              onChange={(e) => setRcptIssuerTel(e.target.value)}
+              placeholder="03-1234-5678"
+              className="font-mono text-sm"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="rcpt_prefix">領収書番号プレフィックス</Label>
+            <Input
+              id="rcpt_prefix"
+              value={rcptPrefix}
+              onChange={(e) => setRcptPrefix(e.target.value)}
+              placeholder="GIF"
+              className="font-mono text-sm"
+            />
+            <p className="text-xs text-muted-foreground">例: GIF → GIF-000001</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="rcpt_proviso">但し書き（デフォルト）</Label>
+          <Input
+            id="rcpt_proviso"
+            value={rcptProviso}
+            onChange={(e) => setRcptProviso(e.target.value)}
+            placeholder="クラウドファンディング支援金として"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="rcpt_footer_note">フッター注記</Label>
+          <Textarea
+            id="rcpt_footer_note"
+            value={rcptFooterNote}
+            onChange={(e) => setRcptFooterNote(e.target.value)}
+            placeholder="この領収書は電子的に発行されたものです。"
+            rows={2}
+            className="resize-none"
+          />
+        </div>
+
+        {/* ロゴ画像 */}
+        <div className="space-y-2">
+          <Label>領収書ロゴ画像</Label>
+          <ImageUploader
+            name="rcpt_logo_url"
+            label="ロゴ画像をアップロード"
+            defaultValue={rcptLogoUrl}
+            onUrlChange={setRcptLogoUrl}
+          />
+          <p className="text-xs text-muted-foreground">領収書のヘッダーに表示されます</p>
+        </div>
+
+        {/* 印鑑画像 */}
+        <div className="space-y-2">
+          <Label>印鑑画像</Label>
+          <p className="text-xs text-muted-foreground">
+            アップロード時に白背景の透過処理と150×150pxへのリサイズが自動で行われます。
+          </p>
+          {rcptStampUrl ? (
+            <div className="flex items-center gap-4">
+              <div className="relative w-20 h-20 rounded-lg border border-border" style={{ backgroundImage: "linear-gradient(45deg, #e0e0e0 25%, transparent 25%, transparent 75%, #e0e0e0 75%), linear-gradient(45deg, #e0e0e0 25%, transparent 25%, transparent 75%, #e0e0e0 75%)", backgroundSize: "16px 16px", backgroundPosition: "0 0, 8px 8px" }}>
+                <img src={rcptStampUrl} alt="印鑑プレビュー" className="w-full h-full object-contain" />
+              </div>
+              <div className="flex gap-2">
+                <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => stampInputRef.current?.click()}>
+                  変更
+                </Button>
+                <Button type="button" size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => setRcptStampUrl("")}>
+                  削除
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div
+              onClick={() => stampInputRef.current?.click()}
+              className="flex flex-col items-center justify-center gap-2 w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-ireland-green/60 hover:bg-muted/50 cursor-pointer transition-colors"
+            >
+              {stampUploading ? (
+                <span className="text-sm text-muted-foreground">処理・アップロード中...</span>
+              ) : (
+                <>
+                  <div className="w-10 h-10 rounded-full bg-ireland-green/10 flex items-center justify-center">
+                    <Stamp className="w-5 h-5 text-ireland-green" />
+                  </div>
+                  <p className="text-sm text-foreground">印鑑画像をアップロード</p>
+                  <p className="text-xs text-muted-foreground">PNG推奨（白背景自動透過）</p>
+                </>
+              )}
+            </div>
+          )}
+          <input
+            ref={stampInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              setStampUploading(true)
+              try {
+                const processed = await processStampImage(file)
+                const fd = new FormData()
+                fd.append("file", processed, "stamp.png")
+                const res = await fetch("/api/admin/upload", { method: "POST", body: fd })
+                const data = await res.json()
+                if (!res.ok) throw new Error(data.error)
+                setRcptStampUrl(data.url)
+              } catch (err) {
+                alert(err instanceof Error ? err.message : "アップロードに失敗しました")
+              } finally {
+                setStampUploading(false)
+                if (stampInputRef.current) stampInputRef.current.value = ""
+              }
+            }}
+          />
+        </div>
       </div>
 
       <Button
