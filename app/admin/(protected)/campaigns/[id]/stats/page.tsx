@@ -47,7 +47,9 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
     ORDER BY date ASC
   `
 
-  const progress = calcProgress(campaign.current_amount, campaign.goal_amount)
+  const actualRevenue = Number(s?.total_revenue ?? 0)
+  const actualCount = Number(s?.completed_count ?? 0)
+  const progress = calcProgress(actualRevenue, campaign.goal_amount)
   const daysLeft = calcDaysLeft(campaign.end_date)
 
   return (
@@ -68,8 +70,8 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
       {/* KPI */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "総支援額", value: formatYen(campaign.current_amount), icon: TrendingUp, color: "text-ireland-green", bg: "bg-ireland-green/10", sub: `目標の${progress}%` },
-          { label: "支援者数", value: `${campaign.supporter_count}人`, icon: Users, color: "text-blue-500", bg: "bg-blue-50", sub: `平均 ${formatYen(Math.round(Number(s?.avg_amount ?? 0)))}` },
+          { label: "総支援額", value: formatYen(actualRevenue), icon: TrendingUp, color: "text-ireland-green", bg: "bg-ireland-green/10", sub: `目標の${progress}%` },
+          { label: "支援者数", value: `${actualCount}人`, icon: Users, color: "text-blue-500", bg: "bg-blue-50", sub: `平均 ${formatYen(Math.round(Number(s?.avg_amount ?? 0)))}` },
           { label: "残り日数", value: `${daysLeft}日`, icon: Clock, color: "text-orange-500", bg: "bg-orange-50", sub: "キャンペーン終了まで" },
           { label: "達成率", value: `${progress}%`, icon: Target, color: "text-purple-500", bg: "bg-purple-50", sub: `目標 ${formatYen(campaign.goal_amount)}` },
         ].map((stat) => (
@@ -94,7 +96,7 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
           <div className="h-full rounded-full" style={{ width: `${progress}%`, background: "linear-gradient(90deg, oklch(0.42 0.15 152), oklch(0.55 0.16 152))" }} />
         </div>
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>{formatYen(campaign.current_amount)} 集まっています</span>
+          <span>{formatYen(actualRevenue)} 集まっています</span>
           <span>目標 {formatYen(campaign.goal_amount)}</span>
         </div>
       </div>

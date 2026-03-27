@@ -32,6 +32,16 @@ export async function PATCH(
     shipping_phone,
   } = body
 
+  // ステータス変更前の情報を取得（返金処理のため）
+  let oldPledge: any = null
+  if (payment_status) {
+    const rows = await sql`
+      SELECT id, campaign_id, amount, reward_tier_id, payment_status
+      FROM pledges WHERE id = ${id}
+    `
+    oldPledge = rows[0]
+  }
+
   await sql`
     UPDATE pledges SET
       payment_status    = COALESCE(${payment_status ?? null}, payment_status),
@@ -43,6 +53,44 @@ export async function PATCH(
       updated_at        = NOW()
     WHERE id = ${id}
   `
+
+  // completed → refunded: キャンペーン集計から減算
+  if (oldPledge && oldPledge.payment_status === "completed" && payment_status === "refunded") {
+    await sql`
+      UPDATE campaigns SET
+        current_amount  = GREATEST(0, current_amount - ${oldPledge.amount}),
+        supporter_count = GREATEST(0, supporter_count - 1),
+        updated_at      = NOW()
+      WHERE id = ${oldPledge.campaign_id}
+    `
+    if (oldPledge.reward_tier_id) {
+      await sql`
+        UPDATE reward_tiers SET
+          claimed_count = GREATEST(0, claimed_count - 1),
+          updated_at    = NOW()
+        WHERE id = ${oldPledge.reward_tier_id}
+      `
+    }
+  }
+
+  // refunded/failed → completed: キャンペーン集計に加算
+  if (oldPledge && oldPledge.payment_status !== "completed" && payment_status === "completed") {
+    await sql`
+      UPDATE campaigns SET
+        current_amount  = current_amount + ${oldPledge.amount},
+        supporter_count = supporter_count + 1,
+        updated_at      = NOW()
+      WHERE id = ${oldPledge.campaign_id}
+    `
+    if (oldPledge.reward_tier_id) {
+      await sql`
+        UPDATE reward_tiers SET
+          claimed_count = claimed_count + 1,
+          updated_at    = NOW()
+        WHERE id = ${oldPledge.reward_tier_id}
+      `
+    }
+  }
 
   return NextResponse.json({ success: true })
 }

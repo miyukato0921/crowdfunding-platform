@@ -14,7 +14,15 @@ const statusMap: Record<string, { label: string; className: string }> = {
 }
 
 export default async function CampaignsPage() {
-  const campaigns = await sql<Campaign[]>`SELECT * FROM campaigns ORDER BY created_at DESC`
+  const campaigns = await sql<(Campaign & { actual_amount: number; actual_supporters: number })[]>`
+    SELECT c.*,
+      COALESCE(SUM(p.amount) FILTER (WHERE p.payment_status = 'completed'), 0) AS actual_amount,
+      COUNT(p.id) FILTER (WHERE p.payment_status = 'completed') AS actual_supporters
+    FROM campaigns c
+    LEFT JOIN pledges p ON p.campaign_id = c.id
+    GROUP BY c.id
+    ORDER BY c.created_at DESC
+  `
 
   return (
     <div className="p-6 lg:p-8">
@@ -33,7 +41,7 @@ export default async function CampaignsPage() {
 
       <div className="space-y-4">
         {campaigns.map((campaign) => {
-          const progress = calcProgress(campaign.current_amount, campaign.goal_amount)
+          const progress = calcProgress(Number(campaign.actual_amount), campaign.goal_amount)
           const daysLeft = calcDaysLeft(campaign.end_date)
           const status = statusMap[campaign.status] ?? { label: campaign.status, className: "bg-gray-100" }
 
@@ -66,11 +74,11 @@ export default async function CampaignsPage() {
 
               <div className="mt-4 grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-xl font-black text-ireland-green">{formatYen(campaign.current_amount)}</p>
+                  <p className="text-xl font-black text-ireland-green">{formatYen(Number(campaign.actual_amount))}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">集まった金額</p>
                 </div>
                 <div>
-                  <p className="text-xl font-black text-foreground">{campaign.supporter_count}人</p>
+                  <p className="text-xl font-black text-foreground">{Number(campaign.actual_supporters)}人</p>
                   <p className="text-xs text-muted-foreground mt-0.5">支援者数</p>
                 </div>
                 <div>
@@ -90,7 +98,7 @@ export default async function CampaignsPage() {
                   />
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>{formatYen(campaign.current_amount)}</span>
+                  <span>{formatYen(Number(campaign.actual_amount))}</span>
                   <span>目標 {formatYen(campaign.goal_amount)}</span>
                 </div>
               </div>

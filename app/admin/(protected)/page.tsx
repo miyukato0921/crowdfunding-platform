@@ -56,13 +56,15 @@ export default async function AdminDashboard() {
     )
   }
 
-  const progress = calcProgress(campaign.current_amount, campaign.goal_amount)
+  const actualRevenue = Number(pledgeStats?.total_revenue ?? 0)
+  const actualCount = Number(pledgeStats?.completed_count ?? 0)
+  const progress = calcProgress(actualRevenue, campaign.goal_amount)
   const daysLeft = calcDaysLeft(campaign.end_date)
 
   const stats = [
     {
       label: "総支援額",
-      value: formatYen(campaign.current_amount),
+      value: formatYen(actualRevenue),
       icon: TrendingUp,
       color: "text-ireland-green",
       bg: "bg-ireland-green/10",
@@ -70,7 +72,7 @@ export default async function AdminDashboard() {
     },
     {
       label: "支援者数",
-      value: `${campaign.supporter_count}人`,
+      value: `${actualCount}人`,
       icon: Users,
       color: "text-ireland-gold",
       bg: "bg-ireland-gold/10",
@@ -135,7 +137,7 @@ export default async function AdminDashboard() {
           />
         </div>
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>{formatYen(campaign.current_amount)} 集まっています</span>
+          <span>{formatYen(actualRevenue)} 集まっています</span>
           <span>目標 {formatYen(campaign.goal_amount)}</span>
         </div>
       </div>
