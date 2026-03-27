@@ -47,12 +47,13 @@ export async function GET(
     .details table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
     .details td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
     .details td:first-child { width: 130px; color: #666; font-weight: bold; }
-    .issuer { text-align: right; margin-top: 48px; }
+    .issuer-section { position: relative; margin-top: 48px; }
+    .issuer { text-align: right; }
     .issuer .name { font-size: 18px; font-weight: bold; }
     .issuer .addr { font-size: 13px; color: #666; margin-top: 4px; }
     .stamp { text-align: right; margin-top: 16px; }
     .stamp img { width: 80px; height: 80px; opacity: 0.8; }
-    .reissue-mark { display: inline-block; color: #dc2626; border: 2px solid #dc2626; padding: 4px 16px; font-size: 14px; font-weight: bold; letter-spacing: 4px; margin-top: 8px; }
+    .reissue-stamp { position: absolute; top: -30px; right: 35%; transform: rotate(-18deg); color: #dc2626; border: 3px solid #dc2626; border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; letter-spacing: 3px; opacity: 0.85; pointer-events: none; }
     .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 11px; color: #999; text-align: center; }
     @media print { .print-btn { display: none; } body { padding: 20px; } }
   </style>
@@ -62,7 +63,6 @@ export async function GET(
   <div class="header">
     ${r.logo_url ? `<img src="${r.logo_url}" alt="" style="height:50px;margin-bottom:16px"><br>` : ""}
     <h1>領　収　書</h1>
-    ${r.reissued ? '<div class="reissue-mark">再 発 行</div>' : ""}
   </div>
   <div class="number">No. ${r.receipt_number}　　発行日: ${issuedDate}</div>
   <div class="recipient">${r.supporter_name || r.recipient_name}　様</div>
@@ -75,13 +75,16 @@ export async function GET(
     <tr><td>発行日</td><td>${issuedDate}</td></tr>
     <tr><td>領収書番号</td><td>${r.receipt_number}</td></tr>
   </table></div>
-  <div class="issuer">
-    <div class="name">${r.issuer_name}</div>
-    ${r.issuer_address ? `<div class="addr">${r.issuer_address}</div>` : ""}
-    ${r.issuer_tel ? `<div class="addr">TEL: ${r.issuer_tel}</div>` : ""}
-    ${r.issuer_email ? `<div class="addr">Email: ${r.issuer_email}</div>` : ""}
+  <div class="issuer-section">
+    ${r.reissued ? '<div class="reissue-stamp">再発行</div>' : ""}
+    <div class="issuer">
+      <div class="name">${r.issuer_name}</div>
+      ${r.issuer_address ? `<div class="addr">${r.issuer_address}</div>` : ""}
+      ${r.issuer_tel ? `<div class="addr">TEL: ${r.issuer_tel}</div>` : ""}
+      ${r.issuer_email ? `<div class="addr">Email: ${r.issuer_email}</div>` : ""}
+    </div>
+    ${r.stamp_url ? `<div class="stamp"><img src="${r.stamp_url}" alt="印影"></div>` : ""}
   </div>
-  ${r.stamp_url ? `<div class="stamp"><img src="${r.stamp_url}" alt="印影"></div>` : ""}
   ${r.footer_note ? `<div class="footer">${r.footer_note}</div>` : ""}
 </body>
 </html>`
