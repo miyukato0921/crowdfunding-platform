@@ -788,8 +788,9 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
               setStampUploading(true)
               try {
                 const processed = await processStampImage(file)
+                const stampFile = new File([processed], "stamp.png", { type: "image/png" })
                 const fd = new FormData()
-                fd.append("file", processed, "stamp.png")
+                fd.append("file", stampFile)
                 const res = await fetch("/api/admin/upload", { method: "POST", body: fd })
                 const data = await res.json()
                 if (!res.ok) throw new Error(data.error)
