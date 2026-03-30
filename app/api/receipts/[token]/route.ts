@@ -61,7 +61,7 @@ export async function GET(
 <body>
   <div class="print-btn"><button onclick="window.print()">印刷 / PDF保存</button></div>
   <div class="header">
-    ${r.logo_url ? `<img src="${r.logo_url}" alt="" style="height:50px;margin-bottom:16px"><br>` : ""}
+    ${r.logo_url ? `<img src="${r.logo_url}" alt="" style="height:50px;display:block;margin:0 auto 16px">` : ""}
     <h1>領　収　書</h1>
   </div>
   <div class="number">No. ${r.receipt_number}　　発行日: ${issuedDate}</div>
