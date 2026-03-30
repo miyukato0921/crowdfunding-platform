@@ -1,7 +1,6 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
 import { sendRawEmail } from "@/lib/email"
-import { generateReceiptPDF } from "@/lib/receipt-generator"
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
 
@@ -19,6 +18,7 @@ export async function POST(req: NextRequest) {
   const tpl = templates[0] as any
   if (!tpl) return NextResponse.json({ error: "領収書テンプレートが未設定です" }, { status: 400 })
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
   let created = 0
   let emailed = 0
   let skipped = 0
@@ -62,23 +62,12 @@ export async function POST(req: NextRequest) {
     if (send_email && pledge.supporter_email) {
       try {
         const supporterName = pledge.supporter_name || "支援者"
-        const pdf = await generateReceiptPDF({
-          receipt_number: receiptNumber,
-          supporter_name: supporterName,
-          amount: Number(pledge.amount),
-          proviso: tpl.default_proviso || "クラウドファンディング支援金として",
-          issued_date: new Date().toISOString().slice(0, 10),
-          issuer_name: tpl.issuer_name,
-          issuer_address: tpl.issuer_address,
-          issuer_tel: tpl.issuer_tel,
-          issuer_email: tpl.issuer_email,
-        })
+        const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
         await sendRawEmail({
           to: pledge.supporter_email,
           subject: `【Green Ireland Festival】領収書（${receiptNumber}）`,
-          text: `${supporterName} 様\n\nGreen Ireland Festivalへのご支援ありがとうございます。\n領収書をPDFにて添付いたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(pledge.amount).toLocaleString()}\n\n${tpl.issuer_name}`,
-          html: `<p>${supporterName} 様</p><p>Green Ireland Festivalへのご支援ありがとうございます。<br>領収書をPDFにて添付いたします。</p><p style="font-size:12px;color:#666">※ 領収書はPDFファイルとして添付されています。</p><p>${tpl.issuer_name}</p>`,
-          attachments: [{ filename: pdf.filename, content: pdf.buffer, contentType: "application/pdf" }],
+          text: `${supporterName} 様\n\n領収書をお届けいたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(pledge.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${tpl.issuer_name}`,
+          html: `<p>${supporterName} 様</p><p>領収書をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${tpl.issuer_name}</p>`,
         })
         await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE download_token = ${downloadToken}`
         emailed++

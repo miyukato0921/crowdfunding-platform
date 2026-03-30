@@ -1,7 +1,6 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
 import { sendRawEmail } from "@/lib/email"
-import { generateReceiptPDF } from "@/lib/receipt-generator"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
@@ -13,40 +12,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "receipt_ids is required" }, { status: 400 })
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
   let sent = 0
   let failed = 0
 
   for (const receiptId of receipt_ids) {
     try {
       const rows = await sql`
-        SELECT r.*, p.supporter_email, rt.issuer_tel, rt.issuer_email as tpl_email
+        SELECT r.*, p.supporter_email
         FROM receipts r
         LEFT JOIN pledges p ON p.id = r.pledge_id
-        LEFT JOIN receipt_templates rt ON rt.id = r.template_id
         WHERE r.id = ${receiptId}
       `
       const receipt = rows[0] as any
       if (!receipt || !receipt.supporter_email) { failed++; continue }
 
-      const pdf = await generateReceiptPDF({
-        receipt_number: receipt.receipt_number,
-        supporter_name: receipt.supporter_name,
-        amount: Number(receipt.amount),
-        proviso: receipt.proviso,
-        issued_date: receipt.issued_date,
-        issuer_name: receipt.issuer_name,
-        issuer_address: receipt.issuer_address,
-        issuer_tel: receipt.issuer_tel,
-        issuer_email: receipt.tpl_email,
-        reissued: receipt.reissued,
-      })
+      const receiptUrl = `${baseUrl}/receipt/${receipt.download_token}`
 
       await sendRawEmail({
         to: receipt.supporter_email,
         subject: `【Green Ireland Festival】領収書（${receipt.receipt_number}）`,
-        text: `${receipt.supporter_name} 様\n\nGreen Ireland Festivalへのご支援ありがとうございます。\n領収書をPDFにて添付いたします。\n\n領収書番号: ${receipt.receipt_number}\n金額: ¥${Number(receipt.amount).toLocaleString()}\n\n${receipt.issuer_name}`,
-        html: `<p>${receipt.supporter_name} 様</p><p>Green Ireland Festivalへのご支援ありがとうございます。<br>領収書をPDFにて添付いたします。</p><p style="font-size:12px;color:#666">※ 領収書はPDFファイルとして添付されています。</p><p>${receipt.issuer_name}</p>`,
-        attachments: [{ filename: pdf.filename, content: pdf.buffer, contentType: "application/pdf" }],
+        text: `${receipt.supporter_name} 様\n\n領収書をお届けいたします。\n\n領収書番号: ${receipt.receipt_number}\n金額: ¥${Number(receipt.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${receipt.issuer_name}`,
+        html: `<p>${receipt.supporter_name} 様</p><p>領収書をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${receipt.issuer_name}</p>`,
       })
 
       await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE id = ${receiptId}`

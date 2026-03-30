@@ -1,7 +1,6 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
 import { sendRawEmail } from "@/lib/email"
-import { generateReceiptPDF } from "@/lib/receipt-generator"
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
 
@@ -57,25 +56,14 @@ export async function POST(req: NextRequest) {
   let emailSent = false
   if (send_email && orig.supporter_email) {
     try {
-      const pdf = await generateReceiptPDF({
-        receipt_number: receiptNumber,
-        supporter_name: orig.supporter_name || "支援者",
-        amount: Number(orig.amount),
-        proviso: orig.proviso,
-        issued_date: new Date().toISOString().slice(0, 10),
-        issuer_name: tpl.issuer_name,
-        issuer_address: tpl.issuer_address,
-        issuer_tel: tpl.issuer_tel,
-        issuer_email: tpl.issuer_email,
-        reissued: true,
-      })
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
+      const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
 
       await sendRawEmail({
         to: orig.supporter_email,
         subject: `【Green Ireland Festival】領収書（${receiptNumber}）（再発行）`,
-        text: `${orig.supporter_name || "支援者"} 様\n\nGreen Ireland Festivalへのご支援ありがとうございます。\n領収書（再発行）をPDFにて添付いたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(orig.amount).toLocaleString()}\n\n${tpl.issuer_name}`,
-        html: `<p>${orig.supporter_name || "支援者"} 様</p><p>Green Ireland Festivalへのご支援ありがとうございます。<br>領収書（再発行）をPDFにて添付いたします。</p><p style="font-size:12px;color:#666">※ 領収書はPDFファイルとして添付されています。</p><p>${tpl.issuer_name}</p>`,
-        attachments: [{ filename: pdf.filename, content: pdf.buffer, contentType: "application/pdf" }],
+        text: `${orig.supporter_name || "支援者"} 様\n\n領収書（再発行）をお届けいたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(orig.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${tpl.issuer_name}`,
+        html: `<p>${orig.supporter_name || "支援者"} 様</p><p>領収書（再発行）をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${tpl.issuer_name}</p>`,
       })
       await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE id = ${newReceipt.id}`
       emailSent = true
