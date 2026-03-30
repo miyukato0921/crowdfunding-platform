@@ -1,5 +1,5 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
-import fontkit from "fontkit"
+import fontkit from "@pdf-lib/fontkit"
 
 // NotoSansJP Regular font URL (Google Fonts CDN)
 const FONT_URL = "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-jp@latest/japanese-400-normal.woff"
