@@ -153,11 +153,13 @@ export async function sendRawEmail({
   subject,
   text,
   html,
+  attachments,
 }: {
   to: string
   subject: string
   text: string
   html?: string
+  attachments?: Array<{ filename: string; content: Buffer; contentType?: string }>
 }): Promise<void> {
   const result = await createTransporter()
 
@@ -175,5 +177,6 @@ export async function sendRawEmail({
     subject,
     text,
     ...(html ? { html } : {}),
+    ...(attachments ? { attachments } : {}),
   })
 }

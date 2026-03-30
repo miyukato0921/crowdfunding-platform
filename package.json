@@ -61,6 +61,8 @@
     "server-only": "^0.0.1",
     "sonner": "^1.7.1",
     "nodemailer": "^6.9.16",
+    "pdf-lib": "^1.17.1",
+    "fontkit": "^2.0.2",
     "stripe": "^17.7.0",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",

@@ -1,6 +1,7 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
-import { sendTemplateEmail } from "@/lib/email"
+import { sendRawEmail } from "@/lib/email"
+import { generateReceiptPDF } from "@/lib/receipt-generator"
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
 
@@ -17,9 +18,6 @@ export async function POST(req: NextRequest) {
   const templates = await sql`SELECT * FROM receipt_templates ORDER BY is_default DESC, id ASC LIMIT 1`
   const tpl = templates[0] as any
   if (!tpl) return NextResponse.json({ error: "領収書テンプレートが未設定です" }, { status: 400 })
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-    || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "https://greenirelandfes.atouch.dev")
 
   let created = 0
   let emailed = 0
@@ -63,12 +61,24 @@ export async function POST(req: NextRequest) {
     // Send email if requested
     if (send_email && pledge.supporter_email) {
       try {
-        const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
-        await sendTemplateEmail("receipt_notification", pledge.supporter_email, {
-          supporter_name: pledge.supporter_name || "支援者",
-          amount: `¥${Number(pledge.amount).toLocaleString()}`,
+        const supporterName = pledge.supporter_name || "支援者"
+        const pdf = await generateReceiptPDF({
           receipt_number: receiptNumber,
-          receipt_url: receiptUrl,
+          supporter_name: supporterName,
+          amount: Number(pledge.amount),
+          proviso: tpl.default_proviso || "クラウドファンディング支援金として",
+          issued_date: new Date().toISOString().slice(0, 10),
+          issuer_name: tpl.issuer_name,
+          issuer_address: tpl.issuer_address,
+          issuer_tel: tpl.issuer_tel,
+          issuer_email: tpl.issuer_email,
+        })
+        await sendRawEmail({
+          to: pledge.supporter_email,
+          subject: `【Green Ireland Festival】領収書（${receiptNumber}）`,
+          text: `${supporterName} 様\n\nGreen Ireland Festivalへのご支援ありがとうございます。\n領収書をPDFにて添付いたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(pledge.amount).toLocaleString()}\n\n${tpl.issuer_name}`,
+          html: `<p>${supporterName} 様</p><p>Green Ireland Festivalへのご支援ありがとうございます。<br>領収書をPDFにて添付いたします。</p><p style="font-size:12px;color:#666">※ 領収書はPDFファイルとして添付されています。</p><p>${tpl.issuer_name}</p>`,
+          attachments: [{ filename: pdf.filename, content: pdf.buffer, contentType: "application/pdf" }],
         })
         await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE download_token = ${downloadToken}`
         emailed++
