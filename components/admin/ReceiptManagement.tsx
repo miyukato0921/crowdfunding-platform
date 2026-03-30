@@ -317,7 +317,7 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
                         size="icon"
                         variant="ghost"
                         className="w-7 h-7 rounded-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        onClick={() => window.open(`/api/receipts/${receipt.download_token}`, "_blank")}
+                        onClick={() => window.open(`/receipt/${receipt.download_token}`, "_blank")}
                         title="領収書を表示"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />

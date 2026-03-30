@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     // Send email if requested
     if (send_email && pledge.supporter_email) {
       try {
-        const receiptUrl = `${baseUrl}/api/receipts/${downloadToken}`
+        const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
         await sendTemplateEmail("receipt_notification", pledge.supporter_email, {
           supporter_name: pledge.supporter_name || "支援者",
           amount: `¥${Number(pledge.amount).toLocaleString()}`,

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       const receipt = rows[0] as any
       if (!receipt || !receipt.supporter_email) { failed++; continue }
 
-      const receiptUrl = `${baseUrl}/api/receipts/${receipt.download_token}`
+      const receiptUrl = `${baseUrl}/receipt/${receipt.download_token}`
       await sendTemplateEmail("receipt_notification", receipt.supporter_email, {
         supporter_name: receipt.supporter_name || "支援者",
         amount: `¥${Number(receipt.amount).toLocaleString()}`,

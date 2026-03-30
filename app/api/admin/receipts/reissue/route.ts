@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
         || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "https://greenirelandfes.atouch.dev")
-      const receiptUrl = `${baseUrl}/api/receipts/${downloadToken}`
+      const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
 
       await sendTemplateEmail("receipt_notification", orig.supporter_email, {
         supporter_name: orig.supporter_name || "支援者",

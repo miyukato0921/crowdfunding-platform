@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     : process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "https://greenirelandfes.atouch.dev"
-  const downloadUrl = `${baseUrl}/api/receipts/${receipt.download_token}`
+  const downloadUrl = `${baseUrl}/receipt/${receipt.download_token}`
 
   await sendRawEmail({
     to: email,
