@@ -54,23 +54,29 @@ export async function POST(req: NextRequest) {
 
   // Send email if requested
   let emailSent = false
-  if (send_email && orig.supporter_email) {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
-      const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
+  let emailError: string | null = null
+  if (send_email) {
+    if (!orig.supporter_email) {
+      emailError = "メールアドレスが見つかりません（支援と紐づけてください）"
+    } else {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
+        const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
 
-      await sendRawEmail({
-        to: orig.supporter_email,
-        subject: `【Green Ireland Festival】領収書（${receiptNumber}）（再発行）`,
-        text: `${orig.supporter_name || "支援者"} 様\n\n領収書（再発行）をお届けいたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(orig.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${tpl.issuer_name}`,
-        html: `<p>${orig.supporter_name || "支援者"} 様</p><p>領収書（再発行）をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${tpl.issuer_name}</p>`,
-      })
-      await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE id = ${newReceipt.id}`
-      emailSent = true
-    } catch (err) {
-      console.error("[receipts/reissue] Email failed:", err)
+        await sendRawEmail({
+          to: orig.supporter_email,
+          subject: `【Green Ireland Festival】領収書（${receiptNumber}）（再発行）`,
+          text: `${orig.supporter_name || "支援者"} 様\n\n領収書（再発行）をお届けいたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(orig.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${tpl.issuer_name}`,
+          html: `<p>${orig.supporter_name || "支援者"} 様</p><p>領収書（再発行）をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${tpl.issuer_name}</p>`,
+        })
+        await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE id = ${newReceipt.id}`
+        emailSent = true
+      } catch (err: any) {
+        console.error("[receipts/reissue] Email failed:", err)
+        emailError = err?.message || "メール送信に失敗しました"
+      }
     }
   }
 
-  return NextResponse.json({ receipt: newReceipt, email_sent: emailSent })
+  return NextResponse.json({ receipt: newReceipt, email_sent: emailSent, email_error: emailError })
 }

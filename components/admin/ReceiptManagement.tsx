@@ -139,7 +139,11 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
       }
       setReceipts((prev) => [newReceipt, ...prev])
       setReissueTarget(null)
-      alert("再発行が完了しました")
+      if (data.email_error) {
+        alert(`再発行は完了しましたが、メール送信に失敗しました: ${data.email_error}`)
+      } else {
+        alert(`再発行が完了しました${data.email_sent ? "（メール送信済み）" : ""}`)
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : "再発行に失敗しました")
     } finally {
