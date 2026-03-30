@@ -1,6 +1,7 @@
 import sql from "@/lib/db"
 import { getAdminSession } from "@/lib/auth"
-import { sendTemplateEmail } from "@/lib/email"
+import { sendRawEmail } from "@/lib/email"
+import { generateReceiptPDF } from "@/lib/receipt-generator"
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
 
@@ -56,15 +57,25 @@ export async function POST(req: NextRequest) {
   let emailSent = false
   if (send_email && orig.supporter_email) {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-        || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "https://greenirelandfes.atouch.dev")
-      const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
-
-      await sendTemplateEmail("receipt_notification", orig.supporter_email, {
-        supporter_name: orig.supporter_name || "支援者",
-        amount: `¥${Number(orig.amount).toLocaleString()}`,
+      const pdf = await generateReceiptPDF({
         receipt_number: receiptNumber,
-        receipt_url: receiptUrl,
+        supporter_name: orig.supporter_name || "支援者",
+        amount: Number(orig.amount),
+        proviso: orig.proviso,
+        issued_date: new Date().toISOString().slice(0, 10),
+        issuer_name: tpl.issuer_name,
+        issuer_address: tpl.issuer_address,
+        issuer_tel: tpl.issuer_tel,
+        issuer_email: tpl.issuer_email,
+        reissued: true,
+      })
+
+      await sendRawEmail({
+        to: orig.supporter_email,
+        subject: `【Green Ireland Festival】領収書（${receiptNumber}）（再発行）`,
+        text: `${orig.supporter_name || "支援者"} 様\n\nGreen Ireland Festivalへのご支援ありがとうございます。\n領収書（再発行）をPDFにて添付いたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(orig.amount).toLocaleString()}\n\n${tpl.issuer_name}`,
+        html: `<p>${orig.supporter_name || "支援者"} 様</p><p>Green Ireland Festivalへのご支援ありがとうございます。<br>領収書（再発行）をPDFにて添付いたします。</p><p style="font-size:12px;color:#666">※ 領収書はPDFファイルとして添付されています。</p><p>${tpl.issuer_name}</p>`,
+        attachments: [{ filename: pdf.filename, content: pdf.buffer, contentType: "application/pdf" }],
       })
       await sql`UPDATE receipts SET email_sent = true, email_sent_at = NOW() WHERE id = ${newReceipt.id}`
       emailSent = true
