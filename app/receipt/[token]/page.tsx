@@ -56,7 +56,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ token:
           <button onClick="window.print()">印刷 / PDF保存</button>
         </div>
         <div className="header">
-          {r.logo_url && <><img src={r.logo_url} alt="" style={{ height: 50, marginBottom: 16 }} /><br /></>}
+          {r.logo_url && <img src={r.logo_url} alt="" style={{ height: 50, marginBottom: 16, display: "block", margin: "0 auto 16px" }} />}
           <h1>領　収　書</h1>
         </div>
         <div className="number">No. {r.receipt_number}　　発行日: {issuedDate}</div>
