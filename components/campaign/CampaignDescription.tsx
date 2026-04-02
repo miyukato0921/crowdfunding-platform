@@ -96,9 +96,9 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ireland-dark/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent" />
           <div className="absolute bottom-0 left-0 p-6">
-            <p className="text-ireland-gold text-xs font-bold uppercase tracking-widest mb-1">{t("aboutProject")}</p>
+            <p className="text-brand-gold text-xs font-bold uppercase tracking-widest mb-1">{t("aboutProject")}</p>
             <h2 className="text-white text-xl font-black text-balance leading-tight">
               {t("aboutTitle")}
             </h2>
@@ -134,7 +134,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       {/* ─── フォトギャラリー ─── */}
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-          <span className="w-1 h-5 rounded-full bg-ireland-green inline-block" />
+          <span className="w-1 h-5 rounded-full bg-brand-green inline-block" />
           {t("gallery")}
         </h2>
         {gallery.length === 0 ? (
@@ -145,7 +145,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
               <button
                 key={img.id}
                 onClick={() => setLightbox(i)}
-                className="relative aspect-square rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-ireland-green"
+                className="relative aspect-square rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-brand-green"
               >
                 <Image
                   src={img.image_url}
@@ -153,7 +153,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-ireland-dark/0 group-hover:bg-ireland-dark/40 transition-colors duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand-dark/0 group-hover:bg-brand-dark/40 transition-colors duration-300 flex items-center justify-center">
                   <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity px-2 text-center leading-tight">
                     {img.caption}
                   </span>
@@ -167,7 +167,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       {/* ─── 出演者紹介 ─── */}
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
-          <span className="w-1 h-5 rounded-full bg-ireland-gold inline-block" />
+          <span className="w-1 h-5 rounded-full bg-brand-gold inline-block" />
           {t("performers")}
         </h2>
         {performers.length === 0 ? (
@@ -185,9 +185,9 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ireland-dark/90 via-ireland-dark/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-4">
-                      <p className="text-ireland-gold text-xs font-bold uppercase tracking-wider mb-0.5">{lp.role}</p>
+                      <p className="text-brand-gold text-xs font-bold uppercase tracking-wider mb-0.5">{lp.role}</p>
                       <p className="text-white text-lg font-black">{lp.name}</p>
                     </div>
                   </div>
@@ -207,13 +207,13 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       {!jaBlocks.some(b => b.type === "fund_usage") && (
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
-          <span className="w-1 h-5 rounded-full bg-ireland-green inline-block" />
+          <span className="w-1 h-5 rounded-full bg-brand-green inline-block" />
           {t("fundingUsage")}
         </h2>
         <div className="space-y-3">
           {[
-            { labelKey: "fundUsage1" as const, percent: 40, color: "bg-ireland-green" },
-            { labelKey: "fundUsage2" as const, percent: 25, color: "bg-ireland-gold" },
+            { labelKey: "fundUsage1" as const, percent: 40, color: "bg-brand-green" },
+            { labelKey: "fundUsage2" as const, percent: 25, color: "bg-brand-gold" },
             { labelKey: "fundUsage3" as const, percent: 15, color: "bg-primary/60" },
             { labelKey: "fundUsage4" as const, percent: 15, color: "bg-secondary/70" },
             { labelKey: "fundUsage5" as const, percent: 5,  color: "bg-muted-foreground/40" },
@@ -237,7 +237,7 @@ export default function CampaignDescription({ campaign, gallery, performers }: P
       <div className="bg-card rounded-2xl border border-border overflow-hidden">
         <div className="relative w-full h-44">
           <Image src="/images/festival-crowd.jpg" alt={t("eventOverview")} fill className="object-cover" />
-          <div className="absolute inset-0 bg-ireland-dark/60" />
+          <div className="absolute inset-0 bg-brand-dark/60" />
           <div className="absolute inset-0 flex items-center justify-center">
             <h2 className="text-white text-xl font-black tracking-wide">{t("eventOverview")}</h2>
           </div>

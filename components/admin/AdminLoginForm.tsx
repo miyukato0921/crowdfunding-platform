@@ -84,7 +84,7 @@ export default function AdminLoginForm() {
 
       <Button
         type="submit"
-        className="w-full bg-ireland-dark hover:bg-ireland-dark/90 text-white font-bold rounded-xl py-5"
+        className="w-full bg-brand-dark hover:bg-brand-dark/90 text-white font-bold rounded-xl py-5"
         disabled={loading}
       >
         {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />ログイン中...</> : "ログイン"}

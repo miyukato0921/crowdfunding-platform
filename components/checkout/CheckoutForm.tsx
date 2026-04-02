@@ -106,8 +106,8 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
                 }}
                 className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold border transition-colors ${
                   customAmount === amt
-                    ? "bg-ireland-green text-white border-ireland-green"
-                    : "bg-background text-foreground border-border hover:border-ireland-green"
+                    ? "bg-brand-green text-white border-brand-green"
+                    : "bg-background text-foreground border-border hover:border-brand-green"
                 }`}
               >
                 {formatYen(amt)}
@@ -132,10 +132,10 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
       )}
 
       {!isCustom && reward && (
-        <div className="p-3 sm:p-4 bg-ireland-green/10 rounded-lg sm:rounded-xl border border-ireland-green/20">
+        <div className="p-3 sm:p-4 bg-brand-green/10 rounded-lg sm:rounded-xl border border-brand-green/20">
           <p className="text-xs sm:text-sm text-muted-foreground">{t("selectedReturn")}</p>
           <p className="font-bold text-foreground text-sm sm:text-base">{rewardTitle ?? reward.title}</p>
-          <p className="text-xl sm:text-2xl font-black text-ireland-green">{formatYen(reward.amount)}</p>
+          <p className="text-xl sm:text-2xl font-black text-brand-green">{formatYen(reward.amount)}</p>
         </div>
       )}
 
@@ -216,7 +216,7 @@ export default function CheckoutForm({ campaign, reward, rewardTitle, isCustom, 
       <div className="pt-1 sm:pt-2 space-y-2">
         <Button
           type="submit"
-          className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-black text-base sm:text-lg py-5 sm:py-6 rounded-lg sm:rounded-xl active:scale-95"
+          className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-black text-base sm:text-lg py-5 sm:py-6 rounded-lg sm:rounded-xl active:scale-95"
           disabled={loading}
         >
           {loading ? (

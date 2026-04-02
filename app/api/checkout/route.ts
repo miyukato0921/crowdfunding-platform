@@ -60,8 +60,8 @@ export async function POST(req: NextRequest) {
             currency: "jpy",
             product_data: {
               name: reward_tier_id
-                ? `Green Ireland Festival 2025 - リターン支援`
-                : `Green Ireland Festival 2025 - 応援支援`,
+                ? `クラウドファンディング - リターン支援`
+                : `クラウドファンディング - 応援支援`,
               description: reward_tier_id
                 ? "リターン付き支援"
                 : "応援支援（リターンなし）",

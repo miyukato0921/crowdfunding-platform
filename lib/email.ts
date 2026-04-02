@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer"
 import sql from "@/lib/db"
 
-const DEFAULT_FROM = "greenirelandfes@enwa.info"
-const DEFAULT_REPLY_TO = "greenirelandfes@enwa.info"
+const DEFAULT_FROM = process.env.EMAIL_FROM ?? ""
+const DEFAULT_REPLY_TO = process.env.EMAIL_FROM ?? ""
 
 function renderTemplate(body: string, vars: Record<string, string>): string {
   return body.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? "")
@@ -67,11 +67,15 @@ async function createTransporter() {
   const creds = await getSmtpCredentials()
   if (!creds) return null
 
-  // 返信先アドレスをDBから取得
+  // 返信先アドレス・送信者名をDBから取得
   let replyTo = DEFAULT_REPLY_TO
+  let senderName = ""
   try {
-    const rows = await sql`SELECT value FROM site_settings WHERE key = 'email_reply_to' LIMIT 1`
-    if (rows[0]?.value) replyTo = rows[0].value
+    const rows = await sql`SELECT key, value FROM site_settings WHERE key IN ('email_reply_to', 'site_title') LIMIT 2`
+    for (const row of rows) {
+      if (row.key === 'email_reply_to') replyTo = row.value
+      if (row.key === 'site_title') senderName = row.value
+    }
   } catch {}
 
   return {
@@ -86,6 +90,7 @@ async function createTransporter() {
     }),
     fromAddress: creds.from,
     replyToAddress: replyTo,
+    senderName,
   }
 }
 
@@ -115,11 +120,11 @@ export async function sendTemplateEmail(
     return
   }
 
-  const { transporter, fromAddress, replyToAddress } = result
+  const { transporter, fromAddress, replyToAddress, senderName } = result
 
   try {
     await transporter.sendMail({
-      from: `"Green Ireland Festival" <${fromAddress}>`,
+      from: senderName ? `"${senderName}" <${fromAddress}>` : fromAddress,
       replyTo: replyToAddress,
       to,
       subject: renderedSubject,
@@ -171,10 +176,10 @@ export async function sendRawEmail({
     return
   }
 
-  const { transporter, fromAddress, replyToAddress } = result
+  const { transporter, fromAddress, replyToAddress, senderName } = result
 
   await transporter.sendMail({
-    from: `"Green Ireland Festival" <${fromAddress}>`,
+    from: senderName ? `"${senderName}" <${fromAddress}>` : fromAddress,
     replyTo: replyToAddress,
     to,
     subject,

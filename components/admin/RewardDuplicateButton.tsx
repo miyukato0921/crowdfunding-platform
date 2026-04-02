@@ -27,7 +27,7 @@ export default function RewardDuplicateButton({ id }: { id: number }) {
     <Button
       variant="ghost"
       size="icon"
-      className="rounded-xl text-muted-foreground hover:text-ireland-green"
+      className="rounded-xl text-muted-foreground hover:text-brand-green"
       onClick={handleDuplicate}
       disabled={loading}
       title="複製する"

@@ -171,7 +171,7 @@ export default function CampaignForm({ action, defaultValues }: Props) {
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">日本語</p>
           <div>
             <Label htmlFor="title" className="text-sm font-bold">タイトル <span className="text-destructive">*</span></Label>
-            <Input id="title" name="title" required value={fields.title} onChange={set("title")} placeholder="例：Green Ireland Festival 2026 クラウドファンディング" className="mt-1.5" />
+            <Input id="title" name="title" required value={fields.title} onChange={set("title")} placeholder="例：クラウドファンディングプロジェクト 2026" className="mt-1.5" />
           </div>
           <div>
             <Label htmlFor="short_description" className="text-sm font-bold">短い説明文 <span className="text-destructive">*</span></Label>
@@ -184,7 +184,7 @@ export default function CampaignForm({ action, defaultValues }: Props) {
             onClick={handleAutoTranslate}
             disabled={isTranslating || (!fields.title && !fields.short_description && blocks.length === 0)}
             variant="outline"
-            className="border-ireland-green text-ireland-green hover:bg-ireland-green/10 rounded-xl font-bold"
+            className="border-brand-green text-brand-green hover:bg-brand-green/10 rounded-xl font-bold"
           >
             {isTranslating
               ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />タイトル＋ブロックを翻訳中...</>
@@ -194,7 +194,7 @@ export default function CampaignForm({ action, defaultValues }: Props) {
             }
           </Button>
           {translateDone && (
-            <p className="text-xs text-ireland-green">タイトル・説明文・ページコンテンツが翻訳されました。「保存する」で反映されます。</p>
+            <p className="text-xs text-brand-green">タイトル・説明文・ページコンテンツが翻訳されました。「保存する」で反映されます。</p>
           )}
         </div>
 
@@ -203,7 +203,7 @@ export default function CampaignForm({ action, defaultValues }: Props) {
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">English</p>
           <div>
             <Label htmlFor="title_en" className="text-sm font-bold">Title</Label>
-            <Input id="title_en" name="title_en" value={fields.title_en} onChange={set("title_en")} placeholder="e.g. Green Ireland Festival 2026 Crowdfunding" className="mt-1.5" />
+            <Input id="title_en" name="title_en" value={fields.title_en} onChange={set("title_en")} placeholder="e.g. Crowdfunding Project 2026" className="mt-1.5" />
           </div>
           <div>
             <Label htmlFor="short_description_en" className="text-sm font-bold">Short Description</Label>
@@ -301,7 +301,7 @@ export default function CampaignForm({ action, defaultValues }: Props) {
         <Button type="button" variant="outline" className="rounded-xl" asChild>
           <Link href="/admin/campaigns"><ArrowLeft className="w-4 h-4 mr-2" />戻る</Link>
         </Button>
-        <Button type="submit" disabled={isPending} className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl">
+        <Button type="submit" disabled={isPending} className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl">
           {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
           {isPending ? "保存中..." : "保存する"}
         </Button>

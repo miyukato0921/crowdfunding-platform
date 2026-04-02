@@ -61,8 +61,8 @@ export default function EmailTemplateEditor({ templates: initial }: Props) {
               onClick={() => setOpenId(isOpen ? null : t.id)}
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-ireland-green/10 flex items-center justify-center">
-                  <Mail className="w-4 h-4 text-ireland-green" />
+                <div className="w-9 h-9 rounded-xl bg-brand-green/10 flex items-center justify-center">
+                  <Mail className="w-4 h-4 text-brand-green" />
                 </div>
                 <div>
                   <p className="font-bold text-foreground text-sm">{t.name}</p>
@@ -70,7 +70,7 @@ export default function EmailTemplateEditor({ templates: initial }: Props) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={t.is_active ? "default" : "secondary"} className={t.is_active ? "bg-ireland-green text-white" : ""}>
+                <Badge variant={t.is_active ? "default" : "secondary"} className={t.is_active ? "bg-brand-green text-white" : ""}>
                   {t.is_active ? "有効" : "無効"}
                 </Badge>
                 {isOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
@@ -92,9 +92,9 @@ export default function EmailTemplateEditor({ templates: initial }: Props) {
                     className="flex items-center gap-1.5 text-sm"
                   >
                     {t.is_active
-                      ? <ToggleRight className="w-6 h-6 text-ireland-green" />
+                      ? <ToggleRight className="w-6 h-6 text-brand-green" />
                       : <ToggleLeft className="w-6 h-6 text-muted-foreground" />}
-                    <span className={t.is_active ? "text-ireland-green font-medium" : "text-muted-foreground"}>
+                    <span className={t.is_active ? "text-brand-green font-medium" : "text-muted-foreground"}>
                       {t.is_active ? "有効" : "無効"}
                     </span>
                   </button>
@@ -142,7 +142,7 @@ export default function EmailTemplateEditor({ templates: initial }: Props) {
                 <Button
                   onClick={() => handleSave(t)}
                   disabled={isPending}
-                  className="bg-ireland-green hover:bg-ireland-green/90 text-white gap-2"
+                  className="bg-brand-green hover:bg-brand-green/90 text-white gap-2"
                 >
                   {saved === t.id ? (
                     <><Check className="w-4 h-4" />保存しました</>

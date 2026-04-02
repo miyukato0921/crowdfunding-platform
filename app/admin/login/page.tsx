@@ -8,14 +8,14 @@ export default async function AdminLoginPage() {
   if (session) redirect("/admin")
 
   return (
-    <div className="min-h-screen bg-ireland-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-ireland-gold rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Leaf className="w-8 h-8 text-ireland-dark" />
+          <div className="w-16 h-16 bg-brand-gold rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Leaf className="w-8 h-8 text-brand-dark" />
           </div>
-          <h1 className="text-2xl font-black text-white">Green Ireland</h1>
+          <h1 className="text-2xl font-black text-white">管理画面</h1>
           <p className="text-white/60 text-sm mt-1">管理画面</p>
         </div>
 
@@ -25,7 +25,7 @@ export default async function AdminLoginPage() {
         </div>
 
         <p className="text-center text-white/40 text-xs mt-6">
-          Green Ireland Festival 2025 &copy; Admin System
+          クラウドファンディング &copy; Admin System
         </p>
       </div>
     </div>

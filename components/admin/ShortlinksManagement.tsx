@@ -264,7 +264,7 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
           <Button
             onClick={editId ? handleUpdate : handleCreate}
             disabled={isPending}
-            className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-bold"
+            className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold"
           >
             {isPending ? "処理中..." : editId ? "更新する" : "リンク作成"}
           </Button>
@@ -294,7 +294,7 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded text-ireland-green truncate">
+                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded text-brand-green truncate">
                         /go/{link.slug}
                       </code>
                       <button
@@ -303,7 +303,7 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
                         title="Copy full URL"
                       >
                         {copied === link.id ? (
-                          <Check className="w-3.5 h-3.5 text-ireland-green" />
+                          <Check className="w-3.5 h-3.5 text-brand-green" />
                         ) : (
                           <Copy className="w-3.5 h-3.5" />
                         )}
@@ -378,7 +378,7 @@ export default function ShortlinksManagement({ initialLinks }: Props) {
           </div>
           <div className="bg-card border border-border rounded-lg p-6 space-y-4">
             <div className="text-center">
-              <p className="text-4xl font-black text-ireland-green">{statsData.link?.click_count ?? 0}</p>
+              <p className="text-4xl font-black text-brand-green">{statsData.link?.click_count ?? 0}</p>
               <p className="text-sm text-muted-foreground">総クリック数</p>
             </div>
             <div className="space-y-2">

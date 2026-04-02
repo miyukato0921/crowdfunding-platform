@@ -169,9 +169,9 @@ export default function BlockRenderer({ blocks, fallbackAboutHtml }: Props) {
                   [&_p]:mb-3 [&_p]:leading-relaxed
                   [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3
                   [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3
-                  [&_blockquote]:border-l-4 [&_blockquote]:border-ireland-green [&_blockquote]:pl-4 [&_blockquote]:italic
+                  [&_blockquote]:border-l-4 [&_blockquote]:border-brand-green [&_blockquote]:pl-4 [&_blockquote]:italic
                   [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3
-                  [&_a]:text-ireland-green [&_a]:underline
+                  [&_a]:text-brand-green [&_a]:underline
                   [&_strong]:font-bold [&_em]:italic"
                 dangerouslySetInnerHTML={{ __html: html }}
               />

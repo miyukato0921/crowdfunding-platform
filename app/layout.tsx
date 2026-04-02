@@ -15,7 +15,7 @@ const notoSansJP = Noto_Sans_JP({
 export const dynamic = "force-dynamic"
 
 export async function generateMetadata(): Promise<Metadata> {
-  let siteTitle = "Green Ireland Festival"
+  let siteTitle = "クラウドファンディング"
   try {
     const rows = await sql`SELECT value FROM site_settings WHERE key = 'site_title' LIMIT 1`
     if (rows[0]?.value) siteTitle = rows[0].value
@@ -56,7 +56,7 @@ export default async function RootLayout({
       <body className={`${notoSansJP.className} font-sans antialiased bg-background text-foreground`}>
         <SiteSettingsProvider
           logoUrl={settings.logo_url ?? ""}
-          siteTitle={settings.site_title ?? "Green Ireland Festival"}
+          siteTitle={settings.site_title ?? "クラウドファンディング"}
         >
           <LanguageProvider>
             {children}

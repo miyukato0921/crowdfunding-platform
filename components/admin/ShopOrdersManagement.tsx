@@ -196,7 +196,7 @@ export default function ShopOrdersManagement({ orders: initialOrders, stats }: P
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <div className="bg-card rounded-2xl border border-border p-5 text-center">
-          <p className="text-2xl font-black text-ireland-green">{formatYen(Number(stats.total_sales))}</p>
+          <p className="text-2xl font-black text-brand-green">{formatYen(Number(stats.total_sales))}</p>
           <p className="text-xs text-muted-foreground mt-1">累計売上</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-5 text-center">
@@ -273,7 +273,7 @@ export default function ShopOrdersManagement({ orders: initialOrders, stats }: P
                       <p className="font-medium text-foreground truncate max-w-[120px]">{order.buyer_name ?? "未設定"}</p>
                       <p className="text-xs text-muted-foreground truncate max-w-[120px]">{order.buyer_email}</p>
                     </td>
-                    <td className="py-3 px-4 text-right font-bold text-ireland-green">{formatYen(order.product_price)}</td>
+                    <td className="py-3 px-4 text-right font-bold text-brand-green">{formatYen(order.product_price)}</td>
                     <td className="py-3 px-4 text-center">
                       <Badge className={`text-xs border ${ps.className}`}>{ps.label}</Badge>
                     </td>
@@ -365,7 +365,7 @@ export default function ShopOrdersManagement({ orders: initialOrders, stats }: P
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOrder(null)} className="rounded-xl">キャンセル</Button>
-            <Button onClick={handleUpdateStatus} disabled={loading} className="rounded-xl bg-ireland-green hover:bg-ireland-green/90 text-white">保存する</Button>
+            <Button onClick={handleUpdateStatus} disabled={loading} className="rounded-xl bg-brand-green hover:bg-brand-green/90 text-white">保存する</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -394,7 +394,7 @@ export default function ShopOrdersManagement({ orders: initialOrders, stats }: P
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShippingOrder(null)} className="rounded-xl">キャンセル</Button>
-            <Button onClick={handleShippingSave} disabled={loading} className="rounded-xl bg-ireland-green hover:bg-ireland-green/90 text-white">保存する</Button>
+            <Button onClick={handleShippingSave} disabled={loading} className="rounded-xl bg-brand-green hover:bg-brand-green/90 text-white">保存する</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -80,7 +80,7 @@ export default function ProductForm({ action, defaultValues }: Props) {
         <h3 className="text-sm font-bold text-foreground">日本語（メイン）</h3>
         <div>
           <Label htmlFor="name" className="text-sm font-bold">商品名 <span className="text-destructive">*</span></Label>
-          <Input id="name" name="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="例：Green Ireland Festival 2026 Tシャツ" className="mt-1.5" />
+          <Input id="name" name="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="例：オリジナルTシャツ 2026" className="mt-1.5" />
         </div>
         <div>
           <Label htmlFor="description" className="text-sm font-bold">商品説明</Label>
@@ -153,7 +153,7 @@ export default function ProductForm({ action, defaultValues }: Props) {
             name="is_active"
             type="checkbox"
             defaultChecked={defaultValues?.is_active ?? true}
-            className="w-4 h-4 rounded border border-input accent-ireland-green"
+            className="w-4 h-4 rounded border border-input accent-brand-green"
           />
           <Label htmlFor="is_active" className="text-sm font-bold cursor-pointer">公開中（チェックを外すと非公開）</Label>
         </div>
@@ -166,7 +166,7 @@ export default function ProductForm({ action, defaultValues }: Props) {
             戻る
           </Link>
         </Button>
-        <Button type="submit" disabled={isPending} className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl">
+        <Button type="submit" disabled={isPending} className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl">
           {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
           {isPending ? "保存中..." : "保存する"}
         </Button>

@@ -205,13 +205,13 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
 
       {/* Bulk action bar */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 mb-4 bg-ireland-green/10 border border-ireland-green/20 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-3 mb-4 bg-brand-green/10 border border-brand-green/20 rounded-xl px-4 py-3">
           <span className="text-sm font-bold text-foreground">{selectedIds.size}件選択中</span>
           <div className="flex-1" />
           <Button
             size="sm"
             variant="outline"
-            className="border-ireland-green text-ireland-green hover:bg-ireland-green/10 rounded-lg"
+            className="border-brand-green text-brand-green hover:bg-brand-green/10 rounded-lg"
             onClick={handleBulkEmail}
             disabled={bulkEmailSending}
           >
@@ -236,7 +236,7 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
           <p className="text-xs text-muted-foreground mt-1">発行済み</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-4 text-center">
-          <p className="text-2xl font-black text-ireland-green">{receipts.filter((r) => r.email_sent).length}</p>
+          <p className="text-2xl font-black text-brand-green">{receipts.filter((r) => r.email_sent).length}</p>
           <p className="text-xs text-muted-foreground mt-1">メール送信済み</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-4 text-center">
@@ -288,7 +288,7 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
                       <p className="text-xs text-muted-foreground truncate max-w-[140px]">{receipt.supporter_email}</p>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-right font-bold text-ireland-green">
+                  <td className="py-3 px-4 text-right font-bold text-brand-green">
                     ¥{Number(receipt.amount).toLocaleString("ja-JP")}
                   </td>
                   <td className="py-3 px-4 text-center">
@@ -383,7 +383,7 @@ export default function ReceiptManagement({ receipts: initialReceipts }: Props) 
             <Button
               onClick={handleEditSave}
               disabled={editSaving || !editName.trim()}
-              className="rounded-xl bg-ireland-green hover:bg-ireland-green/90 text-white"
+              className="rounded-xl bg-brand-green hover:bg-brand-green/90 text-white"
             >
               {editSaving ? "保存中..." : "保存する"}
             </Button>

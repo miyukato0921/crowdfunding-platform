@@ -4,17 +4,17 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Green Ireland Festival Theme */
+  /* Crowdfunding Site Theme */
   --background: oklch(0.99 0.004 140);
   --foreground: oklch(0.15 0.02 150);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.15 0.02 150);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.02 150);
-  /* Irish Green as primary */
+  /* Brand primary color */
   --primary: oklch(0.42 0.15 152);
   --primary-foreground: oklch(1 0 0);
-  /* Gold accent */
+  /* Brand accent color */
   --secondary: oklch(0.82 0.14 85);
   --secondary-foreground: oklch(0.15 0.02 150);
   --muted: oklch(0.96 0.008 140);
@@ -32,11 +32,11 @@
   --chart-4: oklch(0.7 0.1 85);
   --chart-5: oklch(0.3 0.1 152);
   --radius: 0.75rem;
-  /* festival green tones */
-  --ireland-green: oklch(0.42 0.15 152);
-  --ireland-gold: oklch(0.82 0.14 85);
-  --ireland-dark: oklch(0.2 0.05 152);
-  --ireland-light: oklch(0.96 0.02 140);
+  /* Brand custom colors */
+  --brand-green: oklch(0.42 0.15 152);
+  --brand-gold: oklch(0.82 0.14 85);
+  --brand-dark: oklch(0.2 0.05 152);
+  --brand-light: oklch(0.96 0.02 140);
   --sidebar: oklch(0.18 0.05 152);
   --sidebar-foreground: oklch(0.95 0.01 140);
   --sidebar-primary: oklch(0.82 0.14 85);
@@ -85,10 +85,10 @@
 @theme inline {
   --font-sans: 'Noto Sans JP', 'Geist', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
-  --color-ireland-green: var(--ireland-green);
-  --color-ireland-gold: var(--ireland-gold);
-  --color-ireland-dark: var(--ireland-dark);
-  --color-ireland-light: var(--ireland-light);
+  --color-brand-green: var(--brand-green);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

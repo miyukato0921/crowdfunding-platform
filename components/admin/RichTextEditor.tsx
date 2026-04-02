@@ -163,7 +163,7 @@ export default function RichTextEditor({ value, onChange, placeholder, onImageUp
             onClick={mode === "rich" ? switchToPlain : switchToRich}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-colors ${
               mode === "plain"
-                ? "bg-ireland-green text-white"
+                ? "bg-brand-green text-white"
                 : "bg-background border border-border text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -186,9 +186,9 @@ export default function RichTextEditor({ value, onChange, placeholder, onImageUp
             [&_p]:mb-3 [&_p]:leading-relaxed
             [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3
             [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3
-            [&_blockquote]:border-l-4 [&_blockquote]:border-ireland-green [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground
+            [&_blockquote]:border-l-4 [&_blockquote]:border-brand-green [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground
             [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3
-            [&_a]:text-ireland-green [&_a]:underline
+            [&_a]:text-brand-green [&_a]:underline
             [&_strong]:font-bold [&_em]:italic"
           data-placeholder={placeholder ?? "内容を入力してください..."}
           style={{ "--placeholder": `"${placeholder ?? "内容を入力してください..."}"` } as React.CSSProperties}

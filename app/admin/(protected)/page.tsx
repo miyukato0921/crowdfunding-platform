@@ -66,16 +66,16 @@ export default async function AdminDashboard() {
       label: "総支援額",
       value: formatYen(actualRevenue),
       icon: TrendingUp,
-      color: "text-ireland-green",
-      bg: "bg-ireland-green/10",
+      color: "text-brand-green",
+      bg: "bg-brand-green/10",
       sub: `目標の${progress}%達成`,
     },
     {
       label: "支援者数",
       value: `${actualCount}人`,
       icon: Users,
-      color: "text-ireland-gold",
-      bg: "bg-ireland-gold/10",
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
       sub: `完了：${pledgeStats?.completed_count ?? 0}件`,
     },
     {
@@ -122,10 +122,10 @@ export default async function AdminDashboard() {
       <div className="bg-card rounded-2xl border border-border p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-bold text-foreground flex items-center gap-2">
-            <Target className="w-5 h-5 text-ireland-green" />
+            <Target className="w-5 h-5 text-brand-green" />
             目標達成状況
           </h2>
-          <span className="text-sm font-bold text-ireland-green">{progress}%</span>
+          <span className="text-sm font-bold text-brand-green">{progress}%</span>
         </div>
         <div className="h-4 bg-muted rounded-full overflow-hidden mb-2">
           <div
@@ -150,7 +150,7 @@ export default async function AdminDashboard() {
 
         <div className="bg-card rounded-2xl border border-border p-6">
           <h2 className="font-bold text-foreground mb-4 flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-ireland-green" />
+            <CreditCard className="w-5 h-5 text-brand-green" />
             決済状況
           </h2>
           <div className="space-y-3">

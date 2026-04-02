@@ -1,4 +1,4 @@
--- Green Ireland Festival Crowdfunding Schema
+-- Crowdfunding Platform Schema
 
 -- Admin users table
 CREATE TABLE IF NOT EXISTS admin_users (
@@ -89,12 +89,12 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
 -- Seed default campaign
 INSERT INTO campaigns (title, description, short_description, goal_amount, start_date, end_date, status, hero_image_url)
 VALUES (
-  'Green Ireland Festival 2025',
+  'サンプルキャンペーン',
   '## グリーンアイルランドフェスティバルについて
 
-アイルランドの豊かな文化と音楽、食、そして人々の温かさを日本に届けるため、私たちは「Green Ireland Festival 2025」を開催します。
+これはサンプルキャンペーンの説明です。管理画面から実際のコンテンツに変更してください。
 
-このフェスティバルでは、本場アイルランドから招いたミュージシャンによるライブパフォーマンス、伝統的なアイリッシュ料理と日本食のコラボレーション、ケルト文化の体験ブース、アイリッシュウィスキーテイスティングなど、盛りだくさんのコンテンツを予定しています。
+詳細は管理画面から設定できます。
 
 ## 資金の使い道
 
@@ -111,7 +111,7 @@ VALUES (
 - 来場予定者数：5,000人
 
 皆さまのご支援で、日本とアイルランドの架け橋となる素晴らしいフェスティバルを実現させてください！',
-  'アイルランドの文化・音楽・食を日本に届けるフェスティバルを一緒に作りましょう！',
+  'クラウドファンディングプロジェクトにご支援ください！',
   5000000,
   NOW(),
   NOW() + INTERVAL '45 days',
@@ -124,45 +124,45 @@ INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, 
 SELECT 
   c.id,
   'ブロンズサポーター',
-  'フェスティバル限定シャムロックピンバッジをお届けします。あなたの名前をパンフレットにクレジット掲載します。',
+  'サンプルリターン（ブロンズ）です。管理画面から内容を変更してください。',
   3000,
   200,
   '/images/reward-bronze.jpg',
   '2025年3月',
   1
-FROM campaigns c WHERE c.title = 'Green Ireland Festival 2025'
+FROM campaigns c WHERE c.title = 'サンプルキャンペーン'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, image_url, delivery_date, sort_order)
 SELECT 
   c.id,
   'シルバーサポーター',
-  'フェスティバル1日入場券＋限定グッズセット（Tシャツ・ステッカー）＋パンフレットクレジット掲載。',
+  'サンプルリターン（シルバー）です。管理画面から内容を変更してください。',
   8000,
   100,
   '/images/reward-silver.jpg',
   '2025年3月',
   2
-FROM campaigns c WHERE c.title = 'Green Ireland Festival 2025'
+FROM campaigns c WHERE c.title = 'サンプルキャンペーン'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO reward_tiers (campaign_id, title, description, amount, limit_count, image_url, delivery_date, sort_order)
 SELECT 
   c.id,
   'ゴールドサポーター',
-  'VIP2日間通し入場券＋バックステージツアー＋アーティストとの懇親会参加権＋限定プレミアムグッズセット＋パンフレット特別クレジット掲載。',
+  'サンプルリターン（ゴールド）です。管理画面から内容を変更してください。',
   30000,
   30,
   '/images/reward-gold.jpg',
   '2025年3月',
   3
-FROM campaigns c WHERE c.title = 'Green Ireland Festival 2025'
+FROM campaigns c WHERE c.title = 'サンプルキャンペーン'
 ON CONFLICT DO NOTHING;
 
 -- Seed admin user (password: Admin1234! - bcrypt hash)
 INSERT INTO admin_users (email, password_hash, name, role)
 VALUES (
-  'admin@greenireland.jp',
+  'admin@example.com',
   '$2b$10$rOzJqo5W1JrAOW2oZRkfZuGXSJhZL5C5A6KqZ5V9.V.A8UMFrLY.6',
   '管理者',
   'super_admin'

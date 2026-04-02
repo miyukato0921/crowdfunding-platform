@@ -9,7 +9,7 @@ interface SiteSettings {
 
 const SiteSettingsContext = createContext<SiteSettings>({
   logoUrl: "",
-  siteTitle: "Green Ireland Festival",
+  siteTitle: "クラウドファンディング",
 })
 
 export function useSiteSettings() {

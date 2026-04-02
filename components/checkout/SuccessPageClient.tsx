@@ -42,17 +42,17 @@ export default function SuccessPageClient({
 
   return (
     <>
-      <div className="w-20 h-20 bg-ireland-green/15 rounded-full flex items-center justify-center mx-auto mb-6">
-        <CheckCircle className="w-10 h-10 text-ireland-green" />
+      <div className="w-20 h-20 bg-brand-green/15 rounded-full flex items-center justify-center mx-auto mb-6">
+        <CheckCircle className="w-10 h-10 text-brand-green" />
       </div>
       <h1 className="text-3xl font-black text-foreground mb-3">{t("successTitle")}</h1>
       <p className="text-muted-foreground leading-relaxed mb-2">
         {campaignTitle}の実現に近づきました。
       </p>
       <p className="text-sm text-muted-foreground mb-8">{t("successEmailNote")}</p>
-      <div className="bg-ireland-green/10 border border-ireland-green/20 rounded-2xl p-6 mb-8">
+      <div className="bg-brand-green/10 border border-brand-green/20 rounded-2xl p-6 mb-8">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Heart className="w-5 h-5 text-ireland-gold fill-ireland-gold" />
+          <Heart className="w-5 h-5 text-brand-gold fill-brand-gold" />
           <span className="font-bold text-foreground">{t("successShare")}</span>
         </div>
         <p className="text-sm text-muted-foreground">{t("successShareDesc")}</p>
@@ -69,7 +69,7 @@ export default function SuccessPageClient({
       />
 
       <Button
-        className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-bold rounded-xl"
+        className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold rounded-xl"
         asChild
       >
         <Link href="/">

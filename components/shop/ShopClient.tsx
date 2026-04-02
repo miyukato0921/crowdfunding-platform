@@ -26,7 +26,7 @@ interface Props {
 export default function ShopClient({ products }: Props) {
   const { t, lang } = useLanguage()
   const { logoUrl, siteTitle } = useSiteSettings()
-  const title = siteTitle || "Green Ireland Festival"
+  const title = siteTitle || "クラウドファンディング"
 
   const localize = (p: Product) => ({
     name: (lang !== "ja" && (p as any)[`name_${lang}`]) || p.name,
@@ -35,19 +35,19 @@ export default function ShopClient({ products }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-ireland-dark border-b border-ireland-green/20">
+      <header className="sticky top-0 z-40 bg-brand-dark border-b border-brand-green/20">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {logoUrl ? (
               <Image src={logoUrl} alt={title} width={32} height={32} className="rounded-lg object-cover" unoptimized />
             ) : (
-              <div className="w-8 h-8 bg-ireland-gold rounded-lg flex items-center justify-center shrink-0">
-                <Leaf className="w-4 h-4 text-ireland-dark" />
+              <div className="w-8 h-8 bg-brand-gold rounded-lg flex items-center justify-center shrink-0">
+                <Leaf className="w-4 h-4 text-brand-dark" />
               </div>
             )}
             <div>
               <p className="font-black text-white text-sm leading-none">{title}</p>
-              <p className="text-ireland-gold text-xs">Official Shop</p>
+              <p className="text-brand-gold text-xs">Official Shop</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export default function ShopClient({ products }: Props) {
 
       <main className="max-w-5xl mx-auto px-4 py-10">
         <div className="text-center mb-10">
-          <p className="text-ireland-green text-xs font-bold uppercase tracking-widest mb-2">Official Shop</p>
+          <p className="text-brand-green text-xs font-bold uppercase tracking-widest mb-2">Official Shop</p>
           <h1 className="text-3xl font-black text-foreground text-balance">{t("shopTitle")}</h1>
           <p className="text-muted-foreground text-sm mt-3">{t("shopDesc")}</p>
         </div>
@@ -104,13 +104,13 @@ export default function ShopClient({ products }: Props) {
                   )}
                   <div className="flex items-center justify-between mt-3">
                     <div>
-                      <p className="font-black text-ireland-green">{formatYen(product.price)}</p>
+                      <p className="font-black text-brand-green">{formatYen(product.price)}</p>
                       <p className="text-xs text-muted-foreground">{t("tax")}</p>
                     </div>
                     {product.stock_count !== 0 && (
                       <Link
                         href={`/shop/checkout?product_id=${product.id}`}
-                        className="text-xs bg-ireland-green text-white font-bold px-3 py-1.5 rounded-lg hover:bg-ireland-green/90 transition-colors"
+                        className="text-xs bg-brand-green text-white font-bold px-3 py-1.5 rounded-lg hover:bg-brand-green/90 transition-colors"
                       >
                         {t("buyNow")}
                       </Link>
@@ -125,8 +125,8 @@ export default function ShopClient({ products }: Props) {
       </main>
 
       <footer className="border-t border-border mt-16 py-8 text-center text-xs text-muted-foreground">
-        <p>© 2026 Green Ireland Festival. All rights reserved.</p>
-        <Link href="/" className="text-ireland-green hover:underline mt-1 inline-block">{t("backToCampaign")}</Link>
+        <p>© {new Date().getFullYear()} {title}. All rights reserved.</p>
+        <Link href="/" className="text-brand-green hover:underline mt-1 inline-block">{t("backToCampaign")}</Link>
       </footer>
     </div>
   )

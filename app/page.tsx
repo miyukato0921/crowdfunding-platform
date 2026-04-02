@@ -22,15 +22,15 @@ function SupportersList({ supporters }: {
   return (
     <div className="bg-card rounded-2xl border border-border p-6 mt-6">
       <h2 className="font-black text-foreground mb-4 flex items-center gap-2">
-        <Heart className="w-4 h-4 text-ireland-green" />
+        <Heart className="w-4 h-4 text-brand-green" />
         支援者
         <span className="text-sm font-normal text-muted-foreground">（{supporters.length}件）</span>
       </h2>
       <div className="space-y-4">
         {supporters.map((s, i) => (
           <div key={i} className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-ireland-green/10 flex items-center justify-center shrink-0">
-              <Heart className="w-3.5 h-3.5 text-ireland-green" />
+            <div className="w-8 h-8 rounded-full bg-brand-green/10 flex items-center justify-center shrink-0">
+              <Heart className="w-3.5 h-3.5 text-brand-green" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -39,7 +39,7 @@ function SupportersList({ supporters }: {
                 </span>
                 <span className="text-xs text-muted-foreground">{fmt(s.created_at)}</span>
               </div>
-              <p className="text-sm font-bold text-ireland-green">{formatYen(s.amount)}</p>
+              <p className="text-sm font-bold text-brand-green">{formatYen(s.amount)}</p>
               {s.message && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.message}</p>}
             </div>
           </div>

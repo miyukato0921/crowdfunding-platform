@@ -26,7 +26,7 @@ type Props =
 export default function ShopCheckoutPageClient(props: Props) {
   const { t, lang } = useLanguage()
   const { logoUrl, siteTitle } = useSiteSettings()
-  const title = siteTitle || "Green Ireland Festival"
+  const title = siteTitle || "クラウドファンディング"
 
   if (props.type === "no_product") {
     return (
@@ -35,7 +35,7 @@ export default function ShopCheckoutPageClient(props: Props) {
           <p className="text-muted-foreground mb-4">
             {props.reason === "not_found" ? t("noProduct") : t("noProductSpecified")}
           </p>
-          <Link href="/shop" className="text-ireland-green hover:underline text-sm">{t("backToShopLink")}</Link>
+          <Link href="/shop" className="text-brand-green hover:underline text-sm">{t("backToShopLink")}</Link>
         </div>
       </div>
     )
@@ -47,18 +47,18 @@ export default function ShopCheckoutPageClient(props: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-ireland-dark border-b border-ireland-green/20">
+      <header className="sticky top-0 z-40 bg-brand-dark border-b border-brand-green/20">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
           {logoUrl ? (
             <Image src={logoUrl} alt={title} width={32} height={32} className="rounded-lg object-cover" unoptimized />
           ) : (
-            <div className="w-8 h-8 bg-ireland-gold rounded-lg flex items-center justify-center shrink-0">
-              <Leaf className="w-4 h-4 text-ireland-dark" />
+            <div className="w-8 h-8 bg-brand-gold rounded-lg flex items-center justify-center shrink-0">
+              <Leaf className="w-4 h-4 text-brand-dark" />
             </div>
           )}
           <div>
             <p className="font-black text-white text-sm leading-none">{title}</p>
-            <p className="text-ireland-gold text-xs">{t("officialShop")}</p>
+            <p className="text-brand-gold text-xs">{t("officialShop")}</p>
           </div>
         </div>
       </header>
@@ -92,7 +92,7 @@ export default function ShopCheckoutPageClient(props: Props) {
               <div className="border-t border-border pt-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">{t("shopPriceLabel")}</span>
-                  <span className="font-black text-ireland-green text-lg">{formatYen(product.price)}</span>
+                  <span className="font-black text-brand-green text-lg">{formatYen(product.price)}</span>
                 </div>
               </div>
             </div>

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Green Ireland Festival — a crowdfunding platform with an integrated shop, built with Next.js 16 (App Router), React 19, TypeScript, Neon PostgreSQL, Stripe, and Tailwind CSS 4 + shadcn/ui. Deployed on Vercel (serverless).
+汎用クラウドファンディングプラットフォーム（ショップ機能統合）。Next.js 16 (App Router)、React 19、TypeScript、Neon PostgreSQL、Stripe、Tailwind CSS 4 + shadcn/ui で構築。Vercel（サーバーレス）にデプロイ。
 
 ## Commands
 
@@ -63,7 +63,7 @@ React Hook Form + Zod for form handling and validation across admin and checkout
 
 ### Styling
 
-Tailwind CSS 4 with oklch() color variables defined in `app/globals.css`. Custom theme: `--ireland-green`, `--ireland-gold`, `--ireland-dark`. Light/dark mode via `next-themes`. Font: Noto Sans JP (primary).
+Tailwind CSS 4 with oklch() color variables defined in `app/globals.css`. Custom theme: `--brand-green`, `--brand-gold`, `--brand-dark`. Light/dark mode via `next-themes`. Font: Noto Sans JP (primary).
 
 ## Path Alias
 

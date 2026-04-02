@@ -18,18 +18,18 @@ interface Props {
 export default function ShopSuccessPageClient({ order }: Props) {
   const { t } = useLanguage()
   const { siteTitle } = useSiteSettings()
-  const title = siteTitle || "Green Ireland Festival"
+  const title = siteTitle || "クラウドファンディング"
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-ireland-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-ireland-green" />
+          <div className="w-20 h-20 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle2 className="w-10 h-10 text-brand-green" />
           </div>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-7 h-7 bg-ireland-gold rounded-lg flex items-center justify-center">
-              <Leaf className="w-3.5 h-3.5 text-ireland-dark" />
+            <div className="w-7 h-7 bg-brand-gold rounded-lg flex items-center justify-center">
+              <Leaf className="w-3.5 h-3.5 text-brand-dark" />
             </div>
             <span className="font-black text-foreground text-sm">{title} Shop</span>
           </div>
@@ -65,7 +65,7 @@ export default function ShopSuccessPageClient({ order }: Props) {
         <div className="flex flex-col gap-3 mt-6">
           <Link
             href="/shop"
-            className="w-full bg-ireland-green text-white font-bold py-3 rounded-xl text-sm hover:bg-ireland-green/90 transition-colors text-center"
+            className="w-full bg-brand-green text-white font-bold py-3 rounded-xl text-sm hover:bg-brand-green/90 transition-colors text-center"
           >
             {t("backToShopBtn")}
           </Link>

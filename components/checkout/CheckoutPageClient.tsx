@@ -79,7 +79,7 @@ export default function CheckoutPageClient(props: Props) {
                 <div className="border-t border-border pt-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{t("checkoutAmountLabel")}</span>
-                    <span className="font-black text-ireland-green text-lg">{formatYen(reward.amount)}</span>
+                    <span className="font-black text-brand-green text-lg">{formatYen(reward.amount)}</span>
                   </div>
                 </div>
               </>
@@ -90,7 +90,7 @@ export default function CheckoutPageClient(props: Props) {
                   <div className="border-t border-border pt-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">{t("checkoutAmountLabel")}</span>
-                      <span className="font-black text-ireland-green text-lg">{formatYen(defaultAmount)}</span>
+                      <span className="font-black text-brand-green text-lg">{formatYen(defaultAmount)}</span>
                     </div>
                   </div>
                 )}

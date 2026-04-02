@@ -36,10 +36,10 @@ export async function POST(req: NextRequest) {
       ${body.issuer_name},
       ${body.issuer_address || null},
       ${body.issuer_tel || null},
-      ${body.issuer_email || "greenirelandfes@enwa.info"},
+      ${body.issuer_email || null},
       ${body.logo_url || null},
       ${body.stamp_url || null},
-      ${body.prefix || "GIF"},
+      ${body.prefix || "CF"},
       ${body.default_proviso || "クラウドファンディング支援金として"},
       ${body.footer_note || null},
       ${body.is_default ?? true}

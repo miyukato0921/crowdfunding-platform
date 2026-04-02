@@ -33,7 +33,7 @@ export default function LegalPageClient({ title, content }: Props) {
               [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-1
               [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-1
               [&_li]:text-sm [&_li]:leading-relaxed
-              [&_a]:text-ireland-green [&_a]:underline
+              [&_a]:text-brand-green [&_a]:underline
               [&_strong]:font-bold"
             dangerouslySetInnerHTML={{ __html: content }}
           />

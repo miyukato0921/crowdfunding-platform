@@ -129,20 +129,20 @@ export default function ImageUploader({ name, label, defaultValue, currentUrl, r
             relative flex flex-col items-center justify-center gap-3
             w-full h-40 rounded-xl border-2 border-dashed cursor-pointer transition-colors
             ${dragging
-              ? "border-ireland-green bg-ireland-green/5"
-              : "border-border hover:border-ireland-green/60 hover:bg-muted/50"
+              ? "border-brand-green bg-brand-green/5"
+              : "border-border hover:border-brand-green/60 hover:bg-muted/50"
             }
           `}
         >
           {uploading ? (
             <>
-              <Loader2 className="w-8 h-8 text-ireland-green animate-spin" />
+              <Loader2 className="w-8 h-8 text-brand-green animate-spin" />
               <span className="text-sm text-muted-foreground">アップロード中...</span>
             </>
           ) : (
             <>
-              <div className="w-12 h-12 rounded-full bg-ireland-green/10 flex items-center justify-center">
-                <ImageIcon className="w-6 h-6 text-ireland-green" />
+              <div className="w-12 h-12 rounded-full bg-brand-green/10 flex items-center justify-center">
+                <ImageIcon className="w-6 h-6 text-brand-green" />
               </div>
               <div className="text-center">
                 <p className="text-sm font-medium text-foreground">クリックまたはドラッグ＆ドロップ</p>

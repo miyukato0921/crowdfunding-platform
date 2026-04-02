@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "receipt_ids is required" }, { status: 400 })
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   let sent = 0
   let failed = 0
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
       await sendRawEmail({
         to: receipt.supporter_email,
-        subject: `【Green Ireland Festival】領収書（${receipt.receipt_number}）`,
+        subject: `領収書（${receipt.receipt_number}）`,
         text: `${receipt.supporter_name} 様\n\n領収書をお届けいたします。\n\n領収書番号: ${receipt.receipt_number}\n金額: ¥${Number(receipt.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${receipt.issuer_name}`,
         html: `<p>${receipt.supporter_name} 様</p><p>領収書をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${receipt.issuer_name}</p>`,
       })

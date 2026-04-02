@@ -49,16 +49,16 @@ export default function CampaignHero({ campaign }: Props) {
           />
           {/* バッジだけ画像の上に */}
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-            <Badge className="bg-ireland-gold text-ireland-dark font-bold border-0 text-[10px] px-2 py-0.5 shadow">
+            <Badge className="bg-brand-gold text-brand-dark font-bold border-0 text-[10px] px-2 py-0.5 shadow">
               {t("accepting")}
             </Badge>
-            <Badge className="bg-white/90 text-ireland-dark border-0 text-[10px] backdrop-blur-sm px-2 py-0.5 shadow">
+            <Badge className="bg-white/90 text-brand-dark border-0 text-[10px] backdrop-blur-sm px-2 py-0.5 shadow">
               {t("cultureArt")}
             </Badge>
           </div>
         </div>
         {/* テキスト — 画像の下、背景色付き */}
-        <div className="bg-ireland-dark px-4 py-4 space-y-2">
+        <div className="bg-brand-dark px-4 py-4 space-y-2">
           <h1 className="text-lg font-black text-white leading-snug">
             {title}
           </h1>
@@ -67,11 +67,11 @@ export default function CampaignHero({ campaign }: Props) {
           </p>
           <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1">
             <div className="flex items-center gap-1 text-white/70 text-[11px]">
-              <Calendar className="w-3 h-3 text-ireland-gold shrink-0" />
+              <Calendar className="w-3 h-3 text-brand-gold shrink-0" />
               <span>{eventDate}</span>
             </div>
             <div className="flex items-center gap-1 text-white/70 text-[11px]">
-              <MapPin className="w-3 h-3 text-ireland-gold shrink-0" />
+              <MapPin className="w-3 h-3 text-brand-gold shrink-0" />
               <span>{eventVenue}</span>
             </div>
           </div>
@@ -89,11 +89,11 @@ export default function CampaignHero({ campaign }: Props) {
             priority
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ireland-dark/85 via-ireland-dark/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/85 via-brand-dark/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-10">
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-wrap gap-2 mb-3">
-                <Badge className="bg-ireland-gold text-ireland-dark font-bold border-0 text-xs">
+                <Badge className="bg-brand-gold text-brand-dark font-bold border-0 text-xs">
                   {t("accepting")}
                 </Badge>
                 <Badge className="bg-white/20 text-white border-white/30 text-xs backdrop-blur-sm">
@@ -108,11 +108,11 @@ export default function CampaignHero({ campaign }: Props) {
               </p>
               <div className="flex flex-wrap gap-4 mt-4">
                 <div className="flex items-center gap-1.5 text-white/80 text-sm">
-                  <Calendar className="w-4 h-4 text-ireland-gold shrink-0" />
+                  <Calendar className="w-4 h-4 text-brand-gold shrink-0" />
                   <span>{eventDate}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-white/80 text-sm">
-                  <MapPin className="w-4 h-4 text-ireland-gold shrink-0" />
+                  <MapPin className="w-4 h-4 text-brand-gold shrink-0" />
                   <span>{eventVenue}</span>
                 </div>
               </div>

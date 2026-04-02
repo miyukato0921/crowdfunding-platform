@@ -62,7 +62,7 @@ function EmailTestPanel() {
         <Button
           onClick={handleTest}
           disabled={isPending || !to}
-          className="bg-ireland-green hover:bg-ireland-green/90 text-white gap-2"
+          className="bg-brand-green hover:bg-brand-green/90 text-white gap-2"
         >
           {isPending ? (
             <><Loader2 className="w-4 h-4 animate-spin" />送信中...</>
@@ -80,7 +80,7 @@ function EmailTestPanel() {
         }`}>
           <div className="flex items-center gap-2">
             {result.success
-              ? <CheckCircle className="w-5 h-5 text-ireland-green" />
+              ? <CheckCircle className="w-5 h-5 text-brand-green" />
               : <XCircle className="w-5 h-5 text-red-500" />
             }
             <p className="font-bold text-sm">
@@ -118,7 +118,7 @@ function EmailTestPanel() {
                   <span className="flex items-center gap-1">
                     {result.templateStatus.found
                       ? result.templateStatus.is_active
-                        ? <><CheckCircle className="w-3 h-3 text-ireland-green" />有効</>
+                        ? <><CheckCircle className="w-3 h-3 text-brand-green" />有効</>
                         : <><AlertTriangle className="w-3 h-3 text-amber-500" />無効（is_active = false）</>
                       : <><XCircle className="w-3 h-3 text-red-500" />テンプレート未作成</>
                     }

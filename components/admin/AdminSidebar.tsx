@@ -68,11 +68,11 @@ export default function AdminSidebar({ admin }: Props) {
       {/* Logo */}
       <div className="p-5 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-ireland-gold rounded-xl flex items-center justify-center">
-            <Leaf className="w-5 h-5 text-ireland-dark" />
+          <div className="w-9 h-9 bg-brand-gold rounded-xl flex items-center justify-center">
+            <Leaf className="w-5 h-5 text-brand-dark" />
           </div>
           <div>
-            <p className="font-black text-sidebar-foreground text-sm truncate">{siteTitle || "Green Ireland Festival"}</p>
+            <p className="font-black text-sidebar-foreground text-sm truncate">{siteTitle || "クラウドファンディング"}</p>
             <p className="text-sidebar-foreground/50 text-xs">管理画面</p>
             <p className="text-sidebar-foreground/40 text-[11px] font-mono leading-tight mt-1">
               {(() => {
@@ -136,7 +136,7 @@ export default function AdminSidebar({ admin }: Props) {
       {/* User info + logout */}
       <div className="p-3 border-t border-sidebar-border">
         <div className="flex items-center gap-3 px-3 py-2 mb-1">
-          <div className="w-8 h-8 bg-ireland-gold/30 rounded-full flex items-center justify-center text-ireland-gold font-bold text-sm">
+          <div className="w-8 h-8 bg-brand-gold/30 rounded-full flex items-center justify-center text-brand-gold font-bold text-sm">
             {admin.name.charAt(0)}
           </div>
           <div className="min-w-0">

@@ -70,7 +70,7 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
       {/* KPI */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "総支援額", value: formatYen(actualRevenue), icon: TrendingUp, color: "text-ireland-green", bg: "bg-ireland-green/10", sub: `目標の${progress}%` },
+          { label: "総支援額", value: formatYen(actualRevenue), icon: TrendingUp, color: "text-brand-green", bg: "bg-brand-green/10", sub: `目標の${progress}%` },
           { label: "支援者数", value: `${actualCount}人`, icon: Users, color: "text-blue-500", bg: "bg-blue-50", sub: `平均 ${formatYen(Math.round(Number(s?.avg_amount ?? 0)))}` },
           { label: "残り日数", value: `${daysLeft}日`, icon: Clock, color: "text-orange-500", bg: "bg-orange-50", sub: "キャンペーン終了まで" },
           { label: "達成率", value: `${progress}%`, icon: Target, color: "text-purple-500", bg: "bg-purple-50", sub: `目標 ${formatYen(campaign.goal_amount)}` },
@@ -89,8 +89,8 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
       {/* Progress bar */}
       <div className="bg-card rounded-2xl border border-border p-6 mb-6">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="font-bold text-foreground flex items-center gap-2"><Target className="w-5 h-5 text-ireland-green" />目標達成状況</h2>
-          <span className="text-sm font-bold text-ireland-green">{progress}%</span>
+          <h2 className="font-bold text-foreground flex items-center gap-2"><Target className="w-5 h-5 text-brand-green" />目標達成状況</h2>
+          <span className="text-sm font-bold text-brand-green">{progress}%</span>
         </div>
         <div className="h-4 bg-muted rounded-full overflow-hidden mb-2">
           <div className="h-full rounded-full" style={{ width: `${progress}%`, background: "linear-gradient(90deg, oklch(0.42 0.15 152), oklch(0.55 0.16 152))" }} />
@@ -129,7 +129,7 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
 
         {/* Reward breakdown */}
         <div className="bg-card rounded-2xl border border-border p-6">
-          <h2 className="font-bold text-foreground mb-4 flex items-center gap-2"><Gift className="w-5 h-5 text-ireland-green" />リターン別支援状況</h2>
+          <h2 className="font-bold text-foreground mb-4 flex items-center gap-2"><Gift className="w-5 h-5 text-brand-green" />リターン別支援状況</h2>
           <div className="space-y-3">
             {(rewardBreakdown as any[]).map((r) => (
               <div key={r.title} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
@@ -138,7 +138,7 @@ export default async function CampaignStatsPage({ params }: { params: Promise<{ 
                   <p className="text-xs text-muted-foreground">{formatYen(r.amount)}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-ireland-green">{r.pledge_count}人</p>
+                  <p className="text-sm font-bold text-brand-green">{r.pledge_count}人</p>
                   <p className="text-xs text-muted-foreground">{formatYen(Number(r.tier_revenue))}</p>
                 </div>
               </div>

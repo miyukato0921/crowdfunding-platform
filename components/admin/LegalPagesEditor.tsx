@@ -73,7 +73,7 @@ export default function LegalPagesEditor({ tokushoContent, termsContent, privacy
           <Link
             href={currentTab.previewUrl}
             target="_blank"
-            className="text-xs text-ireland-green flex items-center gap-1 hover:underline"
+            className="text-xs text-brand-green flex items-center gap-1 hover:underline"
           >
             <ExternalLink className="w-3 h-3" />
             プレビュー
@@ -100,7 +100,7 @@ export default function LegalPagesEditor({ tokushoContent, termsContent, privacy
       <Button
         onClick={handleSave}
         disabled={isPending}
-        className="bg-ireland-green hover:bg-ireland-green/90 text-white gap-2"
+        className="bg-brand-green hover:bg-brand-green/90 text-white gap-2"
       >
         {saved ? (
           <><Check className="w-4 h-4" />保存しました</>

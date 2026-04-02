@@ -16,7 +16,7 @@ export default async function SuccessPage({
   let campaignTitle = ""
   try {
     const settings = await sql`SELECT value FROM site_settings WHERE key = 'site_title' LIMIT 1`
-    campaignTitle = settings[0]?.value ?? "Green Ireland Festival"
+    campaignTitle = settings[0]?.value ?? "クラウドファンディング"
   } catch {}
   try {
     const campaigns = await sql`SELECT title FROM campaigns WHERE status = 'active' ORDER BY id LIMIT 1`

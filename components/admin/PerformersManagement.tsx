@@ -76,7 +76,7 @@ function AutoTranslateButton({
       variant="outline"
       onClick={handleTranslate}
       disabled={loading}
-      className="gap-1.5 text-xs h-8 border-ireland-green/40 text-ireland-green hover:bg-ireland-green/10"
+      className="gap-1.5 text-xs h-8 border-brand-green/40 text-brand-green hover:bg-brand-green/10"
     >
       {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Languages className="w-3.5 h-3.5" />}
       {loading ? "翻訳中..." : "EN / KO / ZH に自動翻訳"}
@@ -243,7 +243,7 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
           <h1 className="text-2xl font-black text-foreground">出演者管理</h1>
           <p className="text-sm text-muted-foreground mt-1">メインページの出演者紹介セクションを管理します</p>
         </div>
-        <Button onClick={() => setAddMode(true)} disabled={addMode} className="bg-ireland-green hover:bg-ireland-green/90">
+        <Button onClick={() => setAddMode(true)} disabled={addMode} className="bg-brand-green hover:bg-brand-green/90">
           <Plus className="w-4 h-4 mr-2" />
           出演者を追加
         </Button>
@@ -286,7 +286,7 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
             <ImageUploader name="image_url" label="プロフィール写真" currentUrl={form.image_url} onUrlChange={(url) => setForm({ ...form, image_url: url })} />
           </div>
           <div className="flex gap-3 pt-2">
-            <Button onClick={handleAdd} disabled={!form.name || isPending} className="bg-ireland-green hover:bg-ireland-green/90">追加する</Button>
+            <Button onClick={handleAdd} disabled={!form.name || isPending} className="bg-brand-green hover:bg-brand-green/90">追加する</Button>
             <Button variant="outline" onClick={() => { setAddMode(false); setForm(emptyForm) }}>キャンセル</Button>
           </div>
         </div>
@@ -338,7 +338,7 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
                     <ImageUploader name="image_url" label="プロフィール写真" currentUrl={editForm.image_url} onUrlChange={(url) => setEditForm({ ...editForm, image_url: url })} />
                   </div>
                   <div className="flex gap-3">
-                    <Button onClick={() => handleUpdate(p.id)} disabled={isPending} className="bg-ireland-green hover:bg-ireland-green/90">
+                    <Button onClick={() => handleUpdate(p.id)} disabled={isPending} className="bg-brand-green hover:bg-brand-green/90">
                       <Check className="w-4 h-4 mr-1" /> 保存
                     </Button>
                     <Button variant="outline" onClick={() => setEditingId(null)}>
@@ -377,7 +377,7 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-xs text-ireland-gold font-bold uppercase tracking-wider">{p.role}</p>
+                        <p className="text-xs text-brand-gold font-bold uppercase tracking-wider">{p.role}</p>
                         <p className="font-black text-foreground text-lg">{p.name}</p>
                         {(p.name_en || p.name_ko || p.name_zh) && (
                           <p className="text-xs text-muted-foreground mt-0.5">
@@ -398,7 +398,7 @@ export default function PerformersManagement({ campaignId, initialPerformers }: 
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{p.bio}</p>
-                    <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded-full font-medium ${p.is_active ? "bg-ireland-green/10 text-ireland-green" : "bg-muted text-muted-foreground"}`}>
+                    <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded-full font-medium ${p.is_active ? "bg-brand-green/10 text-brand-green" : "bg-muted text-muted-foreground"}`}>
                       {p.is_active ? "表示中" : "非表示"}
                     </span>
                   </div>

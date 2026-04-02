@@ -56,10 +56,10 @@ export default function ShopCheckoutForm({ product }: { product: Product }) {
     <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-5">
       <h2 className="font-bold text-foreground">{t("buyerInfo")}</h2>
 
-      <div className="p-4 bg-ireland-green/10 rounded-xl border border-ireland-green/20">
+      <div className="p-4 bg-brand-green/10 rounded-xl border border-brand-green/20">
         <p className="text-sm text-muted-foreground">{t("shopPurchaseItem")}</p>
         <p className="font-bold text-foreground">{product.name}</p>
-        <p className="text-2xl font-black text-ireland-green mt-1">{formatYen(product.price)}</p>
+        <p className="text-2xl font-black text-brand-green mt-1">{formatYen(product.price)}</p>
       </div>
 
       <div>
@@ -99,7 +99,7 @@ export default function ShopCheckoutForm({ product }: { product: Product }) {
       <div className="pt-2">
         <Button
           type="submit"
-          className="w-full bg-ireland-green hover:bg-ireland-green/90 text-white font-black text-lg py-6 rounded-xl"
+          className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-black text-lg py-6 rounded-xl"
           disabled={loading}
         >
           {loading ? (

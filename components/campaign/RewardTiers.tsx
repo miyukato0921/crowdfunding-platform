@@ -27,13 +27,13 @@ function getSpecialNote(title: string, t: (k: any) => string): string | null {
 
 function getTierStyle(amount: number, t: (k: any) => string) {
   if (amount >= 20000) return {
-    bg: "bg-ireland-gold/8", border: "border-ireland-gold/50",
-    badge: "bg-ireland-gold text-ireland-dark", btn: "bg-ireland-gold hover:bg-ireland-gold/90 text-ireland-dark",
+    bg: "bg-brand-gold/8", border: "border-brand-gold/50",
+    badge: "bg-brand-gold text-brand-dark", btn: "bg-brand-gold hover:bg-brand-gold/90 text-brand-dark",
     label: t("premium"),
   }
   if (amount >= 10000) return {
-    bg: "bg-ireland-green/8", border: "border-ireland-green/40",
-    badge: "bg-ireland-green text-white", btn: "bg-ireland-green hover:bg-ireland-green/90 text-white",
+    bg: "bg-brand-green/8", border: "border-brand-green/40",
+    badge: "bg-brand-green text-white", btn: "bg-brand-green hover:bg-brand-green/90 text-white",
     label: t("standard"),
   }
   if (amount >= 5000) return {
@@ -114,7 +114,7 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
                   </div>
                 )}
                 {reward.claimed_count > 0 && (
-                  <div className="flex items-center gap-1 text-ireland-green">
+                  <div className="flex items-center gap-1 text-brand-green">
                     <CheckCircle className="w-3 h-3 shrink-0" />
                     <span className="truncate">{t("supporting", { n: reward.claimed_count })}</span>
                   </div>
@@ -139,9 +139,9 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
         })}
       </div>
 
-      <div className="rounded-xl sm:rounded-2xl border-2 border-dashed border-ireland-green/40 p-3 sm:p-4 bg-ireland-green/5 mt-2">
+      <div className="rounded-xl sm:rounded-2xl border-2 border-dashed border-brand-green/40 p-3 sm:p-4 bg-brand-green/5 mt-2">
         <div className="flex items-start gap-2 mb-2.5">
-          <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ireland-green mt-0.5 shrink-0" />
+          <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-green mt-0.5 shrink-0" />
           <div className="min-w-0">
             <p className="font-bold text-foreground text-xs sm:text-sm">{t("freeSupport")}</p>
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{t("freeSupportDesc")}</p>
@@ -149,7 +149,7 @@ export default function RewardTiers({ rewards, campaignId }: Props) {
         </div>
         <Button
           variant="outline"
-          className="w-full border-ireland-green text-ireland-green hover:bg-ireland-green hover:text-white font-bold rounded-lg sm:rounded-xl text-xs sm:text-base py-2 sm:py-2.5"
+          className="w-full border-brand-green text-brand-green hover:bg-brand-green hover:text-white font-bold rounded-lg sm:rounded-xl text-xs sm:text-base py-2 sm:py-2.5"
           onClick={() => router.push(`/checkout?campaign_id=${campaignId}&custom=true`)}
         >
           {t("cheerSupport")}

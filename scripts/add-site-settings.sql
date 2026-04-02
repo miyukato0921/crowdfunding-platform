@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 );
 
 INSERT INTO site_settings (key, value) VALUES
-  ('site_title', 'Green Ireland Festival'),
-  ('site_subtitle', 'アイリッシュ盆踊りフェスティバル 2026'),
+  ('site_title', 'クラウドファンディング'),
+  ('site_subtitle', ''),
   ('logo_url', '')
 ON CONFLICT (key) DO NOTHING;

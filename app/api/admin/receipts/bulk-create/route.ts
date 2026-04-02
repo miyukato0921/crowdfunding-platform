@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   const tpl = templates[0] as any
   if (!tpl) return NextResponse.json({ error: "領収書テンプレートが未設定です" }, { status: 400 })
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://greenirelandfes.atouch.dev"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   let created = 0
   let emailed = 0
   let skipped = 0
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         const receiptUrl = `${baseUrl}/receipt/${downloadToken}`
         await sendRawEmail({
           to: pledge.supporter_email,
-          subject: `【Green Ireland Festival】領収書（${receiptNumber}）`,
+          subject: `領収書（${receiptNumber}）`,
           text: `${supporterName} 様\n\n領収書をお届けいたします。\n\n領収書番号: ${receiptNumber}\n金額: ¥${Number(pledge.amount).toLocaleString()}\n\n以下のリンクから領収書を表示・印刷できます:\n${receiptUrl}\n\n${tpl.issuer_name}`,
           html: `<p>${supporterName} 様</p><p>領収書をお届けいたします。</p><p><a href="${receiptUrl}" style="display:inline-block;background:#2D6A4F;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold">領収書を表示・印刷</a></p><p style="font-size:12px;color:#666">※ このリンクから何度でもアクセスできます。</p><p>${tpl.issuer_name}</p>`,
         })

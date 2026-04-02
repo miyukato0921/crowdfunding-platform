@@ -31,7 +31,7 @@ export default async function CampaignsPage() {
           <h1 className="text-2xl font-black text-foreground">クラウドファンディング管理</h1>
           <p className="text-muted-foreground mt-1">キャンペーンの作成・編集・管理</p>
         </div>
-        <Button className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl" asChild>
+        <Button className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl" asChild>
           <Link href="/admin/campaigns/new">
             <Plus className="w-4 h-4 mr-2" />
             新規キャンペーン
@@ -74,7 +74,7 @@ export default async function CampaignsPage() {
 
               <div className="mt-4 grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-xl font-black text-ireland-green">{formatYen(Number(campaign.actual_amount))}</p>
+                  <p className="text-xl font-black text-brand-green">{formatYen(Number(campaign.actual_amount))}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">集まった金額</p>
                 </div>
                 <div>

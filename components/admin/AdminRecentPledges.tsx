@@ -56,7 +56,7 @@ export default function AdminRecentPledges({ pledges }: Props) {
                 <td className="py-3 px-3 text-muted-foreground">
                   {pledge.reward_title ?? "応援支援"}
                 </td>
-                <td className="py-3 px-3 text-right font-bold text-ireland-green">
+                <td className="py-3 px-3 text-right font-bold text-brand-green">
                   {formatYen(pledge.amount)}
                 </td>
                 <td className="py-3 px-3 text-center">

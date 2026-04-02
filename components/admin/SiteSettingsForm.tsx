@@ -61,10 +61,10 @@ function SecretField({
       <div className="flex items-center justify-between">
         <Label htmlFor={id}>
           {label}
-          {saved && <span className="ml-2 text-xs text-ireland-green font-normal">設定済み</span>}
+          {saved && <span className="ml-2 text-xs text-brand-green font-normal">設定済み</span>}
         </Label>
         {saved && !editing && (
-          <button type="button" onClick={onEdit} className="text-xs text-ireland-green underline underline-offset-2">
+          <button type="button" onClick={onEdit} className="text-xs text-brand-green underline underline-offset-2">
             変更する
           </button>
         )}
@@ -102,7 +102,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
   const [rcptIssuerEmail, setRcptIssuerEmail] = useState(receiptTemplate?.issuer_email ?? "")
   const [rcptLogoUrl, setRcptLogoUrl] = useState(receiptTemplate?.logo_url ?? "")
   const [rcptStampUrl, setRcptStampUrl] = useState(receiptTemplate?.stamp_url ?? "")
-  const [rcptPrefix, setRcptPrefix] = useState(receiptTemplate?.prefix ?? "GIF")
+  const [rcptPrefix, setRcptPrefix] = useState(receiptTemplate?.prefix ?? "CF")
   const [rcptProviso, setRcptProviso] = useState(receiptTemplate?.default_proviso ?? "クラウドファンディング支援金として")
   const [rcptFooterNote, setRcptFooterNote] = useState(receiptTemplate?.footer_note ?? "")
   const [stampUploading, setStampUploading] = useState(false)
@@ -157,8 +157,8 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
   const [showSmtpPass, setShowSmtpPass] = useState(false)
   const [smtpPassEditing, setSmtpPassEditing] = useState(false)
 
-  const [emailFrom, setEmailFrom] = useState(initial.email_from ?? "greenirelandfes@enwa.info")
-  const [emailReplyTo, setEmailReplyTo] = useState(initial.email_reply_to ?? "greenirelandfes@enwa.info")
+  const [emailFrom, setEmailFrom] = useState(initial.email_from ?? "")
+  const [emailReplyTo, setEmailReplyTo] = useState(initial.email_reply_to ?? "")
 
   // 完了画面QRコード・リンク
   const [successQrUrl, setSuccessQrUrl] = useState(initial.success_qr_url ?? "")
@@ -254,7 +254,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       {/* ��ゴ */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <Globe className="w-4 h-4 text-ireland-green" />
+          <Globe className="w-4 h-4 text-brand-green" />
           <h2 className="font-bold text-foreground">ロゴ画像</h2>
         </div>
         {logoUrl && (
@@ -274,7 +274,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       {/* サイト名・サブタイトル */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
         <div className="flex items-center gap-2 mb-1">
-          <Globe className="w-4 h-4 text-ireland-green" />
+          <Globe className="w-4 h-4 text-brand-green" />
           <h2 className="font-bold text-foreground">サイト名・サブタイトル</h2>
         </div>
         <div className="space-y-2">
@@ -283,7 +283,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
             id="site_title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Green Ireland Festival"
+            placeholder="サイト名を入力"
           />
           <p className="text-xs text-muted-foreground">ブラウザタブ・ヘッダーに表示されます</p>
         </div>
@@ -303,7 +303,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       {/* Stripe 決済設定 */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-2 mb-1">
-          <CreditCard className="w-4 h-4 text-ireland-green" />
+          <CreditCard className="w-4 h-4 text-brand-green" />
           <h2 className="font-bold text-foreground">Stripe 決済設定</h2>
         </div>
 
@@ -328,7 +328,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
               onClick={() => setStripeMode("live")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
                 stripeMode === "live"
-                  ? "bg-ireland-green text-white"
+                  ? "bg-brand-green text-white"
                   : "bg-card text-muted-foreground hover:bg-muted"
               }`}
             >
@@ -371,7 +371,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
           <div className="space-y-2">
             <Label htmlFor="stripe_test_publishable_key">
               テスト 公開キー
-              {stripeTestPubKeySaved && <span className="ml-2 text-xs text-ireland-green font-normal">設定済み</span>}
+              {stripeTestPubKeySaved && <span className="ml-2 text-xs text-brand-green font-normal">設定済み</span>}
             </Label>
             <Input
               id="stripe_test_publishable_key"
@@ -398,9 +398,9 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
         {/* 本番キー */}
         <div className="space-y-4 border-t border-border pt-4">
           <div className="flex items-center gap-2">
-            <Zap className="w-3.5 h-3.5 text-ireland-green" />
+            <Zap className="w-3.5 h-3.5 text-brand-green" />
             <h3 className="text-sm font-bold text-foreground">本番用キー</h3>
-            <span className="text-xs bg-ireland-green/10 text-ireland-green px-2 py-0.5 rounded-full font-mono">sk_live_ / pk_live_</span>
+            <span className="text-xs bg-brand-green/10 text-brand-green px-2 py-0.5 rounded-full font-mono">sk_live_ / pk_live_</span>
           </div>
           <SecretField
             id="stripe_secret_key"
@@ -417,7 +417,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
           <div className="space-y-2">
             <Label htmlFor="stripe_publishable_key">
               本番 公開キー
-              {stripePubKeySaved && <span className="ml-2 text-xs text-ireland-green font-normal">設定済み</span>}
+              {stripePubKeySaved && <span className="ml-2 text-xs text-brand-green font-normal">設定済み</span>}
             </Label>
             <Input
               id="stripe_publishable_key"
@@ -445,7 +445,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       {/* SMTP メール送信設定 */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <Mail className="w-4 h-4 text-ireland-green" />
+          <Mail className="w-4 h-4 text-brand-green" />
           <h2 className="font-bold text-foreground">メール送信設定（SMTP）</h2>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -487,10 +487,10 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
           <div className="flex items-center justify-between">
             <Label htmlFor="smtp_pass">
               SMTPパスワード
-              {smtpPassSaved && <span className="ml-2 text-xs text-ireland-green font-normal">設定済み</span>}
+              {smtpPassSaved && <span className="ml-2 text-xs text-brand-green font-normal">設定済み</span>}
             </Label>
             {smtpPassSaved && !smtpPassEditing && (
-              <button type="button" onClick={() => { setSmtpPass(""); setSmtpPassEditing(true) }} className="text-xs text-ireland-green underline underline-offset-2">
+              <button type="button" onClick={() => { setSmtpPass(""); setSmtpPassEditing(true) }} className="text-xs text-brand-green underline underline-offset-2">
                 変更する
               </button>
             )}
@@ -517,7 +517,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
             type="email"
             value={emailFrom}
             onChange={(e) => setEmailFrom(e.target.value)}
-            placeholder="greenirelandfes@enwa.info"
+            placeholder="noreply@example.com"
             className="font-mono text-sm"
           />
           <p className="text-xs text-muted-foreground">
@@ -531,7 +531,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
             type="email"
             value={emailReplyTo}
             onChange={(e) => setEmailReplyTo(e.target.value)}
-            placeholder="greenirelandfes@enwa.info"
+            placeholder="noreply@example.com"
             className="font-mono text-sm"
           />
           <p className="text-xs text-muted-foreground">
@@ -543,7 +543,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       {/* 完了画面 QRコード・リンク */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <QrCode className="w-4 h-4 text-ireland-green" />
+          <QrCode className="w-4 h-4 text-brand-green" />
           <h2 className="font-bold text-foreground">完了画面 QRコード・リンク</h2>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -640,7 +640,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       {/* 領収書設定 */}
       <div id="receipt-settings" className="bg-card border border-border rounded-2xl p-6 space-y-5 scroll-mt-6">
         <div className="flex items-center gap-2 mb-1">
-          <Receipt className="w-4 h-4 text-ireland-green" />
+          <Receipt className="w-4 h-4 text-brand-green" />
           <h2 className="font-bold text-foreground">領収書設定</h2>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -654,7 +654,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
               id="rcpt_issuer_name"
               value={rcptIssuerName}
               onChange={(e) => setRcptIssuerName(e.target.value)}
-              placeholder="在日アイルランド商工会議所"
+              placeholder="発行者名を入力"
             />
           </div>
           <div className="space-y-2">
@@ -761,14 +761,14 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
           ) : (
             <div
               onClick={() => stampInputRef.current?.click()}
-              className="flex flex-col items-center justify-center gap-2 w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-ireland-green/60 hover:bg-muted/50 cursor-pointer transition-colors"
+              className="flex flex-col items-center justify-center gap-2 w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-brand-green/60 hover:bg-muted/50 cursor-pointer transition-colors"
             >
               {stampUploading ? (
                 <span className="text-sm text-muted-foreground">処理・アップロード中...</span>
               ) : (
                 <>
-                  <div className="w-10 h-10 rounded-full bg-ireland-green/10 flex items-center justify-center">
-                    <Stamp className="w-5 h-5 text-ireland-green" />
+                  <div className="w-10 h-10 rounded-full bg-brand-green/10 flex items-center justify-center">
+                    <Stamp className="w-5 h-5 text-brand-green" />
                   </div>
                   <p className="text-sm text-foreground">印鑑画像をアップロード</p>
                   <p className="text-xs text-muted-foreground">PNG推奨（白背景自動透過）</p>
@@ -808,7 +808,7 @@ export default function SiteSettingsForm({ initial, receiptTemplate }: Props) {
       <Button
         onClick={handleSave}
         disabled={isPending}
-        className="bg-ireland-green hover:bg-ireland-green/90 text-white gap-2"
+        className="bg-brand-green hover:bg-brand-green/90 text-white gap-2"
       >
         {saved ? (
           <><Check className="w-4 h-4" />保存しました</>

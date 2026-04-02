@@ -61,7 +61,7 @@ export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, r
             href={qrUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-ireland-green hover:underline"
+            className="inline-flex items-center gap-1 text-xs text-brand-green hover:underline"
           >
             {qrUrl.length > 40 ? qrUrl.slice(0, 40) + "..." : qrUrl}
             <ExternalLink className="w-3 h-3" />
@@ -80,7 +80,7 @@ export default function SuccessQrSection({ qrUrl, qrLabel, linkUrl, linkLabel, r
 
       {linkUrl && (
         <Button
-          className="w-full bg-ireland-gold hover:bg-ireland-gold/90 text-ireland-dark font-bold rounded-xl"
+          className="w-full bg-brand-gold hover:bg-brand-gold/90 text-brand-dark font-bold rounded-xl"
           asChild
         >
           <a href={linkUrl} target="_blank" rel="noopener noreferrer">

@@ -16,7 +16,7 @@ export default async function ProductsPage() {
           <h1 className="text-2xl font-black text-foreground">商品管理</h1>
           <p className="text-muted-foreground mt-1">フェスティバルグッズ・商品の管理</p>
         </div>
-        <Button className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl" asChild>
+        <Button className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl" asChild>
           <Link href="/admin/products/new">
             <Plus className="w-4 h-4 mr-2" />
             新規商品登録
@@ -30,7 +30,7 @@ export default async function ProductsPage() {
           <p className="text-xs text-muted-foreground mt-1">総商品数</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-4 text-center">
-          <p className="text-2xl font-black text-ireland-green">{products.filter(p => p.is_active).length}</p>
+          <p className="text-2xl font-black text-brand-green">{products.filter(p => p.is_active).length}</p>
           <p className="text-xs text-muted-foreground mt-1">公開中</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-4 text-center">
@@ -47,7 +47,7 @@ export default async function ProductsPage() {
 
       <div className="bg-card rounded-2xl border border-border overflow-hidden">
         <div className="p-5 border-b border-border flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-ireland-green" />
+          <ShoppingBag className="w-5 h-5 text-brand-green" />
           <h2 className="font-bold text-foreground">商品一覧</h2>
         </div>
         <div className="overflow-x-auto">

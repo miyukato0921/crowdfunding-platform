@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "管理画面 - Green Ireland Festival",
+  title: "管理画面",
 }
 
 // This layout is a passthrough.

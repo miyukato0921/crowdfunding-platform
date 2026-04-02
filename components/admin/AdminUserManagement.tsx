@@ -206,7 +206,7 @@ function UserFormDialog({
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl"
+              className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white rounded-xl"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -288,7 +288,7 @@ export default function AdminUserManagement({
             mode="add"
             currentUserId={currentUserId}
             trigger={
-              <Button className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl gap-2">
+              <Button className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl gap-2">
                 <UserPlus className="w-4 h-4" />
                 ユーザー追加
               </Button>
@@ -299,7 +299,7 @@ export default function AdminUserManagement({
 
       <div className="bg-card rounded-2xl border border-border overflow-hidden">
         <div className="p-5 border-b border-border flex items-center gap-2">
-          <Shield className="w-5 h-5 text-ireland-green" />
+          <Shield className="w-5 h-5 text-brand-green" />
           <h2 className="font-bold text-foreground">管理者一覧</h2>
           <span className="text-sm text-muted-foreground ml-auto">{users.length}人</span>
         </div>
@@ -311,7 +311,7 @@ export default function AdminUserManagement({
               className="flex items-center justify-between p-5 hover:bg-muted/20 transition-colors"
             >
               <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-full bg-ireland-green/20 flex items-center justify-center font-black text-ireland-green text-lg">
+                <div className="w-11 h-11 rounded-full bg-brand-green/20 flex items-center justify-center font-black text-brand-green text-lg">
                   {user.name.charAt(0)}
                 </div>
                 <div>
@@ -331,7 +331,7 @@ export default function AdminUserManagement({
                 <Badge
                   className={
                     user.role === "super_admin"
-                      ? "bg-ireland-gold/20 text-ireland-dark border-ireland-gold/30"
+                      ? "bg-brand-gold/20 text-brand-dark border-brand-gold/30"
                       : "bg-blue-100 text-blue-800 border-blue-200"
                   }
                 >
@@ -368,7 +368,7 @@ export default function AdminUserManagement({
 
       <div className="mt-6 p-5 bg-muted/50 rounded-2xl border border-border">
         <div className="flex items-start gap-3">
-          <Shield className="w-5 h-5 text-ireland-green mt-0.5 shrink-0" />
+          <Shield className="w-5 h-5 text-brand-green mt-0.5 shrink-0" />
           <div>
             <p className="font-bold text-foreground text-sm mb-1">セキュリティについて</p>
             <p className="text-sm text-muted-foreground">

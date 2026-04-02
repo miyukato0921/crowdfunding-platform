@@ -26,8 +26,8 @@ export default async function ReceiptsPage() {
       <div className="mb-8 flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-2xl bg-ireland-green/10 flex items-center justify-center">
-              <Receipt className="w-5 h-5 text-ireland-green" />
+            <div className="w-10 h-10 rounded-2xl bg-brand-green/10 flex items-center justify-center">
+              <Receipt className="w-5 h-5 text-brand-green" />
             </div>
             <h1 className="text-2xl font-black text-foreground">領収書管理</h1>
           </div>

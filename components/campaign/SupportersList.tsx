@@ -31,13 +31,13 @@ export default function SupportersList({ supporters }: Props) {
   return (
     <div className="bg-card rounded-2xl border border-border p-6">
       <h2 className="text-xl font-bold text-foreground mb-5 pb-4 border-b border-border flex items-center gap-2">
-        <Heart className="w-5 h-5 text-ireland-gold fill-ireland-gold" />
+        <Heart className="w-5 h-5 text-brand-gold fill-brand-gold" />
         支援者一覧
       </h2>
       <div className="space-y-4">
         {supporters.map((s, i) => (
           <div key={i} className="flex gap-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-sm ${s.is_anonymous ? "bg-muted text-muted-foreground" : "bg-ireland-green/20 text-ireland-green"}`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-sm ${s.is_anonymous ? "bg-muted text-muted-foreground" : "bg-brand-green/20 text-brand-green"}`}>
               {s.is_anonymous ? "?" : (s.supporter_name?.charAt(0) ?? "?")}
             </div>
             <div className="flex-1 min-w-0">
@@ -49,7 +49,7 @@ export default function SupportersList({ supporters }: Props) {
                   {formatDate(s.created_at)}
                 </span>
               </div>
-              <span className="text-ireland-green font-bold text-sm">{formatYen(s.amount)}</span>
+              <span className="text-brand-green font-bold text-sm">{formatYen(s.amount)}</span>
               {s.message && (
                 <p className="text-sm text-foreground/70 mt-1 leading-relaxed">{s.message}</p>
               )}

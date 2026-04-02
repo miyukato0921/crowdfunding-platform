@@ -2,13 +2,13 @@
 CREATE TABLE IF NOT EXISTS receipt_templates (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL DEFAULT 'デフォルト',
-  issuer_name TEXT NOT NULL DEFAULT '在日アイルランド商工会議所',
+  issuer_name TEXT NOT NULL DEFAULT '',
   issuer_address TEXT,
   issuer_tel TEXT,
-  issuer_email TEXT DEFAULT 'greenirelandfes@enwa.info',
+  issuer_email TEXT DEFAULT NULL,
   logo_url TEXT,
   stamp_url TEXT,
-  prefix TEXT NOT NULL DEFAULT 'GIF',
+  prefix TEXT NOT NULL DEFAULT 'CF',
   next_number INTEGER NOT NULL DEFAULT 1,
   default_proviso TEXT NOT NULL DEFAULT 'クラウドファンディング支援金として',
   footer_note TEXT DEFAULT '※ 本領収書は、クラウドファンディングによる支援金の受領を証するものです。',
@@ -42,5 +42,5 @@ CREATE INDEX IF NOT EXISTS idx_receipts_issued_date ON receipts(issued_date);
 
 -- デフォルトテンプレートを挿入
 INSERT INTO receipt_templates (name, issuer_name, default_proviso, is_default)
-SELECT 'デフォルト', '在日アイルランド商工会議所', 'クラウドファンディング支援金として', TRUE
+SELECT 'デフォルト', '', 'クラウドファンディング支援金として', TRUE
 WHERE NOT EXISTS (SELECT 1 FROM receipt_templates WHERE is_default = TRUE);

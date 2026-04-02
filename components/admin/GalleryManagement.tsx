@@ -252,7 +252,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
           <p className="text-sm text-muted-foreground mt-1">メインページのギャラリーに表示される写真を管理します</p>
           <p className="text-xs text-muted-foreground mt-0.5">ドラッグまたは ↑↓ ボタンで順番を変更できます</p>
         </div>
-        <Button onClick={() => setAddMode(true)} disabled={addMode} className="bg-ireland-green hover:bg-ireland-green/90">
+        <Button onClick={() => setAddMode(true)} disabled={addMode} className="bg-brand-green hover:bg-brand-green/90">
           <Plus className="w-4 h-4 mr-2" />
           写真を追加
         </Button>
@@ -277,7 +277,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
             />
           </div>
           <div className="flex gap-3">
-            <Button onClick={handleAdd} disabled={!addPicker.url || isPending || addPicker.uploading} className="bg-ireland-green hover:bg-ireland-green/90">
+            <Button onClick={handleAdd} disabled={!addPicker.url || isPending || addPicker.uploading} className="bg-brand-green hover:bg-brand-green/90">
               追加する
             </Button>
             <Button variant="outline" onClick={() => { setAddMode(false); addPicker.reset(); setNewCaption("") }}>
@@ -305,8 +305,8 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
               onDragEnd={onDragEnd}
               className={`bg-card border rounded-2xl overflow-hidden transition-all cursor-grab active:cursor-grabbing
                 ${!photo.is_active ? "opacity-60" : "border-border"}
-                ${draggingId === photo.id ? "opacity-40 scale-95 ring-2 ring-ireland-green/50" : ""}
-                ${dragOverId === photo.id && draggingId !== photo.id ? "ring-2 ring-ireland-green border-ireland-green" : ""}
+                ${draggingId === photo.id ? "opacity-40 scale-95 ring-2 ring-brand-green/50" : ""}
+                ${dragOverId === photo.id && draggingId !== photo.id ? "ring-2 ring-brand-green border-brand-green" : ""}
               `}
             >
               {/* 写真変更モード */}
@@ -325,7 +325,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                       size="sm"
                       onClick={() => handleUpdatePhoto(photo.id, editPicker.url)}
                       disabled={isPending || !editPicker.url || editPicker.uploading}
-                      className="bg-ireland-green hover:bg-ireland-green/90 text-white"
+                      className="bg-brand-green hover:bg-brand-green/90 text-white"
                     >
                       <Check className="w-3.5 h-3.5 mr-1" />
                       変更を保存
@@ -358,7 +358,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); editPicker.reset(); setEditingPhotoId(photo.id) }}
-                      className="w-8 h-8 rounded-lg bg-black/50 hover:bg-ireland-green/80 text-white flex items-center justify-center">
+                      className="w-8 h-8 rounded-lg bg-black/50 hover:bg-brand-green/80 text-white flex items-center justify-center">
                       <ImageIcon className="w-4 h-4" />
                     </button>
                     <button onClick={(e) => { e.stopPropagation(); handleToggle(photo.id, photo.is_active) }}
@@ -371,7 +371,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                     </button>
                   </div>
                   <div className="absolute bottom-2 left-2">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${photo.is_active ? "bg-ireland-green text-white" : "bg-gray-500 text-white"}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${photo.is_active ? "bg-brand-green text-white" : "bg-gray-500 text-white"}`}>
                       {photo.is_active ? "表示中" : "非表示"}
                     </span>
                   </div>
@@ -383,7 +383,7 @@ export default function GalleryManagement({ campaignId, initialPhotos }: Props) 
                 {editingCaptionId === photo.id ? (
                   <div className="flex gap-2">
                     <Input value={editCaption} onChange={(e) => setEditCaption(e.target.value)} className="text-sm h-8" autoFocus />
-                    <button onClick={() => handleEditCaption(photo.id)} className="text-ireland-green"><Check className="w-4 h-4" /></button>
+                    <button onClick={() => handleEditCaption(photo.id)} className="text-brand-green"><Check className="w-4 h-4" /></button>
                     <button onClick={() => setEditingCaptionId(null)} className="text-muted-foreground"><X className="w-4 h-4" /></button>
                   </div>
                 ) : (

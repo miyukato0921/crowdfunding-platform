@@ -123,7 +123,7 @@ function BlockContent({
       <div className="p-3 space-y-4">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-bold">資金内訳</Label>
-          <span className={`text-xs font-bold ${total !== 100 ? "text-amber-500" : "text-ireland-green"}`}>
+          <span className={`text-xs font-bold ${total !== 100 ? "text-amber-500" : "text-brand-green"}`}>
             合計: {total}% {total !== 100 && "（100%にしてください）"}
           </span>
         </div>
@@ -213,7 +213,7 @@ function BlockCard({
       {/* ヘッダー */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
         <GripVertical className="w-4 h-4 text-muted-foreground/50 shrink-0" />
-        <Icon className="w-4 h-4 text-ireland-green shrink-0" />
+        <Icon className="w-4 h-4 text-brand-green shrink-0" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-foreground">{meta?.label}</span>
@@ -332,7 +332,7 @@ export default function BlockEditor({ initialBlocks, onChange, onImageUpload }: 
           type="button"
           variant="outline"
           onClick={() => setShowAddMenu(v => !v)}
-          className="w-full rounded-2xl border-dashed border-2 h-12 text-muted-foreground hover:text-foreground hover:border-ireland-green hover:text-ireland-green transition-colors"
+          className="w-full rounded-2xl border-dashed border-2 h-12 text-muted-foreground hover:text-foreground hover:border-brand-green hover:text-brand-green transition-colors"
         >
           <Plus className="w-4 h-4 mr-2" />
           ブロックを追加
@@ -347,8 +347,8 @@ export default function BlockEditor({ initialBlocks, onChange, onImageUpload }: 
                 onClick={() => addBlock(type)}
                 className="flex items-start gap-3 p-3 rounded-xl hover:bg-muted text-left transition-colors"
               >
-                <div className="w-8 h-8 rounded-lg bg-ireland-green/10 flex items-center justify-center shrink-0">
-                  <Icon className="w-4 h-4 text-ireland-green" />
+                <div className="w-8 h-8 rounded-lg bg-brand-green/10 flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-brand-green" />
                 </div>
                 <div>
                   <p className="text-sm font-bold">{label}</p>

@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
   let smtpPort = 587
   let smtpUser: string | undefined
   let smtpPass: string | undefined
-  let emailFrom = "greenirelandfes@enwa.info"
-  let emailReplyTo = "greenirelandfes@enwa.info"
+  let emailFrom = process.env.EMAIL_FROM ?? ""
+  let emailReplyTo = process.env.EMAIL_FROM ?? ""
   let credSource = "none"
 
   let legacyGmailWarning: string | null = null
@@ -87,10 +87,10 @@ export async function POST(req: NextRequest) {
     await transporter.verify()
 
     await transporter.sendMail({
-      from: `"Green Ireland Festival" <${emailFrom}>`,
+      from: emailFrom,
       replyTo: emailReplyTo,
       to,
-      subject: "【テスト送信】Green Ireland Festival メール配信テスト",
+      subject: "【テスト送信】メール配信テスト",
       text: `このメールはテスト送信です。\n\nSMTP認証情報: ${credSource}から取得\nSMTPホスト: ${smtpHost}\nSMTPユーザー: ${smtpUser}\n送信元: ${emailFrom}\n\nメール配信設定は正常に機能しています。`,
     })
 

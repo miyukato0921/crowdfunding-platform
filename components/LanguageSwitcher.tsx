@@ -21,7 +21,7 @@ export default function LanguageSwitcher() {
           onClick={() => setLocale(lang.code)}
           className={`text-xs font-bold px-2.5 py-1 rounded-full transition-all duration-200 ${
             locale === lang.code
-              ? "bg-ireland-gold text-ireland-dark shadow-sm"
+              ? "bg-brand-gold text-brand-dark shadow-sm"
               : "text-white/70 hover:text-white hover:bg-white/10"
           }`}
           aria-label={lang.label}

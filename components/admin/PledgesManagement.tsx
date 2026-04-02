@@ -283,7 +283,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <div className="bg-card rounded-2xl border border-border p-5 text-center">
-          <p className="text-2xl font-black text-ireland-green">{formatYen(Number(stats.total_completed))}</p>
+          <p className="text-2xl font-black text-brand-green">{formatYen(Number(stats.total_completed))}</p>
           <p className="text-xs text-muted-foreground mt-1">完了済み総額</p>
         </div>
         <div className="bg-card rounded-2xl border border-border p-5 text-center">
@@ -313,7 +313,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
 
       {/* 一括操作バー */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 mb-4 bg-ireland-green/10 border border-ireland-green/20 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-3 mb-4 bg-brand-green/10 border border-brand-green/20 rounded-xl px-4 py-3">
           <span className="text-sm font-bold text-foreground">{selectedIds.size}件選択中</span>
           <div className="flex-1" />
           <Button
@@ -328,7 +328,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
           <Button
             size="sm"
             variant="outline"
-            className="border-ireland-green text-ireland-green hover:bg-ireland-green/10 rounded-lg"
+            className="border-brand-green text-brand-green hover:bg-brand-green/10 rounded-lg"
             onClick={() => setBulkEmailOpen(true)}
           >
             <Mail className="w-3.5 h-3.5 mr-1.5" />
@@ -403,7 +403,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
                         </p>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right font-bold text-ireland-green">{formatYen(pledge.amount)}</td>
+                    <td className="py-3 px-4 text-right font-bold text-brand-green">{formatYen(pledge.amount)}</td>
                     <td className="py-3 px-4 text-center">
                       <Badge className={`text-xs border ${ps.className}`}>{ps.label}</Badge>
                     </td>
@@ -506,7 +506,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditPledge(null)} className="rounded-xl">キャンセル</Button>
-            <Button onClick={handleUpdate} disabled={loading} className="rounded-xl bg-ireland-green hover:bg-ireland-green/90 text-white">
+            <Button onClick={handleUpdate} disabled={loading} className="rounded-xl bg-brand-green hover:bg-brand-green/90 text-white">
               保存する
             </Button>
           </DialogFooter>
@@ -539,7 +539,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShippingPledge(null)} className="rounded-xl">キャンセル</Button>
-            <Button onClick={handleShippingSave} disabled={loading} className="rounded-xl bg-ireland-green hover:bg-ireland-green/90 text-white">
+            <Button onClick={handleShippingSave} disabled={loading} className="rounded-xl bg-brand-green hover:bg-brand-green/90 text-white">
               保存する
             </Button>
           </DialogFooter>
@@ -584,7 +584,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
               <Input
                 value={bulkSubject}
                 onChange={e => setBulkSubject(e.target.value)}
-                placeholder="【Green Ireland Festival】お知らせ"
+                placeholder="【プロジェクト名】お知らせ"
                 className="rounded-xl"
               />
             </div>
@@ -593,7 +593,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
               <Textarea
                 value={bulkBody}
                 onChange={e => setBulkBody(e.target.value)}
-                placeholder={"{{supporter_name}} 様\n\nGreen Ireland Festivalへのご支援ありがとうございます。\n\n..."}
+                placeholder={"{{supporter_name}} 様\n\nご支援ありがとうございます。\n\n..."}
                 rows={8}
                 className="resize-none font-mono text-sm rounded-xl"
               />
@@ -604,7 +604,7 @@ export default function PledgesManagement({ pledges: initialPledges, stats }: Pr
             <Button
               onClick={handleBulkEmail}
               disabled={bulkSending || !bulkSubject.trim() || !bulkBody.trim()}
-              className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl"
+              className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl"
             >
               {bulkSending ? "送信中..." : `${selectedIds.size}件に送信`}
             </Button>

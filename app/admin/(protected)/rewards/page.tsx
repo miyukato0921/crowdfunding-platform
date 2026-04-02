@@ -21,7 +21,7 @@ export default async function RewardsPage() {
           <h1 className="text-2xl font-black text-foreground">リターン管理</h1>
           <p className="text-muted-foreground mt-1">支援リターンの作成・編集・管理</p>
         </div>
-        <Button className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl" asChild>
+        <Button className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl" asChild>
           <Link href="/admin/rewards/new">
             <Plus className="w-4 h-4 mr-2" />
             新規リターン
@@ -54,7 +54,7 @@ export default async function RewardsPage() {
                 </div>
               </div>
 
-              <p className="text-2xl font-black text-ireland-green mb-3">{formatYen(reward.amount)}</p>
+              <p className="text-2xl font-black text-brand-green mb-3">{formatYen(reward.amount)}</p>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{reward.description}</p>
 
               <div className="flex items-center justify-between text-sm">
@@ -63,7 +63,7 @@ export default async function RewardsPage() {
                   <span>{reward.claimed_count}人支援中</span>
                 </div>
                 {remaining !== null ? (
-                  <span className={`text-xs font-bold ${isSoldOut ? "text-destructive" : "text-ireland-green"}`}>
+                  <span className={`text-xs font-bold ${isSoldOut ? "text-destructive" : "text-brand-green"}`}>
                     {isSoldOut ? "完売" : `残り${remaining}個`}
                   </span>
                 ) : (
@@ -74,7 +74,7 @@ export default async function RewardsPage() {
               {remaining !== null && (
                 <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-ireland-green rounded-full"
+                    className="h-full bg-brand-green rounded-full"
                     style={{ width: `${Math.min((reward.claimed_count / reward.limit_count) * 100, 100)}%` }}
                   />
                 </div>

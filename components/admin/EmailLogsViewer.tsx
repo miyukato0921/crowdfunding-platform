@@ -34,7 +34,7 @@ export default function EmailLogsViewer() {
   useEffect(() => { fetchLogs() }, [])
 
   const statusConfig = {
-    sent: { label: "送信済み", variant: "default" as const, icon: CheckCircle, color: "text-ireland-green" },
+    sent: { label: "送信済み", variant: "default" as const, icon: CheckCircle, color: "text-brand-green" },
     failed: { label: "失敗", variant: "destructive" as const, icon: AlertTriangle, color: "text-red-500" },
     skipped: { label: "スキップ", variant: "secondary" as const, icon: SkipForward, color: "text-muted-foreground" },
   }

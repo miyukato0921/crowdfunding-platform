@@ -47,7 +47,7 @@ export default function FundingProgress({ campaign }: Props) {
     <div className="bg-card rounded-2xl border border-border p-6 mb-6">
       <div className="mb-4">
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-4xl font-black text-ireland-green tabular-nums">
+          <span className="text-4xl font-black text-brand-green tabular-nums">
             {formatCurrency(current)}
           </span>
           <span className="text-muted-foreground text-sm">
@@ -55,7 +55,7 @@ export default function FundingProgress({ campaign }: Props) {
           </span>
         </div>
         <div className="flex items-center gap-1.5 mt-1">
-          <Target className="w-3.5 h-3.5 text-ireland-gold" />
+          <Target className="w-3.5 h-3.5 text-brand-gold" />
           <span className="text-sm text-muted-foreground">
             {t("remaining")} <span className="font-bold text-foreground">{formatCurrency(remaining)}</span> {t("toGoal")}
           </span>
@@ -64,7 +64,7 @@ export default function FundingProgress({ campaign }: Props) {
 
       <div className="mb-5">
         <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-          <span className="font-bold text-ireland-green">{progress}% {t("achievementRate")}</span>
+          <span className="font-bold text-brand-green">{progress}% {t("achievementRate")}</span>
           <span>{formatCurrency(campaign.goal_amount)}</span>
         </div>
         <div className="h-4 bg-muted rounded-full overflow-hidden">
@@ -81,21 +81,21 @@ export default function FundingProgress({ campaign }: Props) {
       <div className="grid grid-cols-3 gap-4">
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 mb-1">
-            <TrendingUp className="w-4 h-4 text-ireland-green" />
+            <TrendingUp className="w-4 h-4 text-brand-green" />
             <span className="text-2xl font-black text-foreground tabular-nums">{progress}%</span>
           </div>
           <p className="text-xs text-muted-foreground">{t("achievementRate")}</p>
         </div>
         <div className="text-center border-x border-border">
           <div className="flex items-center justify-center gap-1 mb-1">
-            <Users className="w-4 h-4 text-ireland-gold" />
+            <Users className="w-4 h-4 text-brand-gold" />
             <span className="text-2xl font-black text-foreground tabular-nums">{supporters}</span>
           </div>
           <p className="text-xs text-muted-foreground">{t("supporters")}</p>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 mb-1">
-            <Clock className="w-4 h-4 text-ireland-green" />
+            <Clock className="w-4 h-4 text-brand-green" />
             <span className="text-2xl font-black text-foreground tabular-nums">{daysLeft}</span>
           </div>
           <p className="text-xs text-muted-foreground">{t("daysLeft")}</p>

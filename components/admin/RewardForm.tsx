@@ -122,7 +122,7 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
             onClick={handleAutoTranslate}
             disabled={isTranslating || (!fields.title && !fields.description)}
             variant="outline"
-            className="border-ireland-green text-ireland-green hover:bg-ireland-green/10 rounded-xl font-bold"
+            className="border-brand-green text-brand-green hover:bg-brand-green/10 rounded-xl font-bold"
           >
             {isTranslating
               ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />翻訳中...</>
@@ -206,7 +206,7 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
             type="checkbox"
             checked={requiresShipping}
             onChange={(e) => setRequiresShipping(e.target.checked)}
-            className="w-4 h-4 rounded border border-input accent-ireland-green"
+            className="w-4 h-4 rounded border border-input accent-brand-green"
           />
           <Label htmlFor="requires_shipping" className="text-sm font-bold cursor-pointer">
             配送が必要（チェックすると支援完了後に住所入力欄が表示されます）
@@ -219,7 +219,7 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
             name="is_active"
             type="checkbox"
             defaultChecked={defaultValues?.is_active ?? true}
-            className="w-4 h-4 rounded border border-input accent-ireland-green"
+            className="w-4 h-4 rounded border border-input accent-brand-green"
           />
           <Label htmlFor="is_active" className="text-sm font-bold cursor-pointer">公開中（チェックを外すと非公開）</Label>
         </div>
@@ -232,7 +232,7 @@ export default function RewardForm({ action, campaigns, defaultValues }: Props) 
             戻る
           </Link>
         </Button>
-        <Button type="submit" disabled={isPending} className="bg-ireland-green hover:bg-ireland-green/90 text-white rounded-xl">
+        <Button type="submit" disabled={isPending} className="bg-brand-green hover:bg-brand-green/90 text-white rounded-xl">
           {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
           {isPending ? "保存中..." : "保存する"}
         </Button>
