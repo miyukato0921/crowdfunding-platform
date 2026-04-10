@@ -44,7 +44,8 @@ export default function StickySupport({ campaignId }: Props) {
           </Button>
           <Button
             size="sm"
-            className="bg-brand-green hover:bg-brand-green/90 text-white font-bold rounded-full px-5"
+            variant="destructive"
+            className="rounded-full px-5 font-bold border-0 shadow-sm focus-visible:ring-destructive/40"
             onClick={() => {
               const el = document.getElementById("rewards-section")
               if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
