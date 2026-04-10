@@ -161,6 +161,9 @@ export default async function Page() {
             <Link href="/legal/system" className="hover:text-foreground transition-colors">
               システム提供・決済代行
             </Link>
+            <Link href="mailto:m.kato@iris-corp.co.jp" className="hover:text-foreground transition-colors">
+              お問い合わせ
+            </Link>
           </div>
           <p className="text-xs text-muted-foreground/60 font-mono">
             {(() => {

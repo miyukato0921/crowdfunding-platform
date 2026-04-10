@@ -126,7 +126,14 @@ export default function ShopClient({ products }: Props) {
 
       <footer className="border-t border-border mt-16 py-8 text-center text-xs text-muted-foreground">
         <p>© {new Date().getFullYear()} {title}. All rights reserved.</p>
-        <Link href="/" className="text-brand-green hover:underline mt-1 inline-block">{t("backToCampaign")}</Link>
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <Link href="/" className="text-brand-green hover:underline inline-block">
+            {t("backToCampaign")}
+          </Link>
+          <Link href="mailto:m.kato@iris-corp.co.jp" className="text-brand-green hover:underline inline-block">
+            お問い合わせ
+          </Link>
+        </div>
       </footer>
     </div>
   )
